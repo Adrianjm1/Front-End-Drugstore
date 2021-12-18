@@ -1,0 +1,35 @@
+* {
+    margin: 0;
+}
+
+
+.container-login {
+    position: absolute;
+    top: 25%;
+    left: 35%;
+    border-radius: 20px;
+    width: 35%;
+    background: rgb(13,103,128);
+    background: linear-gradient(90deg, rgba(13,103,128,1) 0%, rgba(112,200,244,1) 51%, rgba(10,93,115,1) 100%);
+}
+
+.logintext {
+    color: black;
+}
+
+.formtext {
+    color: black;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background-color: rgb(24, 24, 110);
+    border-color: rgb(38, 38, 90);
+}
+
+
+.btn-primary:hover {
+
+    background-color: rgb(49, 49, 212);
+    border-color: rgb(39, 39, 201);
+}
