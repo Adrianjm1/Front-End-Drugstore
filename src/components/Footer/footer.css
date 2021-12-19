@@ -1,0 +1,12 @@
+
+*{
+    margin: 0;
+}
+
+.sty {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color:#4853e9 ;
+    text-align: center;
+}
