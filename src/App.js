@@ -2,6 +2,7 @@ import './App.css';
 import "bootstrap/dist/css/bootstrap.css";
 import React, { useReducer, useEffect } from 'react';
 import Login from './components/Login/login';
+import Main from './components/Main/main';
 import NavbarLogin from './components/Navbar/NavbarLogin';
 import Footer from './components/Footer/Footer';
 import Dashboard from './components/Dashboard/Dashboard';
@@ -21,7 +22,8 @@ import {
 function App() {
   return (
     <Routes>
-        <Route path="/" element={<Login />}> </Route>
+        <Route path="/login" element={<Login />}> </Route>
+        <Route path="/" element={<Main />}> </Route>
         <Route path='/seller' element={<Seller/>}></Route>
     </Routes>
     

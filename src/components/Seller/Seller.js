@@ -2,7 +2,7 @@ import React  ,{ useState, useEffect }from 'react'
 import { Table } from 'react-bootstrap';
 import './seller.css';
 import axios from '../../config/axios';
-import NavbarLogin from '../Navbar/NavbarLogin';
+import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
 
 
@@ -35,18 +35,11 @@ const Seller = () => {
     
             //eslint-disable-next-line
         }, [])
-    
-
-
-
-
-
 
     return (
         <>
-            <NavbarLogin/>
+            <NavbarLoged/>
             <div className='divTable'> 
-
 
             <Table className='table-seller' striped bordered hover>
                 <thead>
