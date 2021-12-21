@@ -104,7 +104,7 @@ const Main = () => {
                             <td>1000</td>
                             <td>100</td>
                             <td>900</td>
-                            <th><a href='#'>Detalles</a> / <a href='#'>Realizar pago</a></th>
+                            <th><a href='#'>Detalles</a> / <a href='/payment/make/3'>Realizar pago</a></th>
                         </tr>
                         <tr key="2" className='table-danger'>
                             <td>123456</td>
@@ -113,7 +113,7 @@ const Main = () => {
                             <td>1000</td>
                             <td>100</td>
                             <td>900</td>
-                            <th><a href='#'>Detalles</a> / <a href='#'>Realizar pago</a></th>
+                            <th><a href='#'>Detalles</a> / <a href='/payment/make?id=2'>Realizar pago</a></th>
                         </tr>
                     </tbody>
                 </Table>

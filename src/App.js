@@ -3,9 +3,7 @@ import "bootstrap/dist/css/bootstrap.css";
 import React, { useReducer, useEffect } from 'react';
 import Login from './components/Login/login';
 import Main from './components/Main/main';
-import NavbarLogin from './components/Navbar/NavbarLogin';
-import Footer from './components/Footer/Footer';
-import Dashboard from './components/Dashboard/Dashboard';
+import MakeAPayment from './components/Payments/MakeAPayment';
 import Seller from './components/Seller/Seller';
 
 import { render } from "react-dom";
@@ -25,6 +23,7 @@ function App() {
         <Route path="/login" element={<Login />}> </Route>
         <Route path="/" element={<Main />}> </Route>
         <Route path='/seller' element={<Seller/>}></Route>
+        <Route path='/payment/make/:id' element={<MakeAPayment/>}></Route>
     </Routes>
     
 
