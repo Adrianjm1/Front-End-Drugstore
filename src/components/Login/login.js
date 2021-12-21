@@ -1,10 +1,13 @@
 import React from 'react';
 import { Col, Container, Row, Form, Button } from 'react-bootstrap';
+import Footer from '../Footer/Footer';
+import NavbarLogin from '../Navbar/NavbarLogin';
 import './login.css';
 
 const login = () => {
     return (
         <>
+        <NavbarLogin/>
             <Container className='container-login'>
                 <h1 className="logintext shadow-sm  mt-5 p-20 text-center rounded">Login</h1>
 
@@ -35,7 +38,7 @@ const login = () => {
 
             </Container>
 
-
+        <Footer/>
 
 
 
