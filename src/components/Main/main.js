@@ -9,7 +9,8 @@ import Footer from '../Footer/Footer';
 const Main = () => {
 
     const defaultState = {
-        sellers: []
+        sellers: [],
+        bills:[]
     };
 
     const [state, setState] = useState(defaultState);
@@ -23,10 +24,26 @@ const Main = () => {
         axios.get('/seller/')
             .then((res) => {
 
-                setState({
-                    ...state,
-                    sellers: res.data
+
+
+                
+
+
+                axios.get('/bill/')
+                .then((resp) => {
+
+
+                    setState({
+                        ...state,
+                        sellers: res.data,
+                        bills: resp.data
+                    })
+
+                    
+
+
                 })
+                .catch((error) => console.log(error))
 
 
             })
@@ -49,6 +66,7 @@ const Main = () => {
                         <tr>
                             <th># de factura</th>
                             <th>Fecha</th>
+                            <th>Fecha de expiracion</th>
                             <th>Cliente</th>
                             <th>Monto</th>
                             <th>Pagado</th>
@@ -57,25 +75,24 @@ const Main = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr key="1" className='table-success'>
-                            <td>123456</td>
-                            <td>2021-12-20</td>
-                            <td>Farmatodo</td>
-                            <td>1000</td>
-                            <td>100</td>
-                            <td>900</td>
-                            <th><a href='#'>Detalles</a></th>
-                        </tr>
-                        <tr key="2" className='table-success'>
-                            <td>123456</td>
-                            <td>2021-12-20</td>
-                            <td>Farmatodo</td>
-                            <td>1000</td>
-                            <td>100</td>
-                            <td>900</td>
-                            <th><a href='#'>Detalles</a></th>
-                        </tr>
-                    </tbody>
+                                {
+                                    state.bills.map(data => (
+                                         
+
+                                        <tr className='table-pagadas' key={data.id}>
+                                            <td>{data.id}</td>
+                                            <td>{(data.billDate).slice(0,10)}</td>
+                                            <td>{data.expirationDate.slice(0,10)}</td>
+                                            <td>{data.client}</td>
+                                            <td>{`${data.amountUSD} $`}</td>
+                                            <td>{'Working on it'}</td>
+                                            <td>{'Working on it'}</td>
+                                            <td >{<a className='tableDetails' href='#'>Detalles</a>}</td>
+                                            
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
                 </Table>
 
             </div>

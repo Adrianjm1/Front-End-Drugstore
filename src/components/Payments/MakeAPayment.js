@@ -1,9 +1,11 @@
 
 import React, { useEffect, useState } from 'react';
-import { Container, Form, Col, Row, Button } from 'react-bootstrap';
+import { Container, Form, Col, Row, Button, InputGroup } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import axios from '../../config/axios';
+import './makeAPayment.css'
+
 
 const billState = {
     number: '',
@@ -28,7 +30,7 @@ const MakeAPayment = ({ history }) => {
                 if (res.data) {
                     console.log(res.data);
 
-                    setState({ ...state, number: res.data.billNumber, client: res.data.client, city: res.data.city, seller: `${res.data.seller.name} ${res.data.seller.lastname}`, amountUSD: res.data.amountUSD })
+                    setState({ ...state, number: res.data.id, client: res.data.client, city: res.data.city, seller: `${res.data.seller.name} ${res.data.seller.lastname}`, amountUSD: res.data.amountUSD })
 
 
 
@@ -87,7 +89,7 @@ const MakeAPayment = ({ history }) => {
                     </Col>
                 </Form.Group>
 
-                <Button variant="success">Realizar pago</Button>
+                <Button variant="success"  className='btnMake'>Realizar pago</Button>
 
 
             </Container>
