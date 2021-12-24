@@ -1,20 +1,43 @@
 import React, { useState, useEffect } from 'react'
-import { Table } from 'react-bootstrap';
+import { Table, Modal, Button, Form, Row, Col } from 'react-bootstrap';
 import './main.css';
 import axios from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
+import MakeAPayment from '../Payments/MakeAPayment';
+import Details from '../Payments/Details/Details';
 
 
 const Main = () => {
 
     const defaultState = {
         sellers: [],
-        bills:[]
+        bills: [],
+        number:0
     };
+
+    const [show, setShow] = useState(false);
+
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+
+    
+    const [showDetails, setShowDetails] = useState(false);
+
+    const handleCloseDetails = () => setShowDetails(false);
+    const handleShowDetails = () => setShowDetails(true);
 
     const [state, setState] = useState(defaultState);
 
+
+    const changeNumber = (id)=>{
+
+        setState({
+            ...state,
+            number: id
+        })
+
+    }
 
 
     useEffect(function () {
@@ -26,24 +49,24 @@ const Main = () => {
 
 
 
-                
+
 
 
                 axios.get('/bill/')
-                .then((resp) => {
+                    .then((resp) => {
 
 
-                    setState({
-                        ...state,
-                        sellers: res.data,
-                        bills: resp.data
+                        setState({
+                            ...state,
+                            sellers: res.data,
+                            bills: resp.data
+                        })
+
+
+
+
                     })
-
-                    
-
-
-                })
-                .catch((error) => console.log(error))
+                    .catch((error) => console.log(error))
 
 
             })
@@ -55,6 +78,8 @@ const Main = () => {
 
     return (
         <>
+
+
             <NavbarLoged />
 
             <h2><b>Facturas pagadas</b></h2>
@@ -69,30 +94,32 @@ const Main = () => {
                             <th>Fecha de expiracion</th>
                             <th>Cliente</th>
                             <th>Monto</th>
-                            <th>Pagado</th>
+
                             <th>Por pagar</th>
                             <th>Accion a realizar</th>
                         </tr>
                     </thead>
                     <tbody>
-                                {
-                                    state.bills.map(data => (
-                                         
+                        
+                        {
+                            state.bills.map(data => (
 
-                                        <tr className='table-pagadas' key={data.id}>
-                                            <td>{data.id}</td>
-                                            <td>{(data.billDate).slice(0,10)}</td>
-                                            <td>{data.expirationDate.slice(0,10)}</td>
-                                            <td>{data.client}</td>
-                                            <td>{`${data.amountUSD} $`}</td>
-                                            <td>{'Working on it'}</td>
-                                            <td>{'Working on it'}</td>
-                                            <td >{<a className='tableDetails' href='#'>Detalles</a>}</td>
-                                            
-                                        </tr>
-                                    ))
-                                }
-                            </tbody>
+
+                                <tr className='table-pagadas' key={data.id}>
+                                    <td>{data.id}</td>
+                                    <td>{(data.billDate).slice(0, 10)}</td>
+                                    <td>{data.expirationDate.slice(0, 10)}</td>
+                                    <td>{data.client}</td>
+                                    <td>{`${data.amountUSD} $`}</td>
+                                    <td>{'Working on it'}</td>
+
+                                    <td >{<a  onClick={()=>{handleShowDetails(); changeNumber(data.id) }}  className='tableDetails' href='#'>Detalles</a>}</td>
+                             
+
+                                </tr>
+                            ))
+                        }
+                    </tbody>
                 </Table>
 
             </div>
@@ -121,7 +148,7 @@ const Main = () => {
                             <td>1000</td>
                             <td>100</td>
                             <td>900</td>
-                            <th><a href='#'>Detalles</a> / <a href='/payment/make/3'>Realizar pago</a></th>
+                            <th><a href='#'>Detalles</a> / <a onClick={() => handleShow()} >Realizar pago</a></th>
                         </tr>
                         <tr key="2" className='table-danger'>
                             <td>123456</td>
@@ -130,12 +157,38 @@ const Main = () => {
                             <td>1000</td>
                             <td>100</td>
                             <td>900</td>
-                            <th><a href='#'>Detalles</a> / <a href='/payment/make?id=2'>Realizar pago</a></th>
+                            <th><a href='#'>Detalles</a> / <a onClick={() => handleShow()} >Realizar pago</a></th>
                         </tr>
                     </tbody>
                 </Table>
 
             </div>
+
+     
+
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Procesar pago</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+                    <MakeAPayment/>
+
+                </Modal.Body>
+            </Modal>
+
+            <Modal show={showDetails} onHide={handleCloseDetails}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Detalles</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+                    <Details number={state.number} />
+
+                </Modal.Body>
+            </Modal>
+
+
 
             <Footer />
         </>
