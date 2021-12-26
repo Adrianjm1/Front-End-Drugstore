@@ -13,7 +13,7 @@ const Main = () => {
     const defaultState = {
         sellers: [],
         bills: [],
-        number:0
+        number:0,
     };
 
     const [show, setShow] = useState(false);
@@ -47,23 +47,14 @@ const Main = () => {
         axios.get('/seller/')
             .then((res) => {
 
-
-
-
-
-
                 axios.get('/bill/')
                     .then((resp) => {
 
-
-                        setState({
-                            ...state,
-                            sellers: res.data,
-                            bills: resp.data
-                        })
-
-
-
+                            setState({
+                                ...state,
+                                sellers: res.data,
+                                bills: resp.data,
+                            })
 
                     })
                     .catch((error) => console.log(error))
@@ -75,6 +66,8 @@ const Main = () => {
 
         //eslint-disable-next-line
     }, [])
+
+    console.log(state.bills);
 
     return (
         <>
@@ -95,7 +88,6 @@ const Main = () => {
                             <th>Cliente</th>
                             <th>Monto</th>
 
-                            <th>Por pagar</th>
                             <th>Accion a realizar</th>
                         </tr>
                     </thead>
@@ -111,7 +103,7 @@ const Main = () => {
                                     <td>{data.expirationDate.slice(0, 10)}</td>
                                     <td>{data.client}</td>
                                     <td>{`${data.amountUSD} $`}</td>
-                                    <td>{'Working on it'}</td>
+                                    
 
                                     <td >{<a  onClick={()=>{handleShowDetails(); changeNumber(data.id) }}  className='tableDetails' href='#'>Detalles</a>}</td>
                              
