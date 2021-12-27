@@ -14,10 +14,19 @@ h2{
 a{
     text-decoration: none;
     color: black;
+
 }
 
 
 .tableDetails:hover{
     color: rgb(3, 164, 175);
     font-weight: 600;
+    cursor: pointer;
+}
+
+
+.dropdownMain {
+    margin-top: 50px;
+    left: 45%;
+
 }

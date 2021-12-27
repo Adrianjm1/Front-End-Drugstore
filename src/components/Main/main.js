@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Modal, Button, Form, Row, Col } from 'react-bootstrap';
+import { Table, Modal, Button, Form, Row, Col, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
 import './main.css';
 import axios from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
 import MakeAPayment from '../Payments/MakeAPayment';
 import Details from '../Payments/Details/Details';
+import Paid from '../Bills/Paid';
+import Unpaid from '../Bills/Unpaid';
+import Notpayed from '../Bills/Notpayed';
+
 
 
 const Main = () => {
@@ -14,6 +18,7 @@ const Main = () => {
         sellers: [],
         bills: [],
         number:0,
+        option:1
     };
 
     const [show, setShow] = useState(false);
@@ -24,20 +29,25 @@ const Main = () => {
     
     const [showDetails, setShowDetails] = useState(false);
 
-    const handleCloseDetails = () => setShowDetails(false);
-    const handleShowDetails = () => setShowDetails(true);
 
     const [state, setState] = useState(defaultState);
 
 
-    const changeNumber = (id)=>{
+    const changeOption =(op)=>{
 
-        setState({
-            ...state,
-            number: id
-        })
+
+
+            setState({
+                ...state,
+                option: op,
+            })
+        
+
 
     }
+
+
+    
 
 
     useEffect(function () {
@@ -75,86 +85,50 @@ const Main = () => {
 
             <NavbarLoged />
 
-            <h2><b>Facturas pagadas</b></h2>
+    <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
+    <Dropdown.Item eventKey="1" onClick={()=> changeOption(1)}>Facturas por cobrar</Dropdown.Item>
+    <Dropdown.Item eventKey="2" onClick={()=> changeOption(2)}>Facturas pagadas</Dropdown.Item>
+    <Dropdown.Item eventKey="3" onClick={()=> changeOption(3)}>Facturas vencidas</Dropdown.Item>
+  </DropdownButton>
 
-            <div className='divTable'>
+            {state.option ===1 ?
 
-                <Table className='table-seller' striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th># de factura</th>
-                            <th>Fecha</th>
-                            <th>Fecha de expiracion</th>
-                            <th>Cliente</th>
-                            <th>Monto</th>
-
-                            <th>Accion a realizar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        
-                        {
-                            state.bills.map(data => (
+               <Unpaid/>
+            :
 
 
-                                <tr className='table-pagadas' key={data.id}>
-                                    <td>{data.id}</td>
-                                    <td>{(data.billDate).slice(0, 10)}</td>
-                                    <td>{data.expirationDate.slice(0, 10)}</td>
-                                    <td>{data.client}</td>
-                                    <td>{`${data.amountUSD} $`}</td>
-                                    
+            <> </>
 
-                                    <td >{<a  onClick={()=>{handleShowDetails(); changeNumber(data.id) }}  className='tableDetails' href='#'>Detalles</a>}</td>
-                             
 
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </Table>
+        }
 
-            </div>
 
-            <h2><b>Facturas por pagar</b></h2>
 
-            <div className='divTable'>
+{state.option ===2 ?
 
-                <Table className='table-seller' striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th># de factura</th>
-                            <th>Fecha</th>
-                            <th>Cliente</th>
-                            <th>Monto</th>
-                            <th>Pagado</th>
-                            <th>Por pagar</th>
-                            <th>Accion a realizar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr key="1" className='table-danger'>
-                            <td>123456</td>
-                            <td>2021-12-20</td>
-                            <td>Farmatodo</td>
-                            <td>1000</td>
-                            <td>100</td>
-                            <td>900</td>
-                            <th><a href='#'>Detalles</a> / <a onClick={() => handleShow()} >Realizar pago</a></th>
-                        </tr>
-                        <tr key="2" className='table-danger'>
-                            <td>123456</td>
-                            <td>2021-12-20</td>
-                            <td>Farmatodo</td>
-                            <td>1000</td>
-                            <td>100</td>
-                            <td>900</td>
-                            <th><a href='#'>Detalles</a> / <a onClick={() => handleShow()} >Realizar pago</a></th>
-                        </tr>
-                    </tbody>
-                </Table>
+            <Paid/>
 
-            </div>
+
+            :
+
+
+            <> </>
+
+
+        }
+
+{state.option ===3 ?
+            <Notpayed/>
+
+            :
+
+
+            <> </>
+
+
+        }
+
+
 
      
 
@@ -169,16 +143,6 @@ const Main = () => {
                 </Modal.Body>
             </Modal>
 
-            <Modal show={showDetails} onHide={handleCloseDetails}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Detalles</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-
-                    <Details number={state.number} />
-
-                </Modal.Body>
-            </Modal>
 
 
 
