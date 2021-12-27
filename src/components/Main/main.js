@@ -47,9 +47,6 @@ const Main = () => {
     }
 
 
-    
-
-
     useEffect(function () {
 
 
@@ -74,7 +71,7 @@ const Main = () => {
             .catch((error) => console.log(error))
 
 
-        //eslint-disable-next-line
+
     }, [])
 
     console.log(state.bills);
@@ -85,21 +82,16 @@ const Main = () => {
 
             <NavbarLoged />
 
-    <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
-    <Dropdown.Item eventKey="1" onClick={()=> changeOption(1)}>Facturas por cobrar</Dropdown.Item>
-    <Dropdown.Item eventKey="2" onClick={()=> changeOption(2)}>Facturas pagadas</Dropdown.Item>
-    <Dropdown.Item eventKey="3" onClick={()=> changeOption(3)}>Facturas vencidas</Dropdown.Item>
-  </DropdownButton>
+            <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
+            <Dropdown.Item eventKey="1" onClick={()=> changeOption(1)}>Facturas por cobrar</Dropdown.Item>
+            <Dropdown.Item eventKey="2" onClick={()=> changeOption(2)}>Facturas pagadas</Dropdown.Item>
+            <Dropdown.Item eventKey="3" onClick={()=> changeOption(3)}>Facturas vencidas</Dropdown.Item>
+              </DropdownButton>
 
             {state.option ===1 ?
-
                <Unpaid/>
             :
-
-
             <> </>
-
-
         }
 
 
@@ -107,30 +99,15 @@ const Main = () => {
 {state.option ===2 ?
 
             <Paid/>
-
-
             :
-
-
             <> </>
-
-
         }
 
 {state.option ===3 ?
             <Notpayed/>
-
             :
-
-
             <> </>
-
-
         }
-
-
-
-     
 
             <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
@@ -143,6 +120,16 @@ const Main = () => {
                 </Modal.Body>
             </Modal>
 
+            <Modal show={showDetails} onHide={handleCloseDetails}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Detalles</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+                    <Details number={state.number} />
+
+                </Modal.Body>
+            </Modal>
 
 
 
