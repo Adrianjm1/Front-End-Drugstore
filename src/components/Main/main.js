@@ -109,27 +109,6 @@ const Main = () => {
             <> </>
         }
 
-            <Modal show={show} onHide={handleClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Procesar pago</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-
-                    <MakeAPayment/>
-
-                </Modal.Body>
-            </Modal>
-
-            <Modal show={showDetails} onHide={handleCloseDetails}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Detalles</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-
-                    <Details number={state.number} />
-
-                </Modal.Body>
-            </Modal>
 
 
 
