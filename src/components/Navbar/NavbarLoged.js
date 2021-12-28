@@ -23,6 +23,10 @@ const NavbarLoged = () => {
             <Navbar.Brand href="/seller">
                 <b>Vendedores</b>
             </Navbar.Brand>
+            
+            <Navbar.Brand href="/payments">
+                <b>Pagos</b>
+            </Navbar.Brand>
 
             <Button>
                 <b>Salir</b>
