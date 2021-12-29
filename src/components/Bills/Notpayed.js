@@ -77,7 +77,7 @@ const Notpayed = () => {
                 <th>Fecha</th>
                 <th>Fecha de expiracion</th>
                 <th>Cliente</th>
-                <th>Monto</th>
+                <th>Monto Vencido</th>
                 <th>Accion a realizar</th>
             </tr>
         </thead>
@@ -93,7 +93,7 @@ const Notpayed = () => {
                         <td>{(data.billDate).slice(0, 10)}</td>
                         <td>{data.expirationDate.slice(0, 10)}</td>
                         <td>{data.client}</td>
-                        <td>{`${data.amountUSD} $`}</td>
+                        <td>{`${data.amount.notPayed} $`}</td>
                         
 
 

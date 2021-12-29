@@ -8,6 +8,7 @@ const Details = (number) => {
 
     const defaultState = {
         datos:[],
+        amount: [],
         seller: '',
         expiration: '',
         billDate: ''
@@ -22,10 +23,9 @@ const Details = (number) => {
             .then((res) => {
 
                 setState({...state, datos:res.data, seller: res.data.seller.name + ' ' +res.data.seller.lastname,
-                 expiration: (res.data.expirationDate).slice(0,10),
+                 expiration: (res.data.expirationDate).slice(0,10), amount: res.data.amount,
                 billDate: (res.data.billDate).slice(0,10) })
 
-                console.log(res.data);
             })
             .catch((error) => console.log(error))
 
@@ -39,16 +39,13 @@ const Details = (number) => {
     return (
         <>
            <div>
-                {/* <h2>{`Factura numero ${ datos.id   }`}      </h2>
-                <h2>{`${  datos.id   }`}      </h2>
-                <h2>{`${  datos.id   }`}      </h2>
-                <h2>{`${  datos.id   }`}      </h2>
-                <h2>{`${  datos.id   }`}      </h2>
-                <h2>{`${  datos.id   }`}      </h2>
-                <h2>{`${  datos.id   }`}      </h2> */}
+
 <ListGroup variant="flush">
   <ListGroup.Item variant='info'>  {`Factura numero:  `} <b>{state.datos.id}</b>      </ListGroup.Item>
-  <ListGroup.Item variant='info'>  {`Monto:   `}   <b> {`${state.datos.amountUSD} $`}</b>   </ListGroup.Item>
+  <ListGroup.Item variant='info'>  {`Monto de factura:   `}   <b> {`${state.datos.amountUSD} $`}</b>   </ListGroup.Item>
+  <ListGroup.Item variant='info'>  {`Monto pagado   `}   <b> {`${state.amount.paid} $`}</b>   </ListGroup.Item>
+  <ListGroup.Item variant='info'>  {`Monto: por cobrar:   `}   <b> {`${state.amount.unPaid} $`}</b>   </ListGroup.Item>
+  <ListGroup.Item variant='info'>  {`Monto vencido:   `}   <b> {`${state.amount.notPayed} $`}</b>   </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Fecha: `}    <b>{(state.billDate)} </b>   </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Fecha de expiracion: `}   <b>{(state.expiration)}</b>   </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Dias de credito: `}    <b>{state.datos.creditDays}</b>  </ListGroup.Item>
