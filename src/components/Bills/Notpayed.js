@@ -99,8 +99,9 @@ const Notpayed = () => {
 
                         <td >{<a  onClick={()=>{handleShowDetails(); changeNumber(data.id) }}  className='tableDetails' href='#'>
                             Detalles</a> } /      
-                            {<a className='tableDetails' onClick={() => handleShow()} >Realizar pago</a>}
-                                                      </td>                
+                            {<a className='tableDetails' onClick={() =>{ handleShow(); changeNumber(data.id);}} >Realizar pago</a>}
+                                                      </td>
+ 
 
                     </tr>
                 ))
@@ -117,7 +118,7 @@ const Notpayed = () => {
                 </Modal.Header>
                 <Modal.Body>
 
-                    <MakeAPayment/>
+                <MakeAPayment number={state.number}/>
 
                 </Modal.Body>
             </Modal>
