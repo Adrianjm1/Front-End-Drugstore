@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom'
 import { Container, Form, Col, Row, Button, InputGroup } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import image from '../../assets/img/dolar.png'
@@ -18,7 +19,10 @@ const billState = {
     amountPay:0,
     reference: '',
     bank:'',
-    date: ''
+    date: '',
+    checkUSD:'',
+    exchange: 0,
+    exchangeHide: false
 }
 
 const MakeAPayment = (number) => {
@@ -30,7 +34,6 @@ const MakeAPayment = (number) => {
 
     useEffect(function () {
 
-        console.log(number);
 
         axios.get(`/bill/${number.number}`)
             .then((res) => {
@@ -49,12 +52,7 @@ const MakeAPayment = (number) => {
                         setState({ ...state,datos: res.data, seller: res.data.seller, amount: res.data.amount,restante: res.data.amount.unPaid })
                     }
     
-                   
-                    
-
-                    
-
-
+ 
                 } else {
                     console.log('No hay data')
                 }
@@ -64,7 +62,7 @@ const MakeAPayment = (number) => {
             })
             .catch((error) => console.log(error))
 
-            console.log(state.restante);
+
 
         //eslint-disable-next-line
     }, [])
@@ -86,13 +84,39 @@ const MakeAPayment = (number) => {
     }
 
 
+    const handleChange = async e =>{
+      
+        if(e.target.checked === false){
+            setState({ ...state, checkUSD: e.target.checked, exchange: 0 });
+
+            ReactDOM.render(<p></p>, document.getElementById('tasadecambio'));
+            
+        }else{
+
+            setState({ ...state, checkUSD: e.target.checked, exchangeHide: true });
+
+            const tasa =
+            <Form.Group className="mb-3">
+            <Form.Label>Tasa de cambio</Form.Label>
+            <Form.Control  placeholder="Tasa de cambio" name="exchange" onChange={onInputChange} />
+            </Form.Group>
+
+
+            ReactDOM.render(tasa, document.getElementById('tasadecambio'));
+           
+           
+       }
+
+       console.log(e.target.checked);
+    }
+
 
 
      const onSubmit = async e => {
 
         try {
 
-            console.log( 'ID:      '   + state.datos.id  +'   Cliente:   '   +  state.datos.client  +' Ciudad:     '   +   state.datos.city  +'   Referece:   '   +    state.reference  +'  Monto:    '   +   state.amountPay   + 'date: '+ state.date       );
+            console.log( 'ID:      '   + state.datos.id  +'   Cliente:   '   +  state.datos.client  +' Ciudad:     '   +   state.datos.city  +'   Referece:   '   +    state.reference  +'  Monto:    '   +   state.amountPay   + 'date: '+ state.date     );
 
 
             const res = await axios.post('/payments/create',
@@ -102,10 +126,12 @@ const MakeAPayment = (number) => {
                     city: state.datos.city,
                     referenceNumber: (state.reference),
                     amountUSD: state.amountPay,
-                    date: state.date
+                    date: state.date,
+                    bank: state.bank,
+                    checkUSD: state.checkUSD,
+                    exchange: state.exchange
 
                 });
-
 
 
             if (res.data.message) {
@@ -201,6 +227,10 @@ const MakeAPayment = (number) => {
                     <Form.Control  placeholder="Ingrese el monto" name="amountPay" onChange={onInputChange} />
                 </Form.Group>
 
+                <Form.Group id='tasadecambio' className="mb-3">
+
+                </Form.Group>
+
                 <Form.Group className="mb-3">
                     <Form.Label>Referencia</Form.Label>
                     <Form.Control  placeholder="Ingrese el monto" name="reference" onChange={onInputChange} />
@@ -213,11 +243,12 @@ const MakeAPayment = (number) => {
 
 
 
-                <Form.Group as={Row} className="mb-3 checkPayment" controlId="formHorizontalCheck">
+
+                <Form.Group as={Row} className="mb-3 checkPayment" name="checkUSD" onChange={onInputChange}  controlId="formHorizontalCheck">
 
                     <img className='imgDolar' src={image} />
                     <label className="switch">
-                        <input type="checkbox" />
+                        <input onChange={handleChange} type="checkbox" />
                         <span className="slider round"></span>
                     </label>
                     <p className='bolivares' >Bs</p>
