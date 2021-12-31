@@ -9,6 +9,7 @@ import Details from '../Payments/Details/Details';
 import Paid from '../Bills/Paid';
 import Unpaid from '../Bills/Unpaid';
 import Notpayed from '../Bills/Notpayed';
+import Create from '../Bills/Create';
 
 
 
@@ -18,7 +19,7 @@ const Main = () => {
         sellers: [],
         bills: [],
         number:0,
-        option:1
+        option:1,
     };
 
     const [show, setShow] = useState(false);
@@ -74,7 +75,7 @@ const Main = () => {
 
     }, [])
 
-    console.log(state.bills);
+
 
     return (
         <>
@@ -82,11 +83,13 @@ const Main = () => {
 
             <NavbarLoged />
 
+            <Button className='primary' onClick={handleShow}>Crear Factura </Button>
+
             <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
             <Dropdown.Item eventKey="1" onClick={()=> changeOption(1)}>Facturas por cobrar</Dropdown.Item>
             <Dropdown.Item eventKey="2" onClick={()=> changeOption(2)}>Facturas pagadas</Dropdown.Item>
             <Dropdown.Item eventKey="3" onClick={()=> changeOption(3)}>Facturas vencidas</Dropdown.Item>
-              </DropdownButton>
+            </DropdownButton>
 
             {state.option ===1 ?
                <Unpaid/>
@@ -108,11 +111,19 @@ const Main = () => {
             :
             <> </>
         }
-
-
-
-
             <Footer />
+
+
+            <Modal show={show} onHide={handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Crear factura</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+                <Create />
+
+                </Modal.Body>
+            </Modal>
         </>
     )
 }
