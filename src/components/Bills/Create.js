@@ -16,12 +16,12 @@ const stateCreate = {
     rif: '',
     billDate: '',
     dispatchDate: '',
-    creditDays: 0,
     client: '',
     vendedor:'',
     location:'',
     city:'',
-    sellerComission:'',
+    sellersCommission:0,
+    expirationDate: '',
     vendedorID: 0
 
 
@@ -115,8 +115,9 @@ const Create = () => {
             dispatchDate: ${state.dispatchDate}   \n
             creditDays: ${state.creditDays}   \n
             location: ${state.location}   \n
-            sellerComission: ${state.comision}   \n
+            sellersComission: ${state.sellersCommission}   \n
             idSeller: ${state.vendedorID}   \n
+            idSeller: ${state.expirationDate}   \n
             
             
             
@@ -135,11 +136,12 @@ const Create = () => {
                     amountBS: (state.amountUSD * state.exchange ),
                     billDate: state.billDate,
                     dispatchDate: state.dispatchDate,
+                    expirationDate: state.expirationDate,
                     creditDays: state.creditDays,
                     location: state.location,
-                    sellerComission: state.sellerComission,
+                    sellersComission: state.sellersCommission,
                     idSeller: state.vendedorID,
-                    daysLate:0
+                    exchange: state.exchange
 
 
                 });
@@ -173,11 +175,24 @@ const Create = () => {
 
             console.log(error);
 
-            swal({
-                title: 'Error',
-                text: 'Error, no se pudo procesar la factura',
-                icon: 'error'
-            });
+            if(state.vendedorID ===0){
+
+                swal({
+                    title: 'Error',
+                    text: 'Error, debe seleccionar vendedor',
+                    icon: 'error'
+                });
+    
+
+            } else {
+
+                swal({
+                    title: 'Error',
+                    text: 'Error, no se pudo procesar la factura',
+                    icon: 'error'
+                });
+            }
+
 
         }
 
@@ -201,12 +216,12 @@ const Create = () => {
                         type="date"
                         placeholder="Fecha"
                     />
-                </Form.Group>
+            </Form.Group>
 
                 <br/>
 
                 <Form.Group as={Col} md="4" controlId="validationCustom02">
-                    <Form.Label>Despacho</Form.Label>
+                    <Form.Label>Fecha de despacho</Form.Label>
                     <Form.Control
                         name='dispatchDate'
                         onChange={onInputChange}
@@ -217,10 +232,19 @@ const Create = () => {
                 </Form.Group>
                 <br/>
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Dias de credito</Form.Label>
-                    <Form.Control  placeholder="Dias" name="creditDays" onChange={onInputChange} />
+
+                <Form.Group as={Col} md="4" controlId="validationCustom02">
+                    <Form.Label>Fecha de expiracion</Form.Label>
+                    <Form.Control
+                        name='expirationDate'
+                        onChange={onInputChange}
+                        required
+                        type="date"
+                        placeholder="Fecha de expiracion"
+                    />
                 </Form.Group>
+                <br/>
+
 
                 <Form.Group className="mb-3">
                     <Form.Label>Cliente</Form.Label>
@@ -245,7 +269,7 @@ const Create = () => {
 
                 <Form.Group className="mb-3">
                     <Form.Label>Comision</Form.Label>
-                    <Form.Control  placeholder="Comision" name="sellerComission" onChange={onInputChange} />
+                    <Form.Control  placeholder="Comision" name="sellersCommission" onChange={onInputChange} />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
@@ -269,9 +293,9 @@ const Create = () => {
                     ))}
                 </DropdownButton>
                 <br/>
+                <br/>
 
-
-                <Button variant="success" className='btnMake' onClick={onSubmit} type="submit">Crear factura</Button>
+                <Button variant="success" className='btnMake' onClick={onSubmit} type="submit">Registrar factura</Button>
 
 
             </Container>

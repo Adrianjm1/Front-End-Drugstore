@@ -83,7 +83,8 @@ const Main = () => {
 
             <NavbarLoged />
 
-            <Button className='primary' onClick={handleShow}>Crear Factura </Button>
+            <Button className='btnCreateBill' onClick={handleShow}>Crear Factura </Button>
+            <br/>
 
             <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
             <Dropdown.Item eventKey="1" onClick={()=> changeOption(1)}>Facturas por cobrar</Dropdown.Item>
@@ -114,9 +115,9 @@ const Main = () => {
             <Footer />
 
 
-            <Modal show={show} onHide={handleClose}>
+            <Modal className="modalCreateBill" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Crear factura</Modal.Title>
+                    <Modal.Title>Registrar factura</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
 

@@ -92,7 +92,7 @@ const Unpaid = () => {
                     <tr className='table-pagadas' key={data.id}>
                         <td>{data.id}</td>
                         <td>{(data.billDate).slice(0, 10)}</td>
-                        <td>{data.expirationDate.slice(0, 10)}</td>
+                        <td>{(data.expirationDate).slice(0, 10)}</td>
                         <td>{data.client}</td>
                         <td>{`${data.amountUSD} $`}</td>
                         <td>{`${data.amount.unPaid} $`}</td>
