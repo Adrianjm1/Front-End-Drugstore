@@ -20,15 +20,26 @@ const billState = {
     reference: '',
     bank:'',
     date: '',
-    checkUSD:'',
+    paymentUSD: false,
     exchange: 0,
     exchangeHide: false
 }
+
+
+const payState ={
+
+    paymentUSD: false,
+    exchange: 0
+}
+
 
 const MakeAPayment = (number) => {
 
     const [state, setState] = useState(billState);
 
+    const [pay, setPay] = useState(payState);
+
+    const [exc, setExc] = useState(payState);
 
     let id = useParams().id;
 
@@ -84,21 +95,42 @@ const MakeAPayment = (number) => {
     }
 
 
-    const handleChange = async e =>{
+    const onExchangeChange = e => {
+
+        const isValid = e.target.validity.valid;
+
+
+        if (isValid === true) {
+            setExc({ ...exc, exchange: e.target.value });
+
+        } else {
+            console.log(isValid);
+
+        }
+
+    }
+
+
+    const handleChange =  e =>{
+
+
+
+
       
         if(e.target.checked === false){
-            setState({ ...state, checkUSD: e.target.checked, exchange: 0 });
+            setPay({ ...pay, paymentUSD: false });
+            setExc({exchange: 0})
 
             ReactDOM.render(<p></p>, document.getElementById('tasadecambio'));
             
         }else{
 
-            setState({ ...state, checkUSD: e.target.checked, exchangeHide: true });
+            setPay({ ...pay, paymentUSD: true });
 
             const tasa =
             <Form.Group className="mb-3">
             <Form.Label>Tasa de cambio</Form.Label>
-            <Form.Control  placeholder="Tasa de cambio" name="exchange" onChange={onInputChange} />
+            <Form.Control  placeholder="Tasa de cambio" name="exchange" onChange={onExchangeChange} />
             </Form.Group>
 
 
@@ -116,9 +148,11 @@ const MakeAPayment = (number) => {
 
         try {
 
-            console.log( 'ID:      '   + state.datos.id  +'   Cliente:   '   +  state.datos.client  +' Ciudad:     '   +   state.datos.city  +'   Referece:   '   +    state.reference  +'  Monto:    '   +   state.amountPay   + 'date: '+ state.date     );
+            // console.log( 'ID:      '   + state.datos.id  +'   Cliente:   '  
+            //  +  state.datos.client  +' Ciudad:     '   +   state.datos.city  +'   Referece:   '
+            //     +    state.reference  +'  Monto:    '   +   state.amountPay   + '  date: '+ state.date  + ' checkUSD: ' + state.checkUSD   );
 
-
+            console.log(pay);
             const res = await axios.post('/payments/create',
                 {
                     id: state.datos.id,
@@ -128,21 +162,29 @@ const MakeAPayment = (number) => {
                     amountUSD: state.amountPay,
                     date: state.date,
                     bank: state.bank,
-                    checkUSD: state.checkUSD,
-                    exchange: state.exchange
+                    paymentUSD: pay.paymentUSD,
+                    exchangeRate: exc.exchange
 
                 });
 
 
             if (res.data.message) {
 
-
                 swal({
                     title: 'Error',
                     text: res.data.message,
                     icon: 'error'
                 });
-            } else {
+            } else if (state.date === '' || state.bank === '' || state.amountPay===0 || state.referenceNumber === ''){
+
+                swal({
+                    title: 'Error',
+                    text: 'Faltan campos por rellenar',
+                    icon: 'error'
+                });
+
+            } 
+            else {
 
 
                 swal({
@@ -244,7 +286,7 @@ const MakeAPayment = (number) => {
 
 
 
-                <Form.Group as={Row} className="mb-3 checkPayment" name="checkUSD" onChange={onInputChange}  controlId="formHorizontalCheck">
+                <Form.Group as={Row} className="mb-3 checkPayment" name="paymentUSD" onChange={onInputChange}  controlId="formHorizontalCheck">
 
                     <img className='imgDolar' src={image} />
                     <label className="switch">

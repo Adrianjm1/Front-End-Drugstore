@@ -160,7 +160,7 @@ const Create = () => {
 
                 swal({
                     title: 'Realizado',
-                    text: 'Factura creada',
+                    text: 'Factura registrada',
                     icon: 'success'
                 });
 
@@ -268,7 +268,7 @@ const Create = () => {
 
 
                 <Form.Group className="mb-3">
-                    <Form.Label>Comision</Form.Label>
+                    <Form.Label>Comision (%)</Form.Label>
                     <Form.Control  placeholder="Comision" name="sellersCommission" onChange={onInputChange} />
                 </Form.Group>
 

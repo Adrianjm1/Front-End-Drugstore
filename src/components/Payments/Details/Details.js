@@ -11,7 +11,8 @@ const Details = (number) => {
         amount: [],
         seller: '',
         expiration: '',
-        billDate: ''
+        billDate: '',
+        comision: 0
     }
 
     const [state, setState] = useState(defaultState);
@@ -24,7 +25,7 @@ const Details = (number) => {
 
                 setState({...state, datos:res.data, seller: res.data.seller.name + ' ' +res.data.seller.lastname,
                  expiration: (res.data.expirationDate).slice(0,10), amount: res.data.amount,
-                billDate: (res.data.billDate).slice(0,10) })
+                billDate: (res.data.billDate).slice(0,10), comision:res.data.sellersCommission })
 
             })
             .catch((error) => console.log(error))
@@ -32,7 +33,7 @@ const Details = (number) => {
         //eslint-disable-next-line
     }, [])
 
-
+    console.log(state);
 
 
 
@@ -46,14 +47,14 @@ const Details = (number) => {
   <ListGroup.Item variant='info'>  {`Monto pagado   `}   <b> {`${state.amount.paid} $`}</b>   </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Monto: por cobrar:   `}   <b> {`${state.amount.unPaid} $`}</b>   </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Monto vencido:   `}   <b> {`${state.amount.notPayed} $`}</b>   </ListGroup.Item>
+  <ListGroup.Item variant='info'>  {`Tasa de cambio:   `}   <b> {`${state.datos.exchange}`}</b>   </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Fecha: `}    <b>{(state.billDate)} </b>   </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Fecha de expiracion: `}   <b>{(state.expiration)}</b>   </ListGroup.Item>
-  <ListGroup.Item variant='info'>  {`Dias de credito: `}    <b>{state.datos.creditDays}</b>  </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Cliente: `}  <b>  {state.datos.client}  </b>    </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Ciudad: `}  <b>  {state.datos.city}  </b>    </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Ubicacion: `}  <b>  {state.datos.location}  </b>    </ListGroup.Item>
   <ListGroup.Item variant='info'>  {`Vendedor:  `}  <b> {state.seller} </b>     </ListGroup.Item>
-  <ListGroup.Item variant='info'>  {`Comision del vendedor:`}  <b>{state.datos.sellersCommission}</b>    </ListGroup.Item>
+  <ListGroup.Item variant='info'>  {`Comision del vendedor:`}  <b>{state.datos.sellersComission} %</b>    </ListGroup.Item>
 
 
 
