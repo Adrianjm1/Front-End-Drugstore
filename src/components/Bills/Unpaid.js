@@ -78,9 +78,9 @@ const Unpaid = () => {
                 <th>Fecha de expiracion</th>
                 <th>Cliente</th>
                 <th>Monto USD</th>
-                <th>Monto BS</th>
                 <th>Monto por cobrar</th>
                 <th>Monto pagado</th>
+                <th>Monto BS</th>
                 <th>Accion a realizar</th>
             </tr>
         </thead>
@@ -96,10 +96,9 @@ const Unpaid = () => {
                         <td>{(data.expirationDate).slice(0, 10)}</td>
                         <td>{data.client}</td>
                         <td>{`${data.amountUSD} $`}</td>
-                        <td>{`${data.amountBS} Bs`}</td>
                         <td>{`${data.amount.unPaid} $`}</td>
                         <td>{`${data.amount.paid} $`}</td>
-                        
+                        <td>{`${data.amountBS} Bs`}</td>
 
                         <td >{<a  onClick={()=>{handleShowDetails(); changeNumber(data.id) }}  className='tableDetails' href='#'>
                             Detalles</a> } /      

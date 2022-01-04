@@ -18,8 +18,8 @@ const Main = () => {
     const defaultState = {
         sellers: [],
         bills: [],
-        number:0,
-        option:1,
+        number: 0,
+        option: 1,
     };
 
     const [show, setShow] = useState(false);
@@ -27,23 +27,19 @@ const Main = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    
+
     const [showDetails, setShowDetails] = useState(false);
 
 
     const [state, setState] = useState(defaultState);
 
 
-    const changeOption =(op)=>{
+    const changeOption = (op) => {
 
-
-
-            setState({
-                ...state,
-                option: op,
-            })
-        
-
+        setState({
+            ...state,
+            option: op,
+        })
 
     }
 
@@ -58,11 +54,11 @@ const Main = () => {
                 axios.get('/bill/')
                     .then((resp) => {
 
-                            setState({
-                                ...state,
-                                sellers: res.data,
-                                bills: resp.data,
-                            })
+                        setState({
+                            ...state,
+                            sellers: res.data,
+                            bills: resp.data,
+                        })
 
                     })
                     .catch((error) => console.log(error))
@@ -84,34 +80,34 @@ const Main = () => {
             <NavbarLoged />
 
             <Button className='btnCreateBill' onClick={handleShow}>Crear Factura </Button>
-            <br/>
+            <br />
 
             <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
-            <Dropdown.Item eventKey="1" onClick={()=> changeOption(1)}>Facturas por cobrar</Dropdown.Item>
-            <Dropdown.Item eventKey="2" onClick={()=> changeOption(2)}>Facturas pagadas</Dropdown.Item>
-            <Dropdown.Item eventKey="3" onClick={()=> changeOption(3)}>Facturas vencidas</Dropdown.Item>
+                <Dropdown.Item eventKey="1" onClick={() => changeOption(1)}>Facturas por cobrar</Dropdown.Item>
+                <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Facturas pagadas</Dropdown.Item>
+                <Dropdown.Item eventKey="3" onClick={() => changeOption(3)}>Facturas vencidas</Dropdown.Item>
             </DropdownButton>
 
-            {state.option ===1 ?
-               <Unpaid/>
-            :
-            <> </>
-        }
+            {state.option === 1 ?
+                <Unpaid />
+                :
+                <> </>
+            }
 
 
 
-{state.option ===2 ?
+            {state.option === 2 ?
 
-            <Paid/>
-            :
-            <> </>
-        }
+                <Paid />
+                :
+                <> </>
+            }
 
-{state.option ===3 ?
-            <Notpayed/>
-            :
-            <> </>
-        }
+            {state.option === 3 ?
+                <Notpayed />
+                :
+                <> </>
+            }
             <Footer />
 
 
@@ -121,7 +117,7 @@ const Main = () => {
                 </Modal.Header>
                 <Modal.Body>
 
-                <Create />
+                    <Create />
 
                 </Modal.Body>
             </Modal>
