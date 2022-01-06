@@ -141,7 +141,7 @@ const MakeAPayment = (number) => {
             //  +  state.datos.client  +' Ciudad:     '   +   state.datos.city  +'   Referece:   '
             //     +    state.reference  +'  Monto:    '   +   state.amountPay   + '  date: '+ state.date  + ' checkUSD: ' + state.checkUSD   );
 
-            console.log(pay);
+
             const res = await axios.post('/payments/create',
                 {
                     id: state.datos.id,

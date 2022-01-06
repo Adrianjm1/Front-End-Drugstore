@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Table, Modal, Button, Form, Row, Col, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
 import './main.css';
 import axios from '../../config/axios';
+import swal from 'sweetalert';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
 import MakeAPayment from '../Payments/MakeAPayment';
@@ -10,6 +11,7 @@ import Paid from '../Bills/Paid';
 import Unpaid from '../Bills/Unpaid';
 import Notpayed from '../Bills/Notpayed';
 import Create from '../Bills/Create';
+import Welcome from './Welcome';
 
 
 
@@ -23,9 +25,14 @@ const Main = () => {
     };
 
     const [show, setShow] = useState(false);
-
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+
+    const [showWelcome, setShowWelcome] = useState(false);
+    const handleCloseWelcome = () => setShowWelcome(false);
+    const handleShowWelcome = () => setShowWelcome(true);
+
 
 
     const [showDetails, setShowDetails] = useState(false);
@@ -44,6 +51,14 @@ const Main = () => {
     }
 
 
+    const welcome = () => {
+
+        handleShowWelcome();
+
+
+    }
+
+
     useEffect(function () {
 
 
@@ -51,6 +66,7 @@ const Main = () => {
         axios.get('/seller/')
             .then((res) => {
 
+                welcome();
                 axios.get('/bill/')
                     .then((resp) => {
 
@@ -108,6 +124,8 @@ const Main = () => {
                 :
                 <> </>
             }
+
+
             <Footer />
 
 
@@ -120,6 +138,25 @@ const Main = () => {
                     <Create />
 
                 </Modal.Body>
+            </Modal>
+
+
+            <Modal className="modalWelcome" show={showWelcome} onHide={handleCloseWelcome}>
+
+                <Modal.Header closeButton>
+                    <Modal.Title>Bienvenido usuario</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <Welcome />
+
+                </Modal.Body>
+                <Modal.Footer>
+
+                    <Button variant="primary" onClick={handleCloseWelcome}>
+                        Ok
+                    </Button>
+                </Modal.Footer>
             </Modal>
         </>
     )
