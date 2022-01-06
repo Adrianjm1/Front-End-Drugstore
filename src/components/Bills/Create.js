@@ -142,7 +142,7 @@ const Create = () => {
                                 icon: 'success'
                             });
 
-                            setTimeout(function () { window.location.reload(); }, 2000);
+                            setTimeout(function () { window.location.reload(); }, 4000);
 
 
                         }
@@ -267,7 +267,7 @@ const Create = () => {
                     <Form.Select onChange={onCityChange} name="city">
                         <option value="No">--- Seleccione</option>
                         <option value="Cabimas">Cabimas</option>
-                        <option vlaue="Caracas">Caracas</option>
+                        <option value="Caracas">Caracas</option>
                     </Form.Select>
                 </Form.Group>
 

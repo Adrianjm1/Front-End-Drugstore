@@ -16,7 +16,22 @@ const Welcome = (number) => {
     const today = new Date();
     const hoy = `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`
 
+
+    const updateToDate =()=>{
+
+        axios.get(`/amounts/verify/`)
+        .then((respues) => {
+           console.log(respues);
+          
+        })
+        .catch((error) => console.log(error))
+      
+
+    }
+
     useEffect(function () {
+
+        updateToDate();
 
 
         axios.get(`/bill/unpaid`)
