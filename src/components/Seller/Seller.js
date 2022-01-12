@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { Table, Container, Form, Col, Row, Button, InputGroup, ButtonGroup, Dropdown, DropdownButton, ListGroup, Modal } from 'react-bootstrap';
+import React, { useState, useEffect, useContext } from 'react';
+import { types } from '../../config/constant';
+import { Table, Form, Button, Modal } from 'react-bootstrap';
+import { AuthContext } from '../../auth/AuthContext';
 
 import './seller.css';
-import axios from '../../config/axios';
+import axios, { generateToken } from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
 
@@ -22,13 +24,15 @@ const Seller = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-
+    let { user, dispatch } = useContext(AuthContext);
 
     useEffect(function () {
 
+        let auth = generateToken(user.token);
 
+        if(auth){
 
-        axios.get('/seller/')
+            axios.get('/seller/')
             .then((res) => {
 
                 setState({
@@ -36,13 +40,23 @@ const Seller = () => {
                     sellers: res.data
                 })
 
-
             })
             .catch((error) => console.log(error))
 
+        } else {
+
+            dispatch({
+                type: types.logout,
+                payload: {
+                   name: "",
+                   token: "",
+                }
+             })
+
+        }
 
         //eslint-disable-next-line
-    }, [])
+    }, [user.token])
 
 
     const onInputChange = e => {
@@ -131,7 +145,7 @@ const Seller = () => {
                         <option value="Bolivares">Bolivares</option>
                     </Form.Select>
 
-                    <br/>
+                    <br />
 
 
                     {state.monto ?

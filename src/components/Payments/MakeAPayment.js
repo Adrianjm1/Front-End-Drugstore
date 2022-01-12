@@ -209,8 +209,6 @@ const MakeAPayment = (number) => {
 
         <>
 
-            {/* <NavbarLoged /> */}
-
             <Container className='containerPayment'>
 
                 <Form.Group className="mb-3">

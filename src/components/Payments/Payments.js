@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { Table, Container, Modal, Button, Form, FormControl, Dropdown, ButtonGroup, DropdownButton } from 'react-bootstrap';
-import './payments.css';
-import axios from '../../config/axios';
+import React, { useState, useEffect, useMemo, useContext } from 'react'
+import { Table, Container, Form, FormControl, Dropdown, ButtonGroup, DropdownButton } from 'react-bootstrap';
+import axios, { generateToken } from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
 import numberWithCommas from '../../helpers/helpers';
+import { AuthContext } from '../../auth/AuthContext';
+import { types } from '../../config/constant';
+import './payments.css';
 
 const Payments = () => {
 
@@ -21,17 +23,27 @@ const Payments = () => {
         option: 1
     };
 
-    const [show, setShow] = useState(false);
-
-    const handleClose = () => setShow(false);
-    const handleShow = () => setShow(true);
-
-    const [showDetails, setShowDetails] = useState(false);
-
-    const handleCloseDetails = () => setShowDetails(false);
-    const handleShowDetails = () => setShowDetails(true);
-
     const [state, setState] = useState(defaultState);
+
+    const { user, dispatch } = useContext(AuthContext);
+
+    useEffect(function () {
+
+        let auth = generateToken(user.token);  // for all requests
+
+        if (auth === false) {
+
+            dispatch({
+                type: types.logout,
+                payload: {
+                    name: "",
+                    token: "",
+                }
+            })
+        }
+
+    }, [user.token]);
+
 
     const OnChangeMonth = (e) => {
 
@@ -147,12 +159,9 @@ const Payments = () => {
     return (
         <>
 
-
             <NavbarLoged />
 
             <Container>
-
-
 
                 <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver pagos" id="bg-vertical-dropdown-1">
                     <Dropdown.Item eventKey="1" onClick={() => changeOption(1)}>Pagos por mes</Dropdown.Item>

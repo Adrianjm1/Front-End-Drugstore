@@ -5,28 +5,24 @@ import AppRouter from './routes';
 import { authReducer } from './auth/authReducer';
 import { AuthContext } from './auth/AuthContext';
 
-import { render } from "react-dom";
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  
-} from "react-router-dom";
-
 const init = () => {
-  return JSON.parse(localStorage.getItem('user')) || {logged: false};
+  return JSON.parse(localStorage.getItem('user')) || { logged: false };
 }
 
 
 function App() {
 
-  const [ user, dispatch ] = useReducer (authReducer, {}, init)
+  const [user, dispatch] = useReducer(authReducer, {}, init);
+
+  useEffect(() => {
+    localStorage.setItem('user', JSON.stringify(user));
+  }, [user]);
 
   return (
 
-    <AuthContext.Provider value={{user, dispatch}}>
+    <AuthContext.Provider value={{ user, dispatch }}>
       <AppRouter />
-    </AuthContext.Provider>    
+    </AuthContext.Provider>
   );
 }
 

@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { Table, Modal, Button, Form, Row, Col, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
-import './main.css';
-import axios from '../../config/axios';
-import swal from 'sweetalert';
+import React, { useState, useEffect, useContext } from 'react'
+import { Modal, Button, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
+import axios, { generateToken } from '../../config/axios';
+import { AuthContext } from '../../auth/AuthContext';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
-import MakeAPayment from '../Payments/MakeAPayment';
-import Details from '../Payments/Details/Details';
 import Paid from '../Bills/Paid';
 import Unpaid from '../Bills/Unpaid';
 import Notpayed from '../Bills/Notpayed';
 import Create from '../Bills/Create';
 import Welcome from './Welcome';
+import { types } from '../../config/constant';
+import './main.css';
 
 
 
@@ -33,11 +32,6 @@ const Main = () => {
     const handleCloseWelcome = () => setShowWelcome(false);
     const handleShowWelcome = () => setShowWelcome(true);
 
-
-
-    const [showDetails, setShowDetails] = useState(false);
-
-
     const [state, setState] = useState(defaultState);
 
 
@@ -52,46 +46,54 @@ const Main = () => {
 
 
     const welcome = () => {
-
         handleShowWelcome();
-
-
     }
 
+    const { user, dispatch } = useContext(AuthContext);
 
     useEffect(function () {
 
+        let auth = generateToken(user.token)  // for all requests
 
+        if (auth) {
 
-        axios.get('/seller/')
-            .then((res) => {
+            axios.get('/seller/')
+                .then((res) => {
 
-                welcome();
-                axios.get('/bill/')
-                    .then((resp) => {
+                    welcome();
+                    axios.get('/bill/')
+                        .then((resp) => {
 
-                        setState({
-                            ...state,
-                            sellers: res.data,
-                            bills: resp.data,
+                            setState({
+                                ...state,
+                                sellers: res.data,
+                                bills: resp.data,
+                            })
+
                         })
+                        .catch((error) => console.log(error))
 
-                    })
-                    .catch((error) => console.log(error))
+                })
+                .catch((error) => console.log(error))
 
+        } else {
 
+            dispatch({
+                type: types.logout,
+                payload: {
+                    name: "",
+                    token: "",
+                }
             })
-            .catch((error) => console.log(error))
 
+        }
 
-
-    }, [])
+    }, [user.token])
 
 
 
     return (
         <>
-
 
             <NavbarLoged />
 

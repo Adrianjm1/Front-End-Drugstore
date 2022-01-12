@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import axios from '../../config/axios';
-import { Col, Container, Row, Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router';
 import { types } from '../../config/constant';
 import Footer from '../Footer/Footer';
 import NavbarLogin from '../Navbar/NavbarLogin';
@@ -9,6 +9,8 @@ import swal from 'sweetalert';
 import './login.css';
 
 const Login = () => {
+
+   let navigate = useNavigate();
 
    const { dispatch } = useContext(AuthContext);
 
@@ -21,8 +23,8 @@ const Login = () => {
 
    const onInputChange = (e) => {
       setState({ ...state, [e.target.name]: e.target.value });
-  
-  }
+
+   }
 
    const onSubmitForm = (e) => {
 
@@ -54,9 +56,7 @@ const Login = () => {
                      }
                   })
 
-                  console.log(data.data)
-
-                  //history.replace('/');
+                  navigate("../", { replace: true });
 
 
                } else {
@@ -83,7 +83,7 @@ const Login = () => {
          <div className='theLogin'>
             <div className="wrapper">
                <div className="title">
-                  Login
+                  Ingresar
                </div>
                <form onSubmit={onSubmitForm}>
                   <div className="field">
