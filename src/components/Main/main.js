@@ -11,6 +11,7 @@ import Create from '../Bills/Create';
 import Welcome from './Welcome';
 import { types } from '../../config/constant';
 import './main.css';
+import Byseller from '../Bills/BySeller';
 
 
 
@@ -104,6 +105,7 @@ const Main = () => {
                 <Dropdown.Item eventKey="1" onClick={() => changeOption(1)}>Facturas por cobrar</Dropdown.Item>
                 <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Facturas pagadas</Dropdown.Item>
                 <Dropdown.Item eventKey="3" onClick={() => changeOption(3)}>Facturas vencidas</Dropdown.Item>
+                <Dropdown.Item eventKey="3" onClick={() => changeOption(4)}>Facturas por vendedor</Dropdown.Item>
             </DropdownButton>
 
             {state.option === 1 ?
@@ -123,6 +125,12 @@ const Main = () => {
 
             {state.option === 3 ?
                 <Notpayed />
+                :
+                <> </>
+            }
+
+            {state.option === 4 ?
+                <Byseller />
                 :
                 <> </>
             }

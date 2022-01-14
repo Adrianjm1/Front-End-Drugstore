@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { types } from '../../config/constant';
 import { Table, Form, Button, Modal } from 'react-bootstrap';
 import { AuthContext } from '../../auth/AuthContext';
-
+import swal from "sweetalert";
 import './seller.css';
 import axios, { generateToken } from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
@@ -13,8 +13,12 @@ const Seller = () => {
 
     const defaultState = {
         sellers: [],
-        monto: 0,
+        monto: 1,
+        amount:'',
         bank: '',
+        paymentUSD: '',
+        usdbs: '',
+        sellerName: '',
 
     };
 
@@ -56,7 +60,21 @@ const Seller = () => {
         }
 
         //eslint-disable-next-line
-    }, [user.token])
+    }, [user.token, show])
+
+
+    const onChangeSeller =(sellerName)=>{
+
+        let fullName = sellerName.name + ' ' + sellerName.lastname;
+
+        if(sellerName){
+
+            
+            setState({...state, sellerName: fullName })
+        }
+       
+        
+    }
 
 
     const onInputChange = e => {
@@ -73,6 +91,67 @@ const Seller = () => {
 
     }
 
+    const onPay = async e => {
+
+        try {
+
+
+            let USDBS;
+            if (state.paymentUSD == 'Dolares'){
+                USDBS = 1
+            }else{
+                USDBS = 0
+            }
+
+            const res = await axios.post('/sellerPayments/create',
+                {
+                    bank: state.bank,
+                    amount: state.amount,
+                    paymentUSD: state.usdbs
+
+                });
+
+
+            if (res.data.message) {
+
+                swal({
+                    title: 'Error',
+                    text: res.data.message,
+                    icon: 'error'
+                });
+
+            } 
+            else {
+
+                swal({
+                    title: 'Realizado',
+                    text: 'Pago realizado con exito',
+                    icon: 'success'
+                });
+
+                // setTimeout(function () { window.location.reload(); }, 2000);
+
+            }
+
+
+
+
+        }
+        catch (error) {
+
+            console.log(error);
+
+            swal({
+                title: 'Error',
+                text: 'Error, no se pudo procesar el pago',
+                icon: 'error'
+            });
+
+        }
+
+    }
+
+
 
     const onChangeMethod = e => {
 
@@ -80,10 +159,10 @@ const Seller = () => {
 
 
         if (isValid === 'Dolares') {
-            setState({ ...state, monto: true });
+            setState({ ...state, monto: true, usdbs: e.target.value });
 
         } else {
-            setState({ ...state, monto: false });
+            setState({ ...state, monto: false, usdbs: e.target.value });
 
 
         }
@@ -120,7 +199,7 @@ const Seller = () => {
                                     <td>{data.identification} </td>
                                     <td>{data.commissionUSD} USD</td>
                                     <td>{data.commissionBS} Bs</td>
-                                    <td> <Button className='btnSeller' onClick={handleShow}>Registrar pago</Button> </td>
+                                    <td> <Button className='btnSeller' onClick={()=> { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
 
                                 </tr>
                             ))
@@ -134,13 +213,13 @@ const Seller = () => {
 
             <Modal className="modalRegister" show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Registrar pago a vendedor</Modal.Title>
+                    <Modal.Title>Registrar pago a vendedor <b> {state.sellerName} </b></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
 
                     <Form.Label>Metodo de pago</Form.Label>
 
-                    <Form.Select onChange={onChangeMethod} name="city">
+                    <Form.Select onChange={onChangeMethod} >
                         <option value="Dolares">Dolares</option>
                         <option value="Bolivares">Bolivares</option>
                     </Form.Select>
@@ -149,11 +228,11 @@ const Seller = () => {
 
 
                     {state.monto ?
+
                         <Form.Group className="mb-3">
                             <Form.Label>Monto en USD</Form.Label>
                             <Form.Control placeholder="Monto" name="monto" onChange={onInputChange} />
                         </Form.Group>
-
                         :
 
                         <Form.Group className="mb-3">
@@ -169,9 +248,14 @@ const Seller = () => {
                         <Form.Control placeholder="Banco" name="bank" onChange={onInputChange} />
                     </Form.Group>
 
+                    
+
+
+     
+
 
                     <Modal.Footer className="registerSeller">
-                        <Button variant="primary" >
+                        <Button onClick={onPay} variant="primary" >
                             Registrar
                         </Button>
                     </Modal.Footer>
