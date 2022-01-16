@@ -65,13 +65,10 @@ const Login = () => {
                      text: 'Usuario o contraseña incorrecto',
                      icon: 'error'
                   });
-
                }
 
             })
-
       }
-
    }
 
 

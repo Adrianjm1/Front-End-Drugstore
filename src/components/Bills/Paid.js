@@ -3,25 +3,50 @@ import React, { useState, useEffect } from 'react'
 import { Table, Modal, Button, Form, Row, Col, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
+import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import BootstrapTable from "react-bootstrap-table-next";
 
 
 const defaultState = {
-    sellers: [],
     bills: [],
-
 };
 
 
 const Paid = () => {
-    
+
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
-    
-    const handleCloseDetails = () => setShowDetails(false);
-    const handleShowDetails = () => setShowDetails(true);
-    
 
-    const changeNumber = (id)=>{
+    const handleCloseDetails = () => {
+
+        axios.get('/bill/paid')
+            .then((resp) => {
+
+                let productos = [];
+
+                resp.data.map(data => {
+                    productos.push({
+                        billNumber: data.id,
+                        date: (data.billDate).slice(0, 10),
+                        expirationDate: data.expirationDate.slice(0, 10),
+                        client: data.client,
+                        amountPayed: `${data.amount.paid} $`,
+                        toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>Detalles</a></b>,
+                    })
+                });
+
+                setState({ ...state, bills: productos });
+                setShowDetails(false);
+
+            })
+            .catch((error) => console.log(error))
+
+
+    }
+    const handleShowDetails = () => setShowDetails(true);
+
+    const changeNumber = (id) => {
 
         setState({
             ...state,
@@ -29,8 +54,6 @@ const Paid = () => {
         })
 
     }
-
-    
 
 
     useEffect(function () {
@@ -42,79 +65,92 @@ const Paid = () => {
                 axios.get('/bill/paid')
                     .then((resp) => {
 
-                            setState({
-                                ...state,
-                                sellers: res.data,
-                                bills: resp.data,
+                        let productos = [];
+
+                        resp.data.map(data => {
+                            productos.push({
+                                billNumber: data.id,
+                                date: (data.billDate).slice(0, 10),
+                                expirationDate: data.expirationDate.slice(0, 10),
+                                client: data.client,
+                                amountPayed: `${data.amount.paid} $`,
+                                toDo: <a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>Detalles</a>,
                             })
+                        });
+
+                        setState({ ...state, bills: productos });
 
                     })
                     .catch((error) => console.log(error))
 
-
             })
             .catch((error) => console.log(error))
 
-
-        //eslint-disable-next-line
     }, [])
+
+    const columns = [
+        {
+            dataField: "billNumber",
+            text: "# de Factura",
+            sort: true
+        },
+        {
+            dataField: "date",
+            text: "Fecha",
+            sort: true
+        },
+        {
+            dataField: "expirationDate",
+            text: "Fecha de expiracion",
+            sort: true
+        },
+        {
+            dataField: "client",
+            text: "Cliente",
+            sort: true
+        },
+        {
+            dataField: "amountPayed",
+            text: "Monto Pagado",
+            sort: true
+        },
+        {
+            dataField: "toDo",
+            text: "Accion a Realizar",
+            sort: true
+        }
+    ];
 
 
 
     return (
         <>
-             <h2><b>Facturas pagadas</b></h2>
+            <h2><b>Facturas pagadas</b></h2>
 
-    <div className='divTable'>
+            <div className='divTable'>
 
-    <Table className='table-seller' striped bordered hover>
-        <thead>
-            <tr>
-                <th># de factura</th>
-                <th>Fecha</th>
-                <th>Fecha de expiracion</th>
-                <th>Cliente</th>
-                <th>Monto pagado</th>
-                <th>Accion a realizar</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-            {
-                state.bills.map(data => (
+                <BootstrapTable
+                    bootstrap4
+                    keyField="billNumber"
+                    data={state.bills}
+                    columns={columns}
+                    pagination={paginationFactory({ sizePerPage: 5 })}
+                />
 
+            </div>
 
-                    <tr className='table-pagadas' key={data.id}>
-                        <td>{data.id}</td>
-                        <td>{(data.billDate).slice(0, 10)}</td>
-                        <td>{data.expirationDate.slice(0, 10)}</td>
-                        <td>{data.client}</td>
-                        <td>{`${data.amount.paid} $`}</td>
-                        
+            <Modal show={showDetails} onHide={handleCloseDetails}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Detalles</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
 
-                        <td >{<a  onClick={()=>{handleShowDetails(); changeNumber(data.id) }}  className='tableDetails' href='#'>Detalles</a>}</td>
-                
+                    <Details number={state.number} />
 
-                    </tr>
-                ))
-            }
-        </tbody>
-    </Table>
-
-    </div>
-
-    <Modal show={showDetails} onHide={handleCloseDetails}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Detalles</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-
-                        <Details number={state.number} />
-
-                    </Modal.Body>
-                </Modal>
-            </>
-        )
+                </Modal.Body>
+            </Modal>
+        </>
+    )
 }
 
 export default Paid

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react'
 import { Table, Container, Form, FormControl, Dropdown, ButtonGroup, DropdownButton } from 'react-bootstrap';
+import { TableMonthly } from './Details/TableMonthly';
+import { TableDaily } from './Details/TableDaily';
 import axios, { generateToken } from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
@@ -56,6 +58,9 @@ const Payments = () => {
                 if (res.data.ok) {
                     setState({ ...state, datosMeses: res.data.pagos, bsMeses: res.data.sumaBS, usdMeses: res.data.sumaUSD, totalMeses: res.data.total })
 
+                } else{
+                    setState({ ...state, datosMeses: res.data.pagos, bsMeses: '0', usdMeses: '0', totalMeses: '0' })
+
                 }
 
             })
@@ -68,7 +73,6 @@ const Payments = () => {
     const OnChangeDate = (e) => {
 
         const day = e.target.value;
-        console.log(day);
         const query = `/payments/day?day=${day}`;
 
         axios.get(query)
@@ -77,6 +81,8 @@ const Payments = () => {
                 if (res.data.ok) {
                     setState({ ...state, datosDias: res.data.pagos, bsDias: res.data.sumaBS, usdDias: res.data.sumaUSD, totalDias: res.data.total })
 
+                } else{
+                    setState({ ...state, datosDias: res.data.pagos, bsDias: '0', usdDias: '0', totalDias: '0' })
                 }
 
             })
@@ -87,7 +93,6 @@ const Payments = () => {
     }
 
     const handleChangeBDias = e => {
-        console.log(e.target.value.toUpperCase());
 
         let suma = 0;
         let sumaBS = 0;
@@ -106,20 +111,14 @@ const Payments = () => {
 
         });
 
-        setState({ ...state, busqueda: e.target.value.toUpperCase(), bsDias: sumaBS, usdDias: sumaUSD, totalDias: suma });
+        setState({ ...state, busqueda: e.target.value.toUpperCase(), bsDias: sumaBS, usdDias: sumaUSD, totalDias: suma, datosDias: datos });
 
 
     }
 
-    const datosDias = useMemo(function () {
-        if (state.busqueda.length) {
-            return state.datosDias.filter(local => local.bank.includes(state.busqueda))
-        }
-        return state.datosDias
-    }, [state])
-
     const handleChangeBMeses = e => {
-        console.log(e.target.value.toUpperCase());
+
+        e.preventDefault();
 
         let suma = 0;
         let sumaBS = 0;
@@ -138,16 +137,9 @@ const Payments = () => {
 
         });
 
-        setState({ ...state, busqueda: e.target.value.toUpperCase(), bsMeses: sumaBS, usdMeses: sumaUSD, totalMeses: suma });
+        setState({ ...state, busqueda: e.target.value.toUpperCase(), bsMeses: sumaBS, usdMeses: sumaUSD, totalMeses: suma, datosMeses: datos });
 
     }
-
-    const datosMeses = useMemo(function () {
-        if (state.busqueda.length) {
-            return state.datosMeses.filter(local => local.bank.includes(state.busqueda))
-        }
-        return state.datosMeses
-    }, [state])
 
     const changeOption = (op) => {
 
@@ -204,59 +196,14 @@ const Payments = () => {
 
                         <p></p>
 
-                        <Table className="margintable" id="tablaPorDia" striped bordered hover size="sm" >
-                            <thead>
-                                <tr className='first'>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Monto en dolares</th>
-                                    <th>Monto en bolivares</th>
-                                    <th>Tasa de cambio</th>
-                                    <th>Referencia</th>
-                                    <th>Pago en dolares</th>
-                                    <th>Banco</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-
-                                    state.datosMeses ?
-
-                                        datosMeses.map(data => (
-                                            <tr key={data.id}>
-                                                <td>{data.date}</td>
-                                                <td>{data.bill.client}</td>
-                                                <td>{numberWithCommas(parseFloat(data.amountUSD))} USD</td>
-                                                <td>{numberWithCommas((parseFloat(data.amountUSD) * parseFloat(data.exchangeRate)).toFixed(2))} Bs.</td>
-                                                <td>{numberWithCommas(parseFloat(data.exchangeRate).toFixed(2))} Bs.</td>
-                                                <td>{data.referenceNumber}</td>
-                                                <td>{data.paymentUSD === false ? 'No' : 'Si'}</td>
-                                                <td>{data.bank}</td>
-                                            </tr>
-                                        ))
-
-                                        :
-
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-
-                                }
-                            </tbody>
-                        </Table>
+                        <TableMonthly data={state.datosMeses} />
 
                     </Form>
 
-
                     :
+
                     <> </>
+
                 }
 
 
@@ -298,58 +245,14 @@ const Payments = () => {
 
                         <p></p>
 
-                        <Table className="margintable" id="tablaPorDia" striped bordered hover size="sm" >
-                            <thead>
-                                <tr className='first'>
-                                    <th>Fecha</th>
-                                    <th>Cliente</th>
-                                    <th>Monto en dolares</th>
-                                    <th>Monto en bolivares</th>
-                                    <th>Tasa de cambio</th>
-                                    <th>Referencia</th>
-                                    <th>Pago en dolares</th>
-                                    <th>Banco</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {
-
-                                    state.datosDias ?
-
-                                        datosDias.map(data => (
-                                            <tr key={data.id}>
-                                                <td>{data.date}</td>
-                                                <td>{data.bill.client}</td>
-                                                <td>{numberWithCommas(parseFloat(data.amountUSD))} USD</td>
-                                                <td>{numberWithCommas((parseFloat(data.amountUSD) * parseFloat(data.exchangeRate)).toFixed(2))} Bs.</td>
-                                                <td>{numberWithCommas(parseFloat(data.exchangeRate).toFixed(2))} Bs.</td>
-                                                <td>{data.referenceNumber}</td>
-                                                <td>{data.paymentUSD === false ? 'No' : 'Si'}</td>
-                                                <td>{data.bank}</td>
-                                            </tr>
-                                        ))
-
-                                        :
-
-                                        <tr>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-
-                                }
-                            </tbody>
-                        </Table>
+                        <TableDaily data={state.datosDias} />
 
                     </Form>
 
                     :
+
                     <> </>
+
                 }
 
 
