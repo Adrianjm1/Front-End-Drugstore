@@ -1,9 +1,11 @@
 
 import React, { useState, useEffect } from 'react'
-import { Table, Modal, Button, Form, Row, Col, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
+import { Modal, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
-
+import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import BootstrapTable from "react-bootstrap-table-next";
 
 const defaultState = {
     sellers: [],
@@ -12,13 +14,77 @@ const defaultState = {
 
 };
 
+const columns = [
+    {
+        dataField: "date",
+        text: "Fecha",
+        sort: true
+    },
+    {
+        dataField: "expirationDate",
+        text: "Fecha de expiracion",
+        sort: true
+    },
+    {
+        dataField: "client",
+        text: "Cliente",
+        sort: true
+    },
+    {
+        dataField: "amountUSD",
+        text: "Monto USD",
+        sort: true
+    },
+    {
+        dataField: "billNumber",
+        text: "Detalle",
+        sort: true
+    },
+
+];
+
 
 const Byseller = () => {
 
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
 
-    const handleCloseDetails = () => setShowDetails(false);
+    const handleCloseDetails = () => {
+
+        axios.get('/seller/')
+            .then((res) => {
+
+                axios.get(`/bill/seller/${state.id}`)
+                    .then((resp) => {
+
+                        let productos = [];
+
+                        resp.data.map(data => {
+                            productos.push({
+                                date: (data.billDate).slice(0, 10),
+                                expirationDate: data.expirationDate.slice(0, 10),
+                                client: data.client,
+                                amountUSD: `${data.amountUSD} $`,
+                                billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>Detalles</p></b>
+                            })
+                        })
+
+
+                        setState({ ...state, sellers: res.data, bills: productos });
+                        setShowDetails(false);
+
+
+                    })
+                    .catch((error) => console.log(error))
+
+
+            })
+            .catch((error) => console.log(error))
+
+    }
+
+
+
     const handleShowDetails = () => setShowDetails(true);
 
 
@@ -32,8 +98,6 @@ const Byseller = () => {
     }
 
 
-
-
     useEffect(function () {
 
 
@@ -43,12 +107,20 @@ const Byseller = () => {
                 axios.get(`/bill/seller/${state.id}`)
                     .then((resp) => {
 
+                        let productos = [];
 
-                        setState({
-                            ...state,
-                            sellers: res.data,
-                            bills: resp.data,
+                        resp.data.map(data => {
+                            productos.push({
+                                date: (data.billDate).slice(0, 10),
+                                expirationDate: data.expirationDate.slice(0, 10),
+                                client: data.client,
+                                amountUSD: `${data.amountUSD} $`,
+                                billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>{data.id}</p></b>
+                            })
                         })
+
+
+                        setState({ ...state, sellers: res.data, bills: productos })
 
                     })
                     .catch((error) => console.log(error))
@@ -67,7 +139,7 @@ const Byseller = () => {
         console.log(id);
 
         if (id) {
-            setState({ ...state, id:id })
+            setState({ ...state, id: id })
         }
 
     }
@@ -79,51 +151,24 @@ const Byseller = () => {
             <h2><b>Facturas por vendedor</b></h2>  <br />
 
 
+            <DropdownButton as={ButtonGroup} className='selectSeller' style={{ width: '7%', display: "block", margin: "auto" }} title="Vendedor" id="bg-vertical-dropdown-2">
+                {state.sellers.map(data => (
+                    <Dropdown.Item key={data.id} onClick={() => { let sellerName = `${data.name} ${data.lastname}`; setID(data.id); }}>{`${data.name}  ${data.lastname}`}</Dropdown.Item>
 
-            <DropdownButton as={ButtonGroup} className='selectSeller' style={{ width: '8%', display: "block", margin: "auto" }} title="Vendedor" id="bg-vertical-dropdown-2">
-                    {state.sellers.map(data => (
-                        <Dropdown.Item key={data.id} onClick={() => { let sellerName = `${data.name} ${data.lastname}`; setID(data.id); }}>{`${data.name}  ${data.lastname}`}</Dropdown.Item>
-
-                    ))}
-                </DropdownButton>
+                ))}
+            </DropdownButton>
 
 
 
             <div className='divTable'>
 
-                <Table className='table-seller' striped bordered hover>
-                    <thead>
-                        <tr>
-                            <th># de factura</th>
-                            <th>Fecha</th>
-                            <th>Fecha de expiracion</th>
-                            <th>Cliente</th>
-                            <th>Monto</th>
-                            <th>Accion a realizar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                        {
-                            state.bills.map(data => (
-
-
-                                <tr className='table-pagadas' key={data.id}>
-                                    <td>{data.id}</td>
-                                    <td>{(data.billDate).slice(0, 10)}</td>
-                                    <td>{data.expirationDate.slice(0, 10)}</td>
-                                    <td>{data.client}</td>
-                                    <td>{`${data.amountUSD} $`}</td>
-
-
-                                    <td >{<a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>Detalles</a>}</td>
-
-
-                                </tr>
-                            ))
-                        }
-                    </tbody>
-                </Table>
+                <BootstrapTable
+                    bootstrap4
+                    keyField="billNumber"
+                    data={state.bills}
+                    columns={columns}
+                    pagination={paginationFactory({ sizePerPage: 5 })}
+                />
 
             </div>
 

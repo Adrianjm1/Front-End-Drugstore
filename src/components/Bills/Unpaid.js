@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Table, Modal, Button, Form, Row, Col, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import MakeAPayment from '../Payments/MakeAPayment';
@@ -80,8 +80,8 @@ const Unpaid = () => {
                         unPaid: `${data.amount.unPaid} $`,
                         paid: data.amount.paid,
                         amountBS: data.amountBS,
-                        billNumber: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
-                        toDo: <b><a className='tableDetails' onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</a></b>
+                        billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
                 });
 
@@ -114,8 +114,8 @@ const Unpaid = () => {
                         unPaid: `${data.amount.unPaid} $`,
                         paid: data.amount.paid,
                         amountBS: data.amountBS,
-                        billNumber: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
-                        toDo: <b><a className='tableDetails' onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</a></b>
+                        billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
                 });
 
@@ -154,8 +154,8 @@ const Unpaid = () => {
                         unPaid: `${data.amount.unPaid} $`,
                         paid: data.amount.paid,
                         amountBS: data.amountBS,
-                        billNumber: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
-                        toDo: <b><a className='tableDetails' onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</a></b>
+                        billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
                 });
 

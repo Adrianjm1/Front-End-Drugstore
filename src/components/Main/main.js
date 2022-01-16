@@ -109,7 +109,7 @@ const Main = () => {
             </DropdownButton>
 
             {state.option === 1 ?
-                <Unpaid />
+                <Unpaid key={1} />
                 :
                 <> </>
             }
@@ -118,19 +118,19 @@ const Main = () => {
 
             {state.option === 2 ?
 
-                <Paid />
+                <Paid key={2} />
                 :
                 <> </>
             }
 
             {state.option === 3 ?
-                <Notpayed />
+                <Notpayed key={3} />
                 :
                 <> </>
             }
 
             {state.option === 4 ?
-                <Byseller />
+                <Byseller key={4} />
                 :
                 <> </>
             }

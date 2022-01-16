@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
-import { Table, Modal, Button, Form, Row, Col, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
@@ -9,7 +9,7 @@ import BootstrapTable from "react-bootstrap-table-next";
 
 
 const defaultState = {
-    bills: [],
+    bills1: [],
 };
 
 
@@ -36,7 +36,7 @@ const Paid = () => {
                     })
                 });
 
-                setState({ ...state, bills: productos });
+                setState({ ...state, bills1: productos });
                 setShowDetails(false);
 
             })
@@ -74,11 +74,11 @@ const Paid = () => {
                                 expirationDate: data.expirationDate.slice(0, 10),
                                 client: data.client,
                                 amountPayed: `${data.amount.paid} $`,
-                                toDo: <a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>Detalles</a>,
+                                toDo: <a onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>Detalles</a>,
                             })
                         });
 
-                        setState({ ...state, bills: productos });
+                        setState({ ...state, bills1: productos });
 
                     })
                     .catch((error) => console.log(error))
@@ -132,7 +132,7 @@ const Paid = () => {
                 <BootstrapTable
                     bootstrap4
                     keyField="billNumber"
-                    data={state.bills}
+                    data={state.bills1}
                     columns={columns}
                     pagination={paginationFactory({ sizePerPage: 5 })}
                 />
