@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { types } from '../../config/constant';
-import { Table, Form, Button, Modal } from 'react-bootstrap';
+import { Table, Form, Button, Modal, Row, Col } from 'react-bootstrap';
 import { AuthContext } from '../../auth/AuthContext';
 import swal from "sweetalert";
 import './seller.css';
 import axios, { generateToken } from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
+import SellerPayment from './SellerPayment';
 
 
 const Seller = () => {
@@ -14,11 +15,12 @@ const Seller = () => {
     const defaultState = {
         sellers: [],
         monto: 1,
-        amount:'',
+        amount: '',
         bank: '',
         paymentUSD: '',
-        usdbs: '',
+        usdbs: 'Dolares',
         sellerName: '',
+        sellerid: 0,
 
     };
 
@@ -28,34 +30,40 @@ const Seller = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
+    const [showPay, setShowPay] = useState(false);
+
+    const handleClosePay = () => setShowPay(false);
+    const handleShowPay = () => setShowPay(true);
+
+
     let { user, dispatch } = useContext(AuthContext);
 
     useEffect(function () {
 
         let auth = generateToken(user.token);
 
-        if(auth){
+        if (auth) {
 
             axios.get('/seller/')
-            .then((res) => {
+                .then((res) => {
 
-                setState({
-                    ...state,
-                    sellers: res.data
+                    setState({
+                        ...state,
+                        sellers: res.data
+                    })
+
                 })
-
-            })
-            .catch((error) => console.log(error))
+                .catch((error) => console.log(error))
 
         } else {
 
             dispatch({
                 type: types.logout,
                 payload: {
-                   name: "",
-                   token: "",
+                    name: "",
+                    token: "",
                 }
-             })
+            })
 
         }
 
@@ -63,17 +71,17 @@ const Seller = () => {
     }, [user.token, show])
 
 
-    const onChangeSeller =(sellerName)=>{
+    const onChangeSeller = (sellerName) => {
 
         let fullName = sellerName.name + ' ' + sellerName.lastname;
 
-        if(sellerName){
+        if (sellerName) {
 
-            
-            setState({...state, sellerName: fullName })
+
+            setState({ ...state, sellerName: fullName, sellerid: sellerName.id })
         }
-       
-        
+
+
     }
 
 
@@ -96,10 +104,10 @@ const Seller = () => {
         try {
 
 
-            let USDBS;
-            if (state.paymentUSD == 'Dolares'){
+            let USDBS ;
+            if (state.usdbs == 'Dolares') {
                 USDBS = 1
-            }else{
+            } else {
                 USDBS = 0
             }
 
@@ -107,7 +115,8 @@ const Seller = () => {
                 {
                     bank: state.bank,
                     amount: state.amount,
-                    paymentUSD: state.usdbs
+                    paymentUSD: USDBS ,
+                    idSeller: state.sellerid
 
                 });
 
@@ -120,7 +129,7 @@ const Seller = () => {
                     icon: 'error'
                 });
 
-            } 
+            }
             else {
 
                 swal({
@@ -167,6 +176,7 @@ const Seller = () => {
 
         }
 
+  
     }
 
     return (
@@ -199,7 +209,12 @@ const Seller = () => {
                                     <td>{data.identification} </td>
                                     <td>{data.commissionUSD} USD</td>
                                     <td>{data.commissionBS} Bs</td>
-                                    <td> <Button className='btnSeller' onClick={()=> { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
+                                    <td>
+                                        <Row>
+                                            <Col>  <Button className='btnSeller' onClick={() => { handleShow(); onChangeSeller(data) }}>Registrar pago</Button></Col>
+                                            <Col>  <Button className='btnSeller' onClick={() => { handleShowPay(); onChangeSeller(data) }} >Historial</Button></Col>
+                                        </Row>   
+                                    </td>
 
                                 </tr>
                             ))
@@ -231,13 +246,13 @@ const Seller = () => {
 
                         <Form.Group className="mb-3">
                             <Form.Label>Monto en USD</Form.Label>
-                            <Form.Control placeholder="Monto" name="monto" onChange={onInputChange} />
+                            <Form.Control placeholder="Monto" name="amount" type='number' onChange={onInputChange} />
                         </Form.Group>
                         :
 
                         <Form.Group className="mb-3">
                             <Form.Label>Monto en Bs</Form.Label>
-                            <Form.Control placeholder="Monto" name="monto" onChange={onInputChange} />
+                            <Form.Control placeholder="Monto" name="amount" type='number' onChange={onInputChange} />
                         </Form.Group>
 
                     }
@@ -248,10 +263,10 @@ const Seller = () => {
                         <Form.Control placeholder="Banco" name="bank" onChange={onInputChange} />
                     </Form.Group>
 
-                    
 
 
-     
+
+
 
 
                     <Modal.Footer className="registerSeller">
@@ -262,6 +277,16 @@ const Seller = () => {
 
 
 
+                </Modal.Body>
+            </Modal>
+
+
+            <Modal className="modalRegister" show={showPay} onHide={handleClosePay}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Pagos a vendedor <b> {state.sellerName} </b></Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <SellerPayment id={state.sellerid}/>
                 </Modal.Body>
             </Modal>
 
