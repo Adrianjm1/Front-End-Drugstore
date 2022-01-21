@@ -65,7 +65,7 @@ const Byseller = () => {
                                 expirationDate: data.expirationDate.slice(0, 10),
                                 client: data.client,
                                 amountUSD: `${data.amountUSD} $`,
-                                billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>Detalles</p></b>
+                                billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>{data.id}</p></b>
                             })
                         })
 

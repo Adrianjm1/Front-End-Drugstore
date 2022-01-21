@@ -29,20 +29,31 @@ const Payments = () => {
 
     const { user, dispatch } = useContext(AuthContext);
 
+    const logout = () => {
+        dispatch({
+            type: types.logout,
+            payload: {
+                name: '',
+                token: '',
+            }
+        })
+    }
+
     useEffect(function () {
 
-        let auth = generateToken(user.token);  // for all requests
+        generateToken(user.token);
 
-        if (auth === false) {
+        axios.get('/user/')
+            .then((resp) => {
 
-            dispatch({
-                type: types.logout,
-                payload: {
-                    name: "",
-                    token: "",
+                if (!resp.data.ok) {
+                    logout();
                 }
+
+            }).catch((err) => {
+                console.log(err)
+
             })
-        }
 
     }, [user.token]);
 
@@ -58,7 +69,7 @@ const Payments = () => {
                 if (res.data.ok) {
                     setState({ ...state, datosMeses: res.data.pagos, bsMeses: res.data.sumaBS, usdMeses: res.data.sumaUSD, totalMeses: res.data.total })
 
-                } else{
+                } else {
                     setState({ ...state, datosMeses: res.data.pagos, bsMeses: '0', usdMeses: '0', totalMeses: '0' })
 
                 }
@@ -81,7 +92,7 @@ const Payments = () => {
                 if (res.data.ok) {
                     setState({ ...state, datosDias: res.data.pagos, bsDias: res.data.sumaBS, usdDias: res.data.sumaUSD, totalDias: res.data.total })
 
-                } else{
+                } else {
                     setState({ ...state, datosDias: res.data.pagos, bsDias: '0', usdDias: '0', totalDias: '0' })
                 }
 

@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react'
-import { Modal } from 'react-bootstrap';
+import { Modal, Table, Container } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
+import numberWithCommas from '../../helpers/helpers';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
@@ -10,6 +11,8 @@ import BootstrapTable from "react-bootstrap-table-next";
 
 const defaultState = {
     bills1: [],
+    usd: 0,
+    bs: 0
 };
 
 
@@ -58,33 +61,27 @@ const Paid = () => {
 
     useEffect(function () {
 
+        axios.get('/bill/paid')
+            .then((resp) => {
 
-        axios.get('/seller/')
-            .then((res) => {
+                let productos = [];
+                let datos = resp.data;
 
-                axios.get('/bill/paid')
-                    .then((resp) => {
-
-                        let productos = [];
-
-                        resp.data.map(data => {
-                            productos.push({
-                                billNumber: data.id,
-                                date: (data.billDate).slice(0, 10),
-                                expirationDate: data.expirationDate.slice(0, 10),
-                                client: data.client,
-                                amountPayed: `${data.amount.paid} $`,
-                                toDo: <a onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>Detalles</a>,
-                            })
-                        });
-
-                        setState({ ...state, bills1: productos });
-
+                datos.data.map(data => {
+                    productos.push({
+                        billNumber: data.id,
+                        date: (data.billDate).slice(0, 10),
+                        expirationDate: data.expirationDate.slice(0, 10),
+                        client: data.client,
+                        amountPayed: `${data.amount.paid} $`,
+                        toDo: <a onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>Detalles</a>,
                     })
-                    .catch((error) => console.log(error))
+                });
+
+                setState({ ...state, bills1: productos, usd: datos.sumUSD, bs: datos.sumBS });
 
             })
-            .catch((error) => console.log(error))
+            .catch((error) => console.error(error))
 
     }, [])
 
@@ -121,11 +118,41 @@ const Paid = () => {
         }
     ];
 
+    const column2 = [
+        {
+            dataField: "usd",
+            text: "Facturado en Dolares ($)",
+            sort: true
+        },
+        {
+            dataField: "bs",
+            text: "Facturado en Bolivares (Bs.)",
+            sort: true
+        }
+    ];
+
 
 
     return (
         <>
             <h2><b>Facturas pagadas</b></h2>
+
+            <div className='divTable'>
+                <Table className="margintable" striped bordered hover size="sm" >
+                    <thead>
+                        <tr className='first'>
+                            <th>Facturado en dolares ($)</th>
+                            <th>Facturado en bolívares (Bs.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{numberWithCommas(parseFloat(state.usd || 0))} USD</td>
+                            <td>{numberWithCommas(parseFloat(state.bs || 0).toFixed(2))} Bs.</td>
+                        </tr>
+                    </tbody>
+                </Table>
+            </div>
 
             <div className='divTable'>
 

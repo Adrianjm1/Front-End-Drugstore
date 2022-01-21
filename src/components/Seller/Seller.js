@@ -14,7 +14,7 @@ const Seller = () => {
     const defaultState = {
         sellers: [],
         monto: 1,
-        amount:'',
+        amount: '',
         bank: '',
         paymentUSD: '',
         usdbs: '',
@@ -30,50 +30,58 @@ const Seller = () => {
 
     let { user, dispatch } = useContext(AuthContext);
 
+    const logout = () => {
+        dispatch({
+            type: types.logout,
+            payload: {
+                name: '',
+                token: '',
+            }
+        })
+    }
+
     useEffect(function () {
 
-        let auth = generateToken(user.token);
+        generateToken(user.token);
 
-        if(auth){
+        axios.get('/user/')
+            .then((resp) => {
 
-            axios.get('/seller/')
-            .then((res) => {
+                if (!resp.data.ok) {
+                    logout();
+                } else {
+                    axios.get('/seller/')
+                        .then((res) => {
 
-                setState({
-                    ...state,
-                    sellers: res.data
-                })
+                            setState({
+                                ...state,
+                                sellers: res.data
+                            })
+
+                        })
+                        .catch((error) => console.log(error))
+                }
+
+            }).catch((err) => {
+                console.log(err)
 
             })
-            .catch((error) => console.log(error))
-
-        } else {
-
-            dispatch({
-                type: types.logout,
-                payload: {
-                   name: "",
-                   token: "",
-                }
-             })
-
-        }
 
         //eslint-disable-next-line
     }, [user.token, show])
 
 
-    const onChangeSeller =(sellerName)=>{
+    const onChangeSeller = (sellerName) => {
 
         let fullName = sellerName.name + ' ' + sellerName.lastname;
 
-        if(sellerName){
+        if (sellerName) {
 
-            
-            setState({...state, sellerName: fullName })
+
+            setState({ ...state, sellerName: fullName })
         }
-       
-        
+
+
     }
 
 
@@ -97,9 +105,9 @@ const Seller = () => {
 
 
             let USDBS;
-            if (state.paymentUSD == 'Dolares'){
+            if (state.paymentUSD == 'Dolares') {
                 USDBS = 1
-            }else{
+            } else {
                 USDBS = 0
             }
 
@@ -120,7 +128,7 @@ const Seller = () => {
                     icon: 'error'
                 });
 
-            } 
+            }
             else {
 
                 swal({
@@ -199,7 +207,7 @@ const Seller = () => {
                                     <td>{data.identification} </td>
                                     <td>{data.commissionUSD} USD</td>
                                     <td>{data.commissionBS} Bs</td>
-                                    <td> <Button className='btnSeller' onClick={()=> { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
+                                    <td> <Button className='btnSeller' onClick={() => { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
 
                                 </tr>
                             ))
@@ -248,10 +256,10 @@ const Seller = () => {
                         <Form.Control placeholder="Banco" name="bank" onChange={onInputChange} />
                     </Form.Group>
 
-                    
 
 
-     
+
+
 
 
                     <Modal.Footer className="registerSeller">

@@ -59,4 +59,4 @@ const NavbarLoged = () => {
     )
 }
 
-export default NavbarLoged
+export default NavbarLoged;

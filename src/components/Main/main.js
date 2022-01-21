@@ -12,14 +12,13 @@ import Welcome from './Welcome';
 import { types } from '../../config/constant';
 import './main.css';
 import Byseller from '../Bills/BySeller';
+import client from '../../config/axios';
 
 
 
 const Main = () => {
 
     const defaultState = {
-        sellers: [],
-        bills: [],
         number: 0,
         option: 1,
     };
@@ -52,44 +51,36 @@ const Main = () => {
 
     const { user, dispatch } = useContext(AuthContext);
 
+
+    const logout = () => {
+        dispatch({
+            type: types.logout,
+            payload: {
+                name: '',
+                token: '',
+            }
+        })
+    }
+
     useEffect(function () {
 
-        let auth = generateToken(user.token)  // for all requests
+        generateToken(user.token);
 
-        if (auth) {
+        axios.get('/user/')
+            .then((resp) => {
 
-            axios.get('/seller/')
-                .then((res) => {
+                if (! resp.data.ok) {
+                    logout();
+                } 
 
-                    welcome();
-                    axios.get('/bill/')
-                        .then((resp) => {
+            }).catch((err) => {
+                console.log(err)
 
-                            setState({
-                                ...state,
-                                sellers: res.data,
-                                bills: resp.data,
-                            })
-
-                        })
-                        .catch((error) => console.log(error))
-
-                })
-                .catch((error) => console.log(error))
-
-        } else {
-
-            dispatch({
-                type: types.logout,
-                payload: {
-                    name: "",
-                    token: "",
-                }
             })
 
-        }
+            welcome();
 
-    }, [user.token])
+    }, [user.token]);
 
 
 
