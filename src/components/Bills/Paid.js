@@ -26,20 +26,21 @@ const Paid = () => {
         axios.get('/bill/paid')
             .then((resp) => {
 
+                let datos = resp.data;
+
                 let productos = [];
 
-                resp.data.map(data => {
+                datos.data.map(data => {
                     productos.push({
-                        billNumber: data.id,
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
                         amountPayed: `${data.amount.paid} $`,
-                        toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>Detalles</a></b>,
+                        toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
                     })
                 });
 
-                setState({ ...state, bills1: productos });
+                setState({ ...state, bills1: productos, usd: datos.sumUSD, bs: datos.sumBS });
                 setShowDetails(false);
 
             })
@@ -47,6 +48,7 @@ const Paid = () => {
 
 
     }
+
     const handleShowDetails = () => setShowDetails(true);
 
     const changeNumber = (id) => {
@@ -69,12 +71,11 @@ const Paid = () => {
 
                 datos.data.map(data => {
                     productos.push({
-                        billNumber: data.id,
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
                         amountPayed: `${data.amount.paid} $`,
-                        toDo: <a onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>Detalles</a>,
+                        toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
                     })
                 });
 
@@ -86,11 +87,6 @@ const Paid = () => {
     }, [])
 
     const columns = [
-        {
-            dataField: "billNumber",
-            text: "# de Factura",
-            sort: true
-        },
         {
             dataField: "date",
             text: "Fecha",
@@ -113,7 +109,7 @@ const Paid = () => {
         },
         {
             dataField: "toDo",
-            text: "Accion a Realizar",
+            text: "Detalle",
             sort: true
         }
     ];
@@ -135,7 +131,7 @@ const Paid = () => {
 
     return (
         <>
-            <h2><b>Facturas pagadas</b></h2>
+            <h2><b>Facturas cobradas</b></h2>
 
             <div className='divTable'>
                 <Table className="margintable" striped bordered hover size="sm" >

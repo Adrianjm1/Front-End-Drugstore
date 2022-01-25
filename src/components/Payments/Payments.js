@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react'
 import { Table, Container, Form, FormControl, Dropdown, ButtonGroup, DropdownButton } from 'react-bootstrap';
-import { TableMonthly } from './Details/TableMonthly';
-import { TableDaily } from './Details/TableDaily';
+import { TableMonthly } from './Tables/TableMonthly';
+import { TableDaily } from './Tables/TableDaily';
 import axios, { generateToken } from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';

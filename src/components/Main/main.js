@@ -12,7 +12,6 @@ import Welcome from './Welcome';
 import { types } from '../../config/constant';
 import './main.css';
 import Byseller from '../Bills/BySeller';
-import client from '../../config/axios';
 
 
 
@@ -69,16 +68,16 @@ const Main = () => {
         axios.get('/user/')
             .then((resp) => {
 
-                if (! resp.data.ok) {
+                if (!resp.data.ok) {
                     logout();
-                } 
+                }
 
             }).catch((err) => {
                 console.log(err)
 
             })
 
-            welcome();
+        welcome();
 
     }, [user.token]);
 
@@ -94,7 +93,7 @@ const Main = () => {
 
             <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
                 <Dropdown.Item eventKey="1" onClick={() => changeOption(1)}>Facturas por cobrar</Dropdown.Item>
-                <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Facturas pagadas</Dropdown.Item>
+                <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Facturas cobradas</Dropdown.Item>
                 <Dropdown.Item eventKey="3" onClick={() => changeOption(3)}>Facturas vencidas</Dropdown.Item>
                 <Dropdown.Item eventKey="3" onClick={() => changeOption(4)}>Facturas por vendedor</Dropdown.Item>
             </DropdownButton>
