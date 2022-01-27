@@ -55,13 +55,13 @@ const Payments = () => {
         axios.get(query)
             .then((res) => {
 
-                if (res.data.ok) {
-                    setState({ ...state, datosMeses: res.data.pagos, bsMeses: res.data.sumaBS, usdMeses: res.data.sumaUSD, totalMeses: res.data.total })
-
-                } else{
-                    setState({ ...state, datosMeses: res.data.pagos, bsMeses: '0', usdMeses: '0', totalMeses: '0' })
-
-                }
+                    if (res.data.ok) {
+                        setState({ ...state, datosMeses: res.data.pagos, bsMeses: res.data.sumaBS, usdMeses: res.data.sumaUSD, totalMeses: res.data.total })
+    
+                    } else{
+                        setState({ ...state, datosMeses: res.data.pagos, bsMeses: '0', usdMeses: '0', totalMeses: '0' })
+    
+                    }
 
             })
             .catch((error) =>
@@ -78,12 +78,13 @@ const Payments = () => {
         axios.get(query)
             .then((res) => {
 
-                if (res.data.ok) {
-                    setState({ ...state, datosDias: res.data.pagos, bsDias: res.data.sumaBS, usdDias: res.data.sumaUSD, totalDias: res.data.total })
 
-                } else{
-                    setState({ ...state, datosDias: res.data.pagos, bsDias: '0', usdDias: '0', totalDias: '0' })
-                }
+                    if (res.data.ok) {
+                        setState({ ...state, datosDias: res.data.pagos, bsDias: res.data.sumaBS, usdDias: res.data.sumaUSD, totalDias: res.data.total })
+    
+                    } else{
+                        setState({ ...state, datosDias: res.data.pagos, bsDias: '0', usdDias: '0', totalDias: '0' })
+                    }
 
             })
             .catch((error) =>

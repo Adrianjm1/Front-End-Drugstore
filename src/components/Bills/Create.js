@@ -22,7 +22,8 @@ const stateCreate = {
     city: "No",
     sellersCommission: 0,
     expirationDate: '',
-    vendedorID: 0
+    vendedorID: 0,
+    id: 0
 
 
 }
@@ -110,6 +111,7 @@ const Create = () => {
                 axios.post('/bill/create',
                     {
 
+                        id: state.id,
                         client: state.client,
                         city: state.city,
                         rif: (state.rif),
@@ -142,7 +144,7 @@ const Create = () => {
                                 icon: 'success'
                             });
 
-                            setTimeout(function () { window.location.reload(); }, 4000);
+                            setTimeout(function () { window.location.reload(); }, 2000);
 
 
                         }
@@ -235,6 +237,12 @@ const Create = () => {
                 </Form.Group>
                 <br />
 
+                
+                <Form.Group className="mb-3">
+                    <Form.Label># de factura</Form.Label>
+                    <Form.Control placeholder="Numero" name="id" onChange={onInputChange} type='number'/>
+                </Form.Group>
+
 
                 <Form.Group className="mb-3">
                     <Form.Label>Cliente</Form.Label>
@@ -242,7 +250,7 @@ const Create = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <Form.Label>RIF</Form.Label>
+                    <Form.Label>RIF/Cedula</Form.Label>
                     <Form.Control placeholder="RIF" name="rif" onChange={onInputChange} />
                 </Form.Group>
 
