@@ -1,31 +1,28 @@
 
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom'
-import { Container, Form, Col, Row, Button, InputGroup } from 'react-bootstrap';
-import { useParams } from 'react-router-dom';
+import { Container, Form, Col, Row, Button } from 'react-bootstrap';
 import image from '../../assets/img/dolar.png'
-import image2 from '../../assets/img/bolivar.png'
-import NavbarLoged from '../Navbar/NavbarLoged';
 import swal from 'sweetalert';
 import axios from '../../config/axios';
 import './makeAPayment.css'
 
 
 const billState = {
-    datos:[],
+    datos: [],
     seller: [],
     amount: [],
     restante: 0,
-    amountPay:0,
+    amountPay: 0,
     reference: '',
-    bank:'',
+    bank: '',
     date: '',
     exchange: 0,
     exchangeHide: false
 }
 
 
-const payState ={
+const payState = {
 
     paymentUSD: true,
     exchange: 0
@@ -40,8 +37,6 @@ const MakeAPayment = (number) => {
 
     const [exc, setExc] = useState(payState);
 
-    let id = useParams().id;
-
     useEffect(function () {
 
 
@@ -50,15 +45,15 @@ const MakeAPayment = (number) => {
 
                 if (res.data) {
 
-                    if (res.data.amount.unPaid == 0){
-                        setState({ ...state,datos: res.data, seller: res.data.seller, amount: res.data.amount,restante: res.data.amount.notPayed })
-    
+                    if (res.data.amount.unPaid === 0) {
+                        setState({ ...state, datos: res.data, seller: res.data.seller, amount: res.data.amount, restante: res.data.amount.notPayed })
+
                     }
-                    
-                    else{
-                        setState({ ...state,datos: res.data, seller: res.data.seller, amount: res.data.amount,restante: res.data.amount.unPaid })
+
+                    else {
+                        setState({ ...state, datos: res.data, seller: res.data.seller, amount: res.data.amount, restante: res.data.amount.unPaid })
                     }
-    
+
                 } else {
                     console.log('No hay data')
                 }
@@ -104,36 +99,36 @@ const MakeAPayment = (number) => {
     }
 
 
-    const handleChange =  e =>{
-      
-        if(e.target.checked === false){
+    const handleChange = e => {
+
+        if (e.target.checked === false) {
             setPay({ ...pay, paymentUSD: 1 });
-            setExc({exchange: 0})
+            setExc({ exchange: 0 })
 
             ReactDOM.render(<p></p>, document.getElementById('tasadecambio'));
-            
-        }else{
+
+        } else {
 
             setPay({ ...pay, paymentUSD: 0 });
 
             const tasa =
-            <Form.Group className="mb-3">
-            <Form.Label>Tasa de cambio</Form.Label>
-            <Form.Control  placeholder="Tasa de cambio" name="exchange" onChange={onExchangeChange} />
-            </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label>Tasa de cambio</Form.Label>
+                    <Form.Control placeholder="Tasa de cambio" name="exchange" onChange={onExchangeChange} />
+                </Form.Group>
 
 
             ReactDOM.render(tasa, document.getElementById('tasadecambio'));
-           
-           
-       }
 
-       console.log(e.target.checked);
+
+        }
+
+        console.log(e.target.checked);
     }
 
 
 
-     const onSubmit = async e => {
+    const onSubmit = async e => {
 
         try {
 
@@ -165,7 +160,7 @@ const MakeAPayment = (number) => {
                     icon: 'error'
                 });
 
-            } else if (state.date === '' || state.bank === '' || state.amountPay===0 || state.referenceNumber === ''){
+            } else if (state.date === '' || state.bank === '' || state.amountPay === 0 || state.referenceNumber === '') {
 
                 swal({
                     title: 'Error',
@@ -173,7 +168,7 @@ const MakeAPayment = (number) => {
                     icon: 'error'
                 });
 
-            } 
+            }
             else {
 
                 swal({
@@ -230,7 +225,7 @@ const MakeAPayment = (number) => {
 
                 <Form.Group className="mb-3">
                     <Form.Label>Vendedor encargado</Form.Label>
-                    <Form.Control placeholder={state.seller.name  +  '  ' + state.seller.lastname} disabled />
+                    <Form.Control placeholder={state.seller.name + '  ' + state.seller.lastname} disabled />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
@@ -247,13 +242,13 @@ const MakeAPayment = (number) => {
                         type="date"
                         placeholder="Fecha"
                     />
-                    
+
                 </Form.Group>
-                <br/>
+                <br />
 
                 <Form.Group className="mb-3">
                     <Form.Label>Monto a pagar</Form.Label>
-                    <Form.Control  placeholder="Ingrese el monto" name="amountPay" pattern="[0-9.]{0,13}" value={state.amountPay} onChange={onInputChange} />
+                    <Form.Control placeholder="Ingrese el monto" name="amountPay" pattern="[0-9.]{0,13}" value={state.amountPay} onChange={onInputChange} />
                 </Form.Group>
 
                 <Form.Group id='tasadecambio' className="mb-3">
@@ -262,15 +257,15 @@ const MakeAPayment = (number) => {
 
                 <Form.Group className="mb-3">
                     <Form.Label>Referencia</Form.Label>
-                    <Form.Control  placeholder="Ingrese el numero de refrencia" name="reference" onChange={onInputChange} />
+                    <Form.Control placeholder="Ingrese el numero de refrencia" name="reference" onChange={onInputChange} />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>Banco</Form.Label>
-                    <Form.Control  placeholder="Ingrese el banco" name="bank" onChange={onInputChange} />
+                    <Form.Control placeholder="Ingrese el banco" name="bank" onChange={onInputChange} />
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3 checkPayment" name="paymentUSD" onChange={onInputChange}  controlId="formHorizontalCheck">
+                <Form.Group as={Row} className="mb-3 checkPayment" name="paymentUSD" onChange={onInputChange} controlId="formHorizontalCheck">
 
                     <img className='imgDolar' src={image} />
                     <label className="switch">

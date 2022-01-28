@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { ListGroup } from 'react-bootstrap';
-
 import axios from '../../config/axios';
 
 const Welcome = (number) => {
 
     const defaultState = {
-        pagadas:[],
-        porPagar:[],
-        vencidas:[],
+        pagadas: [],
+        porPagar: [],
+        vencidas: [],
     }
 
     const [state, setState] = useState(defaultState);
 
     const today = new Date();
-    const hoy = `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`
+    const hoy = `${today.getDate()}/${today.getMonth() + 1}/${today.getFullYear()}`
 
 
-    const updateToDate =()=>{
+    const updateToDate = () => {
 
         axios.get(`/amounts/verify/`)
-        .then((respues) => {
-           console.log(respues);
-          
-        })
-        .catch((error) => console.log(error))
-      
+            .then((respues) => {
+                console.log(respues);
+
+            })
+            .catch((error) => console.log(error))
+
 
     }
 
@@ -35,26 +33,26 @@ const Welcome = (number) => {
 
 
         axios.get(`/bill/unpaid`)
-        .then((res) => {
+            .then((res) => {
 
-                    axios.get(`/bill/paid`)
+                axios.get(`/bill/paid`)
                     .then((resp) => {
-    
-    
+
+
                         axios.get(`/bill/notPayed`)
-                        .then((respuesta) => {
-                            setState({...state, porPagar:res.data, pagadas: resp.data, vencidas: respuesta.data })
-                          
-                        })
-                        .catch((error) => console.log(error))
-                      
+                            .then((respuesta) => {
+                                setState({ ...state, porPagar: res.data, pagadas: resp.data, vencidas: respuesta.data })
+
+                            })
+                            .catch((error) => console.log(error))
+
                     })
                     .catch((error) => console.log(error))
-    
-                })
-                .catch((error) => console.log(error))
-    
-    
+
+            })
+            .catch((error) => console.log(error))
+
+
 
         //eslint-disable-next-line
     }, [])
@@ -64,14 +62,14 @@ const Welcome = (number) => {
 
     return (
         <>
-           <div>
-                <p> <span className='diadehoy'>  El dia de hoy <b> {hoy}</b> <br/>  </span>  
-                Tenemos un total de:
-                <span className='text-success' > <br/>-{state.pagadas.length} facturas pagadas 
-                </span>  <br/>  <span className='text-primary'>-{state.porPagar.length} facturas por pagar</span>
-                <br/><span className='text-danger'>-{state.vencidas.length} facturas vencidas  </span>  </p>
- 
-           </div>
+            <div>
+                <p> <span className='diadehoy'>  El dia de hoy <b> {hoy}</b> <br />  </span>
+                    Tenemos un total de:
+                    <span className='text-success' > <br />-{state.pagadas.length} facturas pagadas
+                    </span>  <br />  <span className='text-primary'>-{state.porPagar.length} facturas por pagar</span>
+                    <br /><span className='text-danger'>-{state.vencidas.length} facturas vencidas  </span>  </p>
+
+            </div>
 
         </>
     )

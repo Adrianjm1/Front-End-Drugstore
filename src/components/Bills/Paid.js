@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect, useMemo } from 'react'
-import { Modal, Table, Container, FormControl } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react'
+import { Modal, Table } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import numberWithCommas from '../../helpers/helpers';
@@ -65,11 +65,6 @@ const Paid = () => {
 
     }
 
-    const handleChange = e => {
-        setState({ ...state, busqueda: e.target.value.toUpperCase() });
-    }
-
-
     useEffect(function () {
 
         axios.get('/bill/paid')
@@ -124,21 +119,6 @@ const Paid = () => {
         }
     ];
 
-    const column2 = [
-        {
-            dataField: "usd",
-            text: "Facturado en Dolares ($)",
-            sort: true
-        },
-        {
-            dataField: "bs",
-            text: "Facturado en Bolivares (Bs.)",
-            sort: true
-        }
-    ];
-
-
-
     return (
         <>
             <h2><b>Facturas cobradas</b></h2>
@@ -161,12 +141,12 @@ const Paid = () => {
                 </Table>
 
                 {<ReactHTMLTableToExcel
-                id="test-table-xls-button"
-                className="btn btn-success"
-                table="Paid"
-                filename="tablexls"
-                sheet="tablexls"
-                buttonText="Exportar a Excel" />}
+                    id="test-table-xls-button"
+                    className="btn btn-success"
+                    table="Paid"
+                    filename="tablexls"
+                    sheet="tablexls"
+                    buttonText="Exportar a Excel" />}
             </div>
 
             <div className='divTable'>
@@ -177,13 +157,15 @@ const Paid = () => {
                     keyField="id"
                     data={state.bills1}
                     columns={columns}
-                    pagination={paginationFactory({ sizePerPageList : [ {
-                        text: '15', value: 15
-                      }, {
-                        text: '50', value: 50
-                      }, {
-                        text: 'Todo', value: state.bills1.length
-                      } ] })}
+                    pagination={paginationFactory({
+                        sizePerPageList: [{
+                            text: '15', value: 15
+                        }, {
+                            text: '50', value: 50
+                        }, {
+                            text: 'Todo', value: state.bills1.length
+                        }]
+                    })}
                 />
 
             </div>

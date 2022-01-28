@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
-import { Table, Modal, FormControl } from 'react-bootstrap';
+import { Modal, FormControl } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import MakeAPayment from '../Payments/MakeAPayment';
@@ -196,13 +196,15 @@ const Notpayed = () => {
                     keyField="id"
                     data={facturas}
                     columns={columns}
-                    pagination={paginationFactory({ sizePerPageList : [ {
-                        text: '15', value: 15
-                      }, {
-                        text: '50', value: 50
-                      }, {
-                        text: 'Todo', value: state.bills3.length
-                      } ] })}
+                    pagination={paginationFactory({
+                        sizePerPageList: [{
+                            text: '15', value: 15
+                        }, {
+                            text: '50', value: 50
+                        }, {
+                            text: 'Todo', value: state.bills3.length
+                        }]
+                    })}
                 />
 
             </div>

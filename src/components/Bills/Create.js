@@ -1,12 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom'
-import { Container, Form, Col, Row, Button, InputGroup, ButtonGroup, Dropdown, DropdownButton, ListGroup } from 'react-bootstrap';
-
+import { Container, Form, Col, Button, ButtonGroup, Dropdown, DropdownButton } from 'react-bootstrap';
 import swal from 'sweetalert';
 import axios from '../../config/axios';
-
-
 
 const stateCreate = {
     sellers: [],
@@ -96,7 +93,7 @@ const Create = () => {
 
     const onSubmit = async e => {
 
-        if (state.city == "No") {
+        if (state.city === "No") {
 
             swal({
                 title: 'Error',
@@ -237,10 +234,10 @@ const Create = () => {
                 </Form.Group>
                 <br />
 
-                
+
                 <Form.Group className="mb-3">
                     <Form.Label># de factura</Form.Label>
-                    <Form.Control placeholder="Numero" name="id" onChange={onInputChange} type='number'/>
+                    <Form.Control placeholder="Numero" name="id" onChange={onInputChange} type='number' />
                 </Form.Group>
 
 
