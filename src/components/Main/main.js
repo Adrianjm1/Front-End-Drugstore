@@ -18,8 +18,6 @@ import Byseller from '../Bills/BySeller';
 const Main = () => {
 
     const defaultState = {
-        sellers: [],
-        bills: [],
         number: 0,
         option: 1,
     };
@@ -52,44 +50,36 @@ const Main = () => {
 
     const { user, dispatch } = useContext(AuthContext);
 
+
+    const logout = () => {
+        dispatch({
+            type: types.logout,
+            payload: {
+                name: '',
+                token: '',
+            }
+        })
+    }
+
     useEffect(function () {
 
-        let auth = generateToken(user.token)  // for all requests
+        generateToken(user.token);
 
-        if (auth) {
+        axios.get('/user/')
+            .then((resp) => {
 
-            axios.get('/seller/')
-                .then((res) => {
-
-                    welcome();
-                    axios.get('/bill/')
-                        .then((resp) => {
-
-                            setState({
-                                ...state,
-                                sellers: res.data,
-                                bills: resp.data,
-                            })
-
-                        })
-                        .catch((error) => console.log(error))
-
-                })
-                .catch((error) => console.log(error))
-
-        } else {
-
-            dispatch({
-                type: types.logout,
-                payload: {
-                    name: "",
-                    token: "",
+                if (!resp.data.ok) {
+                    logout();
                 }
+
+            }).catch((err) => {
+                console.log(err)
+
             })
 
-        }
+        welcome();
 
-    }, [user.token])
+    }, [user.token]);
 
 
 
@@ -103,7 +93,7 @@ const Main = () => {
 
             <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
                 <Dropdown.Item eventKey="1" onClick={() => changeOption(1)}>Facturas por cobrar</Dropdown.Item>
-                <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Facturas pagadas</Dropdown.Item>
+                <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Facturas cobradas</Dropdown.Item>
                 <Dropdown.Item eventKey="3" onClick={() => changeOption(3)}>Facturas vencidas</Dropdown.Item>
                 <Dropdown.Item eventKey="3" onClick={() => changeOption(4)}>Facturas por vendedor</Dropdown.Item>
             </DropdownButton>

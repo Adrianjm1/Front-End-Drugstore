@@ -6,6 +6,8 @@ import Details from '../Payments/Details/Details';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
+
 
 const defaultState = {
     sellers: [],
@@ -65,7 +67,7 @@ const Byseller = () => {
                                 expirationDate: data.expirationDate.slice(0, 10),
                                 client: data.client,
                                 amountUSD: `${data.amountUSD} $`,
-                                billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>Detalles</p></b>
+                                billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>{data.id}</p></b>
                             })
                         })
 
@@ -150,6 +152,14 @@ const Byseller = () => {
         <>
             <h2><b>Facturas por vendedor</b></h2>  <br />
 
+            {<ReactHTMLTableToExcel
+                id="test-table-xls-button"
+                className="btn btn-success"
+                table="Byseller"
+                filename="tablexls"
+                sheet="tablexls"
+                buttonText="Exportar a Excel" />}
+
 
             <DropdownButton as={ButtonGroup} className='selectSeller' style={{ width: '7%', display: "block", margin: "auto" }} title="Vendedor" id="bg-vertical-dropdown-2">
                 {state.sellers.map(data => (
@@ -164,10 +174,17 @@ const Byseller = () => {
 
                 <BootstrapTable
                     bootstrap4
-                    keyField="billNumber"
+                    id='Byseller'
+                    keyField="id"
                     data={state.bills}
                     columns={columns}
-                    pagination={paginationFactory({ sizePerPage: 5 })}
+                    pagination={paginationFactory({ sizePerPageList : [ {
+                        text: '15', value: 15
+                      }, {
+                        text: '50', value: 50
+                      }, {
+                        text: 'Todo', value: state.bills.length
+                      } ] })}
                 />
 
             </div>

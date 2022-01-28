@@ -1,14 +1,17 @@
-import React, { useState, useEffect } from 'react'
-import { Modal } from 'react-bootstrap';
+import React, { useState, useEffect, useMemo } from 'react'
+import { Modal, FormControl } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import MakeAPayment from '../Payments/MakeAPayment';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
+
 
 
 const defaultState = {
     bills: [],
+    busqueda: ''
 };
 
 const columns = [
@@ -64,6 +67,8 @@ const Unpaid = () => {
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
 
+
+
     const handleCloseDetails = () => {
 
         axios.get('/bill/unpaid')
@@ -94,6 +99,10 @@ const Unpaid = () => {
     };
 
     const handleShowDetails = () => setShowDetails(true);
+
+    const handleChange = e => {
+        setState({ ...state, busqueda: e.target.value.toUpperCase() });
+    }
 
 
     const [show, setShow] = useState(false);
@@ -147,6 +156,7 @@ const Unpaid = () => {
 
                 resp.data.map(data => {
                     productos.push({
+                        id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
@@ -165,19 +175,47 @@ const Unpaid = () => {
             .catch((error) => console.log(error))
     }, [])
 
+    const facturas = useMemo(function () {
+        if (state.bills.length) {
+            return state.bills.filter(factura => (`${factura.id}`).includes(state.busqueda))
+        } else if (state.busqueda === '') {
+            return state.bills
+        }
+
+        return state.bills
+    }, [state])
+
 
     return (
         <>
             <h2><b>Facturas por cobrar</b></h2>
 
+            <p className='busquedax'>Busqueda por #</p>
+            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+
+            {<ReactHTMLTableToExcel
+                id="test-table-xls-button"
+                className="btn btn-success"
+                table="Unpaid"
+                filename="tablexls"
+                sheet="tablexls"
+                buttonText="Exportar a Excel" />}
+
             <div className='divTable'>
 
                 <BootstrapTable
                     bootstrap4
-                    keyField="billNumber"
-                    data={state.bills}
+                    id='Unpaid'
+                    keyField="id"
+                    data={facturas}
                     columns={columns}
-                    pagination={paginationFactory({ sizePerPage: 5 })}
+                    pagination={paginationFactory({ sizePerPageList : [ {
+                        text: '15', value: 15
+                      }, {
+                        text: '50', value: 50
+                      }, {
+                        text: 'Todo', value: state.bills.length
+                      } ] })}
                 />
 
             </div>

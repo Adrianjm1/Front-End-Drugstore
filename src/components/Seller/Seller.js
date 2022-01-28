@@ -38,34 +38,42 @@ const Seller = () => {
 
     let { user, dispatch } = useContext(AuthContext);
 
+    const logout = () => {
+        dispatch({
+            type: types.logout,
+            payload: {
+                name: '',
+                token: '',
+            }
+        })
+    }
+
     useEffect(function () {
 
-        let auth = generateToken(user.token);
+        generateToken(user.token);
 
-        if (auth) {
+        axios.get('/user/')
+            .then((resp) => {
 
-            axios.get('/seller/')
-                .then((res) => {
+                if (!resp.data.ok) {
+                    logout();
+                } else {
+                    axios.get('/seller/')
+                        .then((res) => {
 
-                    setState({
-                        ...state,
-                        sellers: res.data
-                    })
+                            setState({
+                                ...state,
+                                sellers: res.data
+                            })
 
-                })
-                .catch((error) => console.log(error))
-
-        } else {
-
-            dispatch({
-                type: types.logout,
-                payload: {
-                    name: "",
-                    token: "",
+                        })
+                        .catch((error) => console.log(error))
                 }
-            })
 
-        }
+            }).catch((err) => {
+                console.log(err)
+
+            })
 
         //eslint-disable-next-line
     }, [user.token, show])
@@ -78,7 +86,7 @@ const Seller = () => {
         if (sellerName) {
 
 
-            setState({ ...state, sellerName: fullName, sellerid: sellerName.id })
+            setState({ ...state, sellerName: fullName })
         }
 
 
@@ -104,8 +112,8 @@ const Seller = () => {
         try {
 
 
-            let USDBS ;
-            if (state.usdbs == 'Dolares') {
+            let USDBS;
+            if (state.paymentUSD == 'Dolares') {
                 USDBS = 1
             } else {
                 USDBS = 0
@@ -209,12 +217,7 @@ const Seller = () => {
                                     <td>{data.identification} </td>
                                     <td>{data.commissionUSD} USD</td>
                                     <td>{data.commissionBS} Bs</td>
-                                    <td>
-                                        <Row>
-                                            <Col>  <Button className='btnSeller' onClick={() => { handleShow(); onChangeSeller(data) }}>Registrar pago</Button></Col>
-                                            <Col>  <Button className='btnSeller' onClick={() => { handleShowPay(); onChangeSeller(data) }} >Historial</Button></Col>
-                                        </Row>   
-                                    </td>
+                                    <td> <Button className='btnSeller' onClick={() => { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
 
                                 </tr>
                             ))

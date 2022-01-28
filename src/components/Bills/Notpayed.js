@@ -1,21 +1,26 @@
-import React, { useState, useEffect } from 'react'
-import { Table, Modal } from 'react-bootstrap';
+import React, { useState, useEffect, useMemo } from 'react'
+import { Table, Modal, FormControl } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import MakeAPayment from '../Payments/MakeAPayment';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
+
 
 
 const defaultState = {
-    bills3: []
+    bills3: [],
+    busqueda: ''
 };
 
 
 const Notpayed = () => {
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
+
+
 
     const handleCloseDetails = () => {
 
@@ -26,6 +31,7 @@ const Notpayed = () => {
 
                 resp.data.map(data => {
                     productos.push({
+                        id: data.id,
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
@@ -43,7 +49,17 @@ const Notpayed = () => {
             .catch((error) => console.log(error))
     }
 
+
+
+
     const handleShowDetails = () => setShowDetails(true);
+
+
+
+
+    const handleChange = e => {
+        setState({ ...state, busqueda: e.target.value.toUpperCase() });
+    }
 
     const [show, setShow] = useState(false);
 
@@ -126,6 +142,7 @@ const Notpayed = () => {
 
                 resp.data.map(data => {
                     productos.push({
+                        id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
@@ -145,19 +162,47 @@ const Notpayed = () => {
         //eslint-disable-next-line
     }, [])
 
+    const facturas = useMemo(function () {
+        if (state.bills3.length) {
+            return state.bills3.filter(factura => (`${factura.id}`).includes(state.busqueda))
+        } else if (state.busqueda === '') {
+            return state.bills3
+        }
+
+        return state.bills3
+    }, [state])
 
     return (
         <>
             <h2><b>Facturas vencidas</b></h2>
+            <p className='busquedax'>Busqueda por #</p>
+            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+
+            {<ReactHTMLTableToExcel
+                id="test-table-xls-button"
+                className="btn btn-success"
+                table="NotPayedTable"
+                filename="tablexls"
+                sheet="tablexls"
+                buttonText="Exportar a Excel" />}
+
+
 
             <div className='divTable'>
 
                 <BootstrapTable
                     bootstrap4
-                    keyField="billNumber"
-                    data={state.bills3}
+                    id='NotPayedTable'
+                    keyField="id"
+                    data={facturas}
                     columns={columns}
-                    pagination={paginationFactory({ sizePerPage: 5 })}
+                    pagination={paginationFactory({ sizePerPageList : [ {
+                        text: '15', value: 15
+                      }, {
+                        text: '50', value: 50
+                      }, {
+                        text: 'Todo', value: state.bills3.length
+                      } ] })}
                 />
 
             </div>

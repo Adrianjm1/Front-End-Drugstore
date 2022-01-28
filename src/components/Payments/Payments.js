@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react'
 import { Table, Container, Form, FormControl, Dropdown, ButtonGroup, DropdownButton } from 'react-bootstrap';
-import { TableMonthly } from './Details/TableMonthly';
-import { TableDaily } from './Details/TableDaily';
+import { TableMonthly } from './Tables/TableMonthly';
+import { TableDaily } from './Tables/TableDaily';
 import axios, { generateToken } from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
@@ -29,20 +29,31 @@ const Payments = () => {
 
     const { user, dispatch } = useContext(AuthContext);
 
+    const logout = () => {
+        dispatch({
+            type: types.logout,
+            payload: {
+                name: '',
+                token: '',
+            }
+        })
+    }
+
     useEffect(function () {
 
-        let auth = generateToken(user.token);  // for all requests
+        generateToken(user.token);
 
-        if (auth === false) {
+        axios.get('/user/')
+            .then((resp) => {
 
-            dispatch({
-                type: types.logout,
-                payload: {
-                    name: "",
-                    token: "",
+                if (!resp.data.ok) {
+                    logout();
                 }
+
+            }).catch((err) => {
+                console.log(err)
+
             })
-        }
 
     }, [user.token]);
 
@@ -55,13 +66,13 @@ const Payments = () => {
         axios.get(query)
             .then((res) => {
 
-                    if (res.data.ok) {
-                        setState({ ...state, datosMeses: res.data.pagos, bsMeses: res.data.sumaBS, usdMeses: res.data.sumaUSD, totalMeses: res.data.total })
-    
-                    } else{
-                        setState({ ...state, datosMeses: res.data.pagos, bsMeses: '0', usdMeses: '0', totalMeses: '0' })
-    
-                    }
+                if (res.data.ok) {
+                    setState({ ...state, datosMeses: res.data.pagos, bsMeses: res.data.sumaBS, usdMeses: res.data.sumaUSD, totalMeses: res.data.total })
+
+                } else {
+                    setState({ ...state, datosMeses: res.data.pagos, bsMeses: '0', usdMeses: '0', totalMeses: '0' })
+
+                }
 
             })
             .catch((error) =>
@@ -70,6 +81,7 @@ const Payments = () => {
 
     }
 
+    
     const OnChangeDate = (e) => {
 
         const day = e.target.value;
@@ -78,13 +90,12 @@ const Payments = () => {
         axios.get(query)
             .then((res) => {
 
+                if (res.data.ok) {
+                    setState({ ...state, datosDias: res.data.pagos, bsDias: res.data.sumaBS, usdDias: res.data.sumaUSD, totalDias: res.data.total })
 
-                    if (res.data.ok) {
-                        setState({ ...state, datosDias: res.data.pagos, bsDias: res.data.sumaBS, usdDias: res.data.sumaUSD, totalDias: res.data.total })
-    
-                    } else{
-                        setState({ ...state, datosDias: res.data.pagos, bsDias: '0', usdDias: '0', totalDias: '0' })
-                    }
+                } else {
+                    setState({ ...state, datosDias: res.data.pagos, bsDias: '0', usdDias: '0', totalDias: '0' })
+                }
 
             })
             .catch((error) =>
@@ -92,6 +103,8 @@ const Payments = () => {
             )
 
     }
+
+
 
     const handleChangeBDias = e => {
 
