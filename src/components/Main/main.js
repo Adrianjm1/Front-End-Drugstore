@@ -12,6 +12,7 @@ import Welcome from './Welcome';
 import { types } from '../../config/constant';
 import './main.css';
 import Byseller from '../Bills/BySeller';
+import File from './File';
 
 
 
@@ -87,6 +88,7 @@ const Main = () => {
         <>
 
             <NavbarLoged />
+            <File/>
 
             <Button className='btnCreateBill' onClick={handleShow}>Crear Factura </Button>
             <br />
