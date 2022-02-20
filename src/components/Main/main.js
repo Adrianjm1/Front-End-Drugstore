@@ -88,7 +88,7 @@ const Main = () => {
         <>
 
             <NavbarLoged />
-            <File/>
+            {/* <File/> */}
 
             <Button className='btnCreateBill' onClick={handleShow}>Crear Factura </Button>
             <br />
