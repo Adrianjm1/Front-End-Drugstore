@@ -6,6 +6,7 @@ import MakeAPayment from '../Payments/MakeAPayment';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import numberWithCommas from '../../helpers/helpers';
 
 
 
@@ -36,18 +37,18 @@ const columns = [
         sort: true
     },
     {
-        dataField: "unPaid",
-        text: "Monto por Cobrar",
-        sort: true
-    },
-    {
         dataField: "paid",
         text: "Monto Pagado",
         sort: true
     },
     {
+        dataField: "unPaid",
+        text: "Monto por Cobrar ($)",
+        sort: true
+    },
+    {
         dataField: "amountBS",
-        text: "Monto BS",
+        text: "Monto por Cobrar (Bs.)",
         sort: true
     },
     {
@@ -83,8 +84,8 @@ const Unpaid = () => {
                         client: data.client,
                         amountUSD: `${data.amountUSD} $`,
                         unPaid: `${data.amount.unPaid} $`,
-                        paid: data.amount.paid,
-                        amountBS: data.amountBS,
+                        paid: `${data.amount.paid} $`,
+                        amountBS: `${numberWithCommas(parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))}Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
@@ -121,8 +122,8 @@ const Unpaid = () => {
                         client: data.client,
                         amountUSD: `${data.amountUSD} $`,
                         unPaid: `${data.amount.unPaid} $`,
-                        paid: data.amount.paid,
-                        amountBS: data.amountBS,
+                        paid: `${data.amount.paid} $`,
+                        amountBS: `${numberWithCommas(parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))}Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
@@ -152,6 +153,8 @@ const Unpaid = () => {
         axios.get('/bill/unpaid')
             .then((resp) => {
 
+                console.log(resp);
+
                 let productos = [];
 
                 resp.data.map(data => {
@@ -162,8 +165,8 @@ const Unpaid = () => {
                         client: data.client,
                         amountUSD: `${data.amountUSD} $`,
                         unPaid: `${data.amount.unPaid} $`,
-                        paid: data.amount.paid,
-                        amountBS: data.amountBS,
+                        paid: `${data.amount.paid} $`,
+                        amountBS: `${numberWithCommas(parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))}Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
@@ -209,13 +212,15 @@ const Unpaid = () => {
                     keyField="id"
                     data={facturas}
                     columns={columns}
-                    pagination={paginationFactory({ sizePerPageList : [ {
-                        text: '15', value: 15
-                      }, {
-                        text: '50', value: 50
-                      }, {
-                        text: 'Todo', value: state.bills.length
-                      } ] })}
+                    pagination={paginationFactory({
+                        sizePerPageList: [{
+                            text: '15', value: 15
+                        }, {
+                            text: '50', value: 50
+                        }, {
+                            text: 'Todo', value: state.bills.length
+                        }]
+                    })}
                 />
 
             </div>
