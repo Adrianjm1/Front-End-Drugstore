@@ -53,6 +53,7 @@ const Login = () => {
                      payload: {
                         name: data.data.usuario.username,
                         token: data.data.token,
+                        viewer: data.data.usuario.viewer
                      }
                   })
 

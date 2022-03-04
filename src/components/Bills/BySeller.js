@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Modal, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
+import { AuthContext } from '../../auth/AuthContext';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
@@ -47,7 +48,7 @@ const columns = [
 
 
 const Byseller = () => {
-
+   
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
 

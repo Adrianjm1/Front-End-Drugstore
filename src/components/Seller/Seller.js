@@ -25,7 +25,7 @@ const Seller = () => {
     };
 
     const [state, setState] = useState(defaultState);
-
+    const { user, dispatch } = useContext(AuthContext);
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
@@ -35,8 +35,6 @@ const Seller = () => {
     const handleClosePay = () => setShowPay(false);
     const handleShowPay = () => setShowPay(true);
 
-
-    let { user, dispatch } = useContext(AuthContext);
 
     const logout = () => {
         dispatch({
@@ -123,7 +121,7 @@ const Seller = () => {
                 {
                     bank: state.bank,
                     amount: state.amount,
-                    paymentUSD: USDBS ,
+                    paymentUSD: USDBS,
                     idSeller: state.sellerid
 
                 });
@@ -184,7 +182,7 @@ const Seller = () => {
 
         }
 
-  
+
     }
 
     return (
@@ -204,7 +202,12 @@ const Seller = () => {
                             <th>Identidad</th>
                             <th>Comision en USD</th>
                             <th>Comision en Bs</th>
-                            <th>Accion</th>
+
+                            {user.viewer === 0 ?
+                                <th>Accion</th>
+                                :
+                                null
+                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -217,7 +220,12 @@ const Seller = () => {
                                     <td>{data.identification} </td>
                                     <td>{data.commissionUSD} USD</td>
                                     <td>{data.commissionBS} Bs</td>
-                                    <td> <Button className='btnSeller' onClick={() => { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
+
+                                    {user.viewer === 0 ?
+                                        <td> <Button className='btnSeller' onClick={() => { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
+                                        :
+                                        null
+                                    }
 
                                 </tr>
                             ))
@@ -289,7 +297,7 @@ const Seller = () => {
                     <Modal.Title>Pagos a vendedor <b> {state.sellerName} </b></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <SellerPayment id={state.sellerid}/>
+                    <SellerPayment id={state.sellerid} />
                 </Modal.Body>
             </Modal>
 
