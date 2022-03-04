@@ -17,6 +17,7 @@ const NavbarLoged = () => {
             payload: {
                 name: '',
                 token: '',
+                viewer: ''
             }
         })
 
@@ -33,7 +34,7 @@ const NavbarLoged = () => {
                 <Container>
                     <Navbar.Brand>
                         <b>Sistema de facturacion drogueria Enmanuelle</b><br />
-                        Bienvenido, {user.name}
+                        Bienvenido, {user.name}  {user.viewer}
                     </Navbar.Brand>
                 </Container>
 

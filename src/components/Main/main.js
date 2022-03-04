@@ -16,7 +16,11 @@ import File from './File';
 
 
 
+
 const Main = () => {
+
+
+ 
 
     const defaultState = {
         number: 0,
@@ -88,9 +92,14 @@ const Main = () => {
         <>
 
             <NavbarLoged />
-            {/* <File/> */}
+            <File/>
 
-            <Button className='btnCreateBill' onClick={handleShow}>Crear Factura </Button>
+            {user.viewer === 0 ?
+                <Button className='btnCreateBill' onClick={handleShow}>Crear Factura </Button>
+                :
+                <> {user.viewer}</>
+            }
+
             <br />
 
             <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">

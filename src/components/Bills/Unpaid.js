@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useContext } from 'react'
 import { Modal, FormControl } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
@@ -6,6 +6,7 @@ import MakeAPayment from '../Payments/MakeAPayment';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import { AuthContext } from '../../auth/AuthContext';
 
 
 
@@ -62,11 +63,55 @@ const columns = [
     }
 ];
 
+const columview = [
+    {
+        dataField: "date",
+        text: "Fecha",
+        sort: true
+    },
+    {
+        dataField: "expirationDate",
+        text: "Fecha de expiracion",
+        sort: true
+    },
+    {
+        dataField: "client",
+        text: "Cliente",
+        sort: true
+    },
+    {
+        dataField: "amountUSD",
+        text: "Monto USD",
+        sort: true
+    },
+    {
+        dataField: "unPaid",
+        text: "Monto por Cobrar",
+        sort: true
+    },
+    {
+        dataField: "paid",
+        text: "Monto Pagado",
+        sort: true
+    },
+    {
+        dataField: "amountBS",
+        text: "Monto BS",
+        sort: true
+    },
+    {
+        dataField: "billNumber",
+        text: "Detalle",
+        sort: true
+    }
+
+];
+
 
 const Unpaid = () => {
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
-
+    const { user, dispatch } = useContext(AuthContext);
 
 
     const handleCloseDetails = () => {
@@ -203,20 +248,44 @@ const Unpaid = () => {
 
             <div className='divTable'>
 
-                <BootstrapTable
-                    bootstrap4
-                    id='Unpaid'
-                    keyField="id"
-                    data={facturas}
-                    columns={columns}
-                    pagination={paginationFactory({ sizePerPageList : [ {
-                        text: '15', value: 15
-                      }, {
-                        text: '50', value: 50
-                      }, {
-                        text: 'Todo', value: state.bills.length
-                      } ] })}
-                />
+
+                {user.viewer === 0 ?
+                    <BootstrapTable
+                        bootstrap4
+                        id='Unpaid'
+                        keyField="id"
+                        data={facturas}
+                        columns={columns}
+                        pagination={paginationFactory({
+                            sizePerPageList: [{
+                                text: '15', value: 15
+                            }, {
+                                text: '50', value: 50
+                            }, {
+                                text: 'Todo', value: state.bills.length
+                            }]
+                        })}
+                    />
+                    :
+                    <BootstrapTable
+                        bootstrap4
+                        id='Unpaid'
+                        keyField="id"
+                        data={facturas}
+                        columns={columview}
+                        pagination={paginationFactory({
+                            sizePerPageList: [{
+                                text: '15', value: 15
+                            }, {
+                                text: '50', value: 50
+                            }, {
+                                text: 'Todo', value: state.bills.length
+                            }]
+                        })}
+                    />
+                }
+
+
 
             </div>
 
