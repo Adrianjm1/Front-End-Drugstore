@@ -6,8 +6,8 @@ import MakeAPayment from '../Payments/MakeAPayment';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
-import numberWithCommas from '../../helpers/helpers';
 import { AuthContext } from '../../auth/AuthContext';
+import numberWithCommas from '../../helpers/helpers';
 
 
 
@@ -251,22 +251,6 @@ const Unpaid = () => {
 
             <div className='divTable'>
 
-                <BootstrapTable
-                    bootstrap4
-                    id='Unpaid'
-                    keyField="id"
-                    data={facturas}
-                    columns={columns}
-                    pagination={paginationFactory({
-                        sizePerPageList: [{
-                            text: '15', value: 15
-                        }, {
-                            text: '50', value: 50
-                        }, {
-                            text: 'Todo', value: state.bills.length
-                        }]
-                    })}
-                />
 
                 {user.viewer === 0 ?
                     <BootstrapTable
