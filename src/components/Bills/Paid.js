@@ -81,6 +81,7 @@ const Paid = () => {
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
                         amountPayed: `${data.amount.paid} $`,
+                        overPaidBS: `${data.overPaidBS}Bs.`,
                         toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
                     })
                 });
@@ -111,6 +112,11 @@ const Paid = () => {
         {
             dataField: "amountPayed",
             text: "Monto Pagado",
+            sort: true
+        },
+        {
+            dataField: "overPaidBS",
+            text: "Diferencial Cambiario",
             sort: true
         },
         {

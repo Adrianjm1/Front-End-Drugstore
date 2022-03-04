@@ -1,10 +1,10 @@
-
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom'
 import { Container, Form, Col, Row, Button } from 'react-bootstrap';
 import image from '../../assets/img/dolar.png'
 import swal from 'sweetalert';
 import axios from '../../config/axios';
+import numberWithComas from '../../helpers/helpers';
 import './makeAPayment.css'
 
 
@@ -17,25 +17,23 @@ const billState = {
     reference: '',
     bank: '',
     date: '',
-    exchange: 0,
-    exchangeHide: false
+    paymentUSD: 1,
+    oldExchange: 0,
+    restanteBS: 0,
+    exchangeHide: false,
+    diferencial: 0
 }
 
+const tasadecambio = 0;
 
-const payState = {
-
-    paymentUSD: true,
-    exchange: 0
-}
-
+let value1 = 0;
+let value2 = 0;
+let diferencialBancario = 0;
 
 const MakeAPayment = (number) => {
 
     const [state, setState] = useState(billState);
-
-    const [pay, setPay] = useState(payState);
-
-    const [exc, setExc] = useState(payState);
+    const [tasacambio, setTasa] = useState(tasadecambio);
 
     useEffect(function () {
 
@@ -51,13 +49,14 @@ const MakeAPayment = (number) => {
                     }
 
                     else {
-                        setState({ ...state, datos: res.data, seller: res.data.seller, amount: res.data.amount, restante: res.data.amount.unPaid })
+                        setState({ ...state, datos: res.data, seller: res.data.seller, amount: res.data.amount, restante: res.data.amount.unPaid, oldExchange: res.data.exchange, restanteBS: res.data.overPaidBS })
+                        console.log(res.data);
+
                     }
 
                 } else {
                     console.log('No hay data')
                 }
-
 
 
             })
@@ -71,28 +70,49 @@ const MakeAPayment = (number) => {
 
     const onInputChange = e => {
 
-        const isValid = e.target.validity.valid;
+        setState({ ...state, [e.target.name]: e.target.value });
 
-        if (isValid === true) {
-            setState({ ...state, [e.target.name]: e.target.value });
+    }
+
+    const onRestanteChange = () => {
+
+        if (isNaN(value1) || isNaN(value2)) {
+            document.getElementById('diferencialInput').placeholder = `Ingrese los numeros correctos`;
+            diferencialBancario = 0;
 
         } else {
-            console.log(isValid);
+            let old = parseFloat(state.restante) * parseFloat(state.oldExchange);
+            let now = value1 * value2;
 
+            if (old < now) {
+                document.getElementById('diferencialInput').placeholder = `${-(old - now)}Bs.`;
+                diferencialBancario = -(old - now);
+
+            } else {
+                document.getElementById('diferencialInput').placeholder = `0`;
+                diferencialBancario = 0;
+
+            }
         }
 
     }
 
+    const onNumberChange = e => {
 
-    const onExchangeChange = e => {
+        setTasa(isNaN(e.target.value) == true ? 0 : parseFloat(e.target.value));
+        value2 = parseFloat(e.target.value);
 
-        const isValid = e.target.validity.valid;
+        onRestanteChange();
 
-        if (isValid === true) {
-            setExc({ ...exc, exchange: e.target.value });
+    }
 
-        } else {
-            console.log(isValid);
+    const onNumber2Change = e => {
+
+        setState({ ...state, amountPay: (isNaN(e.target.value) == true ? 0 : parseFloat(e.target.value)) });
+        value1 = parseFloat(e.target.value);
+
+        if (state.paymentUSD == 0) {
+            onRestanteChange();
 
         }
 
@@ -102,28 +122,36 @@ const MakeAPayment = (number) => {
     const handleChange = e => {
 
         if (e.target.checked === false) {
-            setPay({ ...pay, paymentUSD: 1 });
-            setExc({ exchange: 0 })
+            setState({ ...state, paymentUSD: 1, diferencial: 0 });
+            setTasa(0);
+
+            document.getElementById('restantePorPagar').placeholder = `${numberWithComas(parseFloat(state.restante))}$`;
 
             ReactDOM.render(<p></p>, document.getElementById('tasadecambio'));
+            ReactDOM.render(<p></p>, document.getElementById('diferencial'));
 
         } else {
 
-            setPay({ ...pay, paymentUSD: 0 });
+            setState({ ...state, paymentUSD: 0 });
 
             const tasa =
                 <Form.Group className="mb-3">
                     <Form.Label>Tasa de cambio</Form.Label>
-                    <Form.Control placeholder="Tasa de cambio" name="exchange" onChange={onExchangeChange} />
+                    <Form.Control placeholder="Tasa de cambio" name='tasacambio' onChange={onNumberChange} />
                 </Form.Group>
 
+            const diferencial =
+                <Form.Group className="mb-3">
+                    <Form.Label>Diferencial Cambiario</Form.Label>
+                    <Form.Control placeholder="0" id='diferencialInput' disabled />
+                </Form.Group>
 
+            document.getElementById('restantePorPagar').placeholder = `${numberWithComas(parseFloat(state.restante))}$ (${numberWithComas(parseFloat(state.restante) * parseFloat(state.oldExchange))}Bs.)`;
             ReactDOM.render(tasa, document.getElementById('tasadecambio'));
-
+            ReactDOM.render(diferencial, document.getElementById('diferencial'));
 
         }
 
-        console.log(e.target.checked);
     }
 
 
@@ -132,59 +160,68 @@ const MakeAPayment = (number) => {
 
         try {
 
-            // console.log( 'ID:      '   + state.datos.id  +'   Cliente:   '  
-            //  +  state.datos.client  +' Ciudad:     '   +   state.datos.city  +'   Referece:   '
-            //     +    state.reference  +'  Monto:    '   +   state.amountPay   + '  date: '+ state.date  + ' checkUSD: ' + state.checkUSD   );
+            console.log(tasacambio);
+
+            if (state.date != "" && state.bank != "" && state.amountPay != 0 && state.referenceNumber != "") {
+
+                if ((isNaN(tasacambio == '' ? 'a' : tasacambio) === false || tasacambio === 0) && (isNaN(state.amountPay == '' ? 'a' : state.amountPay) === false)) {
+
+                    const res = await axios.post('/payments/create',
+                        {
+                            id: state.datos.id,
+                            client: state.datos.client,
+                            city: state.datos.city,
+                            referenceNumber: (state.reference),
+                            amountUSD: state.amountPay,
+                            date: state.date,
+                            bank: state.bank,
+                            paymentUSD: state.paymentUSD,
+                            exchangeRate: tasacambio,
+                            overPaidBS: diferencialBancario
+
+                        });
+
+                    if (res.data.message) {
+
+                        swal({
+                            title: 'Error',
+                            text: res.data.message,
+                            icon: 'error'
+                        });
+
+                    } else {
+
+                        swal({
+                            title: 'Realizado',
+                            text: 'Pago realizado con exito',
+                            icon: 'success'
+                        });
+
+                        setTimeout(function () { window.location.reload(); }, 1500);
+
+                    }
 
 
-            const res = await axios.post('/payments/create',
-                {
-                    id: state.datos.id,
-                    client: state.datos.client,
-                    city: state.datos.city,
-                    referenceNumber: (state.reference),
-                    amountUSD: state.amountPay,
-                    date: state.date,
-                    bank: state.bank,
-                    paymentUSD: pay.paymentUSD,
-                    exchangeRate: exc.exchange
+                } else {
+                    swal({
+                        title: 'Error',
+                        text: 'Uno de los campos ingresados no es numerico',
+                        icon: 'error'
+                    });
+                }
 
-                });
-
-
-            if (res.data.message) {
+            } else {
 
                 swal({
                     title: 'Error',
-                    text: res.data.message,
-                    icon: 'error'
-                });
-
-            } else if (state.date === '' || state.bank === '' || state.amountPay === 0 || state.referenceNumber === '') {
-
-                swal({
-                    title: 'Error',
-                    text: 'Faltan campos por rellenar',
+                    text: 'Verifique bien los campos',
                     icon: 'error'
                 });
 
             }
-            else {
-
-                swal({
-                    title: 'Realizado',
-                    text: 'Pago realizado con exito',
-                    icon: 'success'
-                });
-
-                setTimeout(function () { window.location.reload(); }, 2000);
-
-            }
-
-
-
 
         }
+
         catch (error) {
 
             console.log(error);
@@ -211,8 +248,6 @@ const MakeAPayment = (number) => {
                     <Form.Control placeholder={state.datos.id} disabled />
                 </Form.Group>
 
-
-
                 <Form.Group className="mb-3">
                     <Form.Label>Cliente</Form.Label>
                     <Form.Control placeholder={state.datos.client} disabled />
@@ -230,7 +265,7 @@ const MakeAPayment = (number) => {
 
                 <Form.Group className="mb-3">
                     <Form.Label>Restante por pagar</Form.Label>
-                    <Form.Control placeholder={state.restante} disabled />
+                    <Form.Control id="restantePorPagar" placeholder={`${state.restante}$`} disabled />
                 </Form.Group>
 
                 <Form.Group as={Col} md="4" controlId="validationCustom02">
@@ -248,10 +283,14 @@ const MakeAPayment = (number) => {
 
                 <Form.Group className="mb-3">
                     <Form.Label>Monto a pagar</Form.Label>
-                    <Form.Control placeholder="Ingrese el monto" name="amountPay" pattern="[0-9.]{0,13}" value={state.amountPay} onChange={onInputChange} />
+                    <Form.Control placeholder="Ingrese el monto" type='text' name="amountPay" onChange={onNumber2Change} />
                 </Form.Group>
 
                 <Form.Group id='tasadecambio' className="mb-3">
+
+                </Form.Group>
+
+                <Form.Group id='diferencial' className="mb-3">
 
                 </Form.Group>
 
