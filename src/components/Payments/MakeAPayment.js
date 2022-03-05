@@ -17,15 +17,17 @@ const billState = {
     reference: '',
     bank: '',
     date: '',
-    paymentUSD: 1,
     oldExchange: 0,
     restanteBS: 0,
     exchangeHide: false,
-    diferencial: 0
 }
 
-const tasadecambio = 0;
+const handle = {
+    tasadecambio: 0,
+}
 
+
+var paymentUSD = 1;
 let value1 = 0;
 let value2 = 0;
 let diferencialBancario = 0;
@@ -33,7 +35,7 @@ let diferencialBancario = 0;
 const MakeAPayment = (number) => {
 
     const [state, setState] = useState(billState);
-    const [tasacambio, setTasa] = useState(tasadecambio);
+    const [stateHandle, setHandle] = useState(handle);
 
     useEffect(function () {
 
@@ -43,8 +45,8 @@ const MakeAPayment = (number) => {
 
                 if (res.data) {
 
-                    if (res.data.amount.unPaid === 0) {
-                        setState({ ...state, datos: res.data, seller: res.data.seller, amount: res.data.amount, restante: res.data.amount.notPayed })
+                    if (res.data.amount.unPaid == 0) {
+                        setState({ ...state, datos: res.data, seller: res.data.seller, amount: res.data.amount, restante: res.data.amount.notPayed, oldExchange: res.data.exchange })
 
                     }
 
@@ -85,7 +87,7 @@ const MakeAPayment = (number) => {
             let now = value1 * value2;
 
             if (old < now) {
-                document.getElementById('diferencialInput').placeholder = `${-(old - now)}Bs.`;
+                document.getElementById('diferencialInput').placeholder = `${-(old - now).toFixed(2)}Bs.`;
                 diferencialBancario = -(old - now);
 
             } else {
@@ -99,7 +101,7 @@ const MakeAPayment = (number) => {
 
     const onNumberChange = e => {
 
-        setTasa(isNaN(e.target.value) == true ? 0 : parseFloat(e.target.value));
+        setHandle({ ...stateHandle, tasadecambio: (isNaN(e.target.value) == true ? 0 : parseFloat(e.target.value)) });
         value2 = parseFloat(e.target.value);
 
         onRestanteChange();
@@ -111,7 +113,7 @@ const MakeAPayment = (number) => {
         setState({ ...state, amountPay: (isNaN(e.target.value) == true ? 0 : parseFloat(e.target.value)) });
         value1 = parseFloat(e.target.value);
 
-        if (state.paymentUSD == 0) {
+        if (paymentUSD == 0) {
             onRestanteChange();
 
         }
@@ -121,9 +123,7 @@ const MakeAPayment = (number) => {
 
     const handleChange = e => {
 
-        if (e.target.checked === false) {
-            setState({ ...state, paymentUSD: 1, diferencial: 0 });
-            setTasa(0);
+        if (e.target.checked == false) {
 
             document.getElementById('restantePorPagar').placeholder = `${numberWithComas(parseFloat(state.restante))}$`;
 
@@ -132,12 +132,10 @@ const MakeAPayment = (number) => {
 
         } else {
 
-            setState({ ...state, paymentUSD: 0 });
-
             const tasa =
                 <Form.Group className="mb-3">
                     <Form.Label>Tasa de cambio</Form.Label>
-                    <Form.Control placeholder="Tasa de cambio" name='tasacambio' onChange={onNumberChange} />
+                    <Form.Control placeholder="Tasa de cambio" name='tasadecambio' onChange={onNumberChange} />
                 </Form.Group>
 
             const diferencial =
@@ -146,11 +144,15 @@ const MakeAPayment = (number) => {
                     <Form.Control placeholder="0" id='diferencialInput' disabled />
                 </Form.Group>
 
-            document.getElementById('restantePorPagar').placeholder = `${numberWithComas(parseFloat(state.restante))}$ (${numberWithComas(parseFloat(state.restante) * parseFloat(state.oldExchange))}Bs.)`;
+            document.getElementById('restantePorPagar').placeholder = `${numberWithComas(parseFloat(state.restante))}$ (${numberWithComas((parseFloat(state.restante) * parseFloat(state.oldExchange)).toFixed(2))}Bs.)`;
             ReactDOM.render(tasa, document.getElementById('tasadecambio'));
             ReactDOM.render(diferencial, document.getElementById('diferencial'));
 
         }
+
+        paymentUSD = e.target.checked == false ? 1 : 0;
+
+        setHandle({ ...stateHandle, tasadecambio: (e.target.checked == false ? 0 : stateHandle.tasadecambio) });
 
     }
 
@@ -160,11 +162,12 @@ const MakeAPayment = (number) => {
 
         try {
 
-            console.log(tasacambio);
+            console.log(stateHandle.tasadecambio);
+            console.log(paymentUSD);
 
             if (state.date != "" && state.bank != "" && state.amountPay != 0 && state.referenceNumber != "") {
 
-                if ((isNaN(tasacambio == '' ? 'a' : tasacambio) === false || tasacambio === 0) && (isNaN(state.amountPay == '' ? 'a' : state.amountPay) === false)) {
+                if ((isNaN(stateHandle.tasadecambio == '' ? 'a' : stateHandle.tasadecambio) === false || stateHandle.tasadecambio === 0) && (isNaN(state.amountPay == '' ? 'a' : state.amountPay) === false)) {
 
                     const res = await axios.post('/payments/create',
                         {
@@ -175,8 +178,8 @@ const MakeAPayment = (number) => {
                             amountUSD: state.amountPay,
                             date: state.date,
                             bank: state.bank,
-                            paymentUSD: state.paymentUSD,
-                            exchangeRate: tasacambio,
+                            paymentUSD: paymentUSD,
+                            exchangeRate: stateHandle.tasadecambio,
                             overPaidBS: diferencialBancario
 
                         });
@@ -304,7 +307,7 @@ const MakeAPayment = (number) => {
                     <Form.Control placeholder="Ingrese el banco" name="bank" onChange={onInputChange} />
                 </Form.Group>
 
-                <Form.Group as={Row} className="mb-3 checkPayment" name="paymentUSD" onChange={onInputChange} controlId="formHorizontalCheck">
+                <Form.Group as={Row} className="mb-3 checkPayment" name="paymentUSD" controlId="formHorizontalCheck">
 
                     <img className='imgDolar' src={image} />
                     <label className="switch">
@@ -312,6 +315,7 @@ const MakeAPayment = (number) => {
                         <span className="slider round"></span>
                     </label>
                     <p className='bolivares' >Bs</p>
+
                 </Form.Group>
 
                 <Button variant="success" className='btnMake' onClick={onSubmit} type="submit">Realizar pago</Button>

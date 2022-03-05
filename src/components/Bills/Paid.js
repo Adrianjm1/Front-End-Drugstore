@@ -141,7 +141,7 @@ const Paid = () => {
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{numberWithCommas(parseFloat(state.usd || 0))} USD</td>
+                            <td>{numberWithCommas(parseFloat(state.usd || 0).toFixed(2))} USD</td>
                             <td>{numberWithCommas(parseFloat(state.bs || 0).toFixed(2))} Bs.</td>
                         </tr>
                     </tbody>

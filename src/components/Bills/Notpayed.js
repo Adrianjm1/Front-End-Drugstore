@@ -179,8 +179,8 @@ const Notpayed = () => {
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
-                });
 
+                });
 
                 setState({ ...state, bills3: productos })
 
