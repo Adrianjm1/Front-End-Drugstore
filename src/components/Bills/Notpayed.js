@@ -187,8 +187,6 @@ const Notpayed = () => {
             })
             .catch((error) => console.log(error))
 
-
-        //eslint-disable-next-line
     }, [])
 
     const facturas = useMemo(function () {

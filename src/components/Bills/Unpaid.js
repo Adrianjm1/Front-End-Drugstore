@@ -198,8 +198,6 @@ const Unpaid = () => {
         axios.get('/bill/unpaid')
             .then((resp) => {
 
-                console.log(resp);
-
                 let productos = [];
 
                 resp.data.map(data => {

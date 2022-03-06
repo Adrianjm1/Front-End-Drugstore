@@ -169,6 +169,9 @@ const Payments = () => {
 
             <Container>
 
+                <br />
+                <br />
+
                 <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver pagos" id="bg-vertical-dropdown-1">
                     <Dropdown.Item eventKey="1" onClick={() => changeOption(1)}>Pagos por mes</Dropdown.Item>
                     <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Pagos por dia</Dropdown.Item>
@@ -203,7 +206,7 @@ const Payments = () => {
                                 <tr>
                                     <td>{numberWithCommas(parseFloat(state.usdMeses || 0))} USD</td>
                                     <td>{numberWithCommas(parseFloat(state.bsMeses || 0).toFixed(2))} Bs.</td>
-                                    <td>{numberWithCommas(parseFloat(state.totalMeses || 0))} USD</td>
+                                    <td>{numberWithCommas(parseFloat(state.totalMeses || 0).toFixed(2))} USD</td>
                                 </tr>
                             </tbody>
                         </Table>
@@ -252,7 +255,7 @@ const Payments = () => {
                                 <tr>
                                     <td>{numberWithCommas(parseFloat(state.usdDias || 0))} USD</td>
                                     <td>{numberWithCommas(parseFloat(state.bsDias || 0).toFixed(2))} Bs.</td>
-                                    <td>{numberWithCommas(parseFloat(state.totalDias || 0))} USD</td>
+                                    <td>{numberWithCommas(parseFloat(state.totalDias || 0).toFixed(2))} USD</td>
                                 </tr>
                             </tbody>
                         </Table>

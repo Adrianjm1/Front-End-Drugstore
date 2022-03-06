@@ -52,14 +52,10 @@ const MakeAPayment = (number) => {
 
                     else {
                         setState({ ...state, datos: res.data, seller: res.data.seller, amount: res.data.amount, restante: res.data.amount.unPaid, oldExchange: res.data.exchange, restanteBS: res.data.overPaidBS })
-                        console.log(res.data);
 
                     }
 
-                } else {
-                    console.log('No hay data')
-                }
-
+                } 
 
             })
             .catch((error) => console.log(error))
@@ -162,9 +158,6 @@ const MakeAPayment = (number) => {
 
         try {
 
-            console.log(stateHandle.tasadecambio);
-            console.log(paymentUSD);
-
             if (state.date != "" && state.bank != "" && state.amountPay != 0 && state.referenceNumber != "") {
 
                 if ((isNaN(stateHandle.tasadecambio == '' ? 'a' : stateHandle.tasadecambio) === false || stateHandle.tasadecambio === 0) && (isNaN(state.amountPay == '' ? 'a' : state.amountPay) === false)) {
@@ -226,8 +219,6 @@ const MakeAPayment = (number) => {
         }
 
         catch (error) {
-
-            console.log(error);
 
             swal({
                 title: 'Error',

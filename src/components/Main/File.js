@@ -23,17 +23,10 @@ const File = () => {
 
     const [state, setState] = useState(defaultState);
 
-
-
-
-
     const correct = () => {
-
-
 
         axios.get('/bill/correct')
             .catch((error) => console.log(error))
-
 
         swal({
             title: 'Esperar',

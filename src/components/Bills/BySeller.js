@@ -133,14 +133,11 @@ const Byseller = () => {
             .catch((error) => console.log(error))
 
 
-        //eslint-disable-next-line
     }, [state.id])
 
 
     const setID = (id) => {
-        console.log('funciono');
-        console.log(id);
-
+        
         if (id) {
             setState({ ...state, id: id })
         }

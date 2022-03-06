@@ -36,18 +36,11 @@ const Create = () => {
         axios.get(`/seller/`)
             .then((res) => {
 
-
-
-
                 if (res.data) {
 
                     setState({ ...state, sellers: res.data })
 
-                } else {
-                    console.log('No hay data')
                 }
-
-
 
             })
             .catch((error) => console.log(error))
@@ -61,9 +54,6 @@ const Create = () => {
         if (isValid === true) {
             setState({ ...state, [e.target.name]: e.target.value });
 
-        } else {
-            console.log(isValid);
-
         }
 
     }
@@ -71,12 +61,10 @@ const Create = () => {
     const onCityChange = e => {
 
         setState({ ...state, city: e.target.value });
-        console.log(e.target.value);
 
     }
 
     const onChangeSeller = (sellerName, vendedorID) => {
-
 
         setState({ ...state, vendedor: sellerName, vendedorID: vendedorID });
         const vendedor =
