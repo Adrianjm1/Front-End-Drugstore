@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { types } from '../../config/constant';
-import { Table, Form, Button, Modal, Row, Col } from 'react-bootstrap';
+import { Table, Form, Button, Modal} from 'react-bootstrap';
 import { AuthContext } from '../../auth/AuthContext';
 import swal from "sweetalert";
 import './seller.css';
@@ -30,8 +30,8 @@ const Seller = () => {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const [showPay, setShowPay] = useState(false);
 
+    const [showPay, setShowPay] = useState(false);
     const handleClosePay = () => setShowPay(false);
     const handleShowPay = () => setShowPay(true);
 
@@ -84,7 +84,7 @@ const Seller = () => {
         if (sellerName) {
 
 
-            setState({ ...state, sellerName: fullName })
+            setState({ ...state, sellerName: fullName, sellerid: sellerName.id })
         }
 
 
@@ -97,6 +97,7 @@ const Seller = () => {
 
         if (isValid === true) {
             setState({ ...state, [e.target.name]: e.target.value });
+
 
         } else {
             console.log(isValid);
@@ -111,11 +112,14 @@ const Seller = () => {
 
 
             let USDBS;
-            if (state.paymentUSD == 'Dolares') {
-                USDBS = 1
+            if (state.usdbs == 'Dolares') {
+                // console.log('dolares');
+                USDBS = true
             } else {
-                USDBS = 0
+                USDBS = false
+
             }
+
 
             const res = await axios.post('/sellerPayments/create',
                 {
@@ -144,7 +148,6 @@ const Seller = () => {
                     icon: 'success'
                 });
 
-                // setTimeout(function () { window.location.reload(); }, 2000);
 
             }
 
@@ -171,7 +174,6 @@ const Seller = () => {
     const onChangeMethod = e => {
 
         const isValid = e.target.value;
-
 
         if (isValid === 'Dolares') {
             setState({ ...state, monto: true, usdbs: e.target.value });
@@ -220,6 +222,7 @@ const Seller = () => {
                                     <td>{data.identification} </td>
                                     <td>{data.commissionUSD} USD</td>
                                     <td>{data.commissionBS} Bs</td>
+                                    <td> <Button className='btnSeller' onClick={() => { handleShowPay(); onChangeSeller(data) }}>Detalles</Button> </td>
 
                                     {user.viewer === 0 ?
                                         <td> <Button className='btnSeller' onClick={() => { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
@@ -273,12 +276,6 @@ const Seller = () => {
                         <Form.Label>Banco</Form.Label>
                         <Form.Control placeholder="Banco" name="bank" onChange={onInputChange} />
                     </Form.Group>
-
-
-
-
-
-
 
                     <Modal.Footer className="registerSeller">
                         <Button onClick={onPay} variant="primary" >
