@@ -1,12 +1,9 @@
 
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom'
-import { Container, Form, Col, Row, Button, InputGroup, ButtonGroup, Dropdown, DropdownButton } from 'react-bootstrap';
-
+import { Container, Form, Col, Button, ButtonGroup, Dropdown, DropdownButton } from 'react-bootstrap';
 import swal from 'sweetalert';
 import axios from '../../config/axios';
-
-
 
 const stateCreate = {
     sellers: [],
@@ -17,12 +14,13 @@ const stateCreate = {
     billDate: '',
     dispatchDate: '',
     client: '',
-    vendedor:'',
-    location:'',
-    city:'',
-    sellersCommission:0,
+    vendedor: '',
+    location: '',
+    city: "No",
+    sellersCommission: 0,
     expirationDate: '',
-    vendedorID: 0
+    vendedorID: 0,
+    id: 0
 
 
 }
@@ -35,24 +33,24 @@ const Create = () => {
     useEffect(function () {
 
 
-    axios.get(`/seller/`)
-    .then((res) => {
+        axios.get(`/seller/`)
+            .then((res) => {
 
 
 
 
-        if (res.data) {
+                if (res.data) {
 
-        setState({...state, sellers: res.data})
+                    setState({ ...state, sellers: res.data })
 
-        } else {
-            console.log('No hay data')
-        }
+                } else {
+                    console.log('No hay data')
+                }
 
 
 
-    })
-    .catch((error) => console.log(error))
+            })
+            .catch((error) => console.log(error))
 
     }, [])
 
@@ -60,11 +58,8 @@ const Create = () => {
 
         const isValid = e.target.validity.valid;
 
-
         if (isValid === true) {
             setState({ ...state, [e.target.name]: e.target.value });
-
-            console.log(e.target.value);
 
         } else {
             console.log(isValid);
@@ -73,126 +68,120 @@ const Create = () => {
 
     }
 
+    const onCityChange = e => {
 
+        setState({ ...state, city: e.target.value });
+        console.log(e.target.value);
+
+    }
 
     const onChangeSeller = (sellerName, vendedorID) => {
 
-      
 
-        // const isValid = e.target.validity.valid;
-
-
-            setState({ ...state, vendedor: sellerName, vendedorID: vendedorID });
-            const vendedor =
+        setState({ ...state, vendedor: sellerName, vendedorID: vendedorID });
+        const vendedor =
             <Form.Group className="mb-3">
-            <Form.Label>Vendedor</Form.Label>
-            <Form.Control disabled  placeholder="Tasa de cambio" value={sellerName} name="vendedor"  />
+                <Form.Label>Vendedor</Form.Label>
+                <Form.Control disabled placeholder="Tasa de cambio" value={sellerName} name="vendedor" />
             </Form.Group>
 
 
-            ReactDOM.render(vendedor, document.getElementById('vendedor'));
-            
-
+        ReactDOM.render(vendedor, document.getElementById('vendedor'));
 
     }
 
 
+    const onSubmit = async e => {
 
-     const onSubmit = async e => {
+        if (state.city === "No") {
 
-        try {
+            swal({
+                title: 'Error',
+                text: 'Seleccione la sede',
+                icon: 'error'
+            });
 
+        } else {
 
-            console.log(`  Se hara la siguiente consulta: Create             
-            \n
-            
-            client: ${state.client}   \n
-            city: ${state.city}   \n
-            rif: ${state.rif}   \n
-            amountUSD: ${state.amountUSD}   \n
-            amountBS: ${(state.amountUSD * state.exchange )}   \n
-            date: ${state.billDate}   \n
-            dispatchDate: ${state.dispatchDate}   \n
-            creditDays: ${state.creditDays}   \n
-            location: ${state.location}   \n
-            sellersComission: ${state.sellersCommission}   \n
-            idSeller: ${state.vendedorID}   \n
-            idSeller: ${state.expirationDate}   \n
-            
-            
-            
-            `);
+            try {
 
+                axios.post('/bill/create',
+                    {
 
+                        id: state.id,
+                        client: state.client,
+                        city: state.city,
+                        rif: (state.rif),
+                        amountUSD: state.amountUSD,
+                        amountBS: (state.amountUSD * state.exchange),
+                        billDate: state.billDate,
+                        dispatchDate: state.dispatchDate,
+                        expirationDate: state.expirationDate,
+                        creditDays: state.creditDays,
+                        location: state.location,
+                        sellersComission: state.sellersCommission,
+                        idSeller: state.vendedorID,
+                        exchange: state.exchange
 
+                    }).then(res => {
 
-            const res = await axios.post('/bill/create',
-                {
-                    
-                    client: state.client,
-                    city: state.city,
-                    rif: (state.rif),
-                    amountUSD: state.amountUSD,
-                    amountBS: (state.amountUSD * state.exchange ),
-                    billDate: state.billDate,
-                    dispatchDate: state.dispatchDate,
-                    expirationDate: state.expirationDate,
-                    creditDays: state.creditDays,
-                    location: state.location,
-                    sellersComission: state.sellersCommission,
-                    idSeller: state.vendedorID,
-                    exchange: state.exchange
+                        if (!res.data.ok) {
 
+                            swal({
+                                title: 'Error',
+                                text: res.data.ok,
+                                icon: 'error'
+                            });
 
-                });
+                        } else {
 
+                            swal({
+                                title: 'Realizado',
+                                text: 'Factura registrada',
+                                icon: 'success'
+                            });
 
-            if (res.data.message) {
-
-
-                swal({
-                    title: 'Error',
-                    text: res.data.message,
-                    icon: 'error'
-                });
-            } else {
+                            setTimeout(function () { window.location.reload(); }, 2000);
 
 
-                swal({
-                    title: 'Realizado',
-                    text: 'Factura registrada',
-                    icon: 'success'
-                });
+                        }
+
+                    }).catch(e => {
+
+                        console.log(e);
+
+                        swal({
+                            title: 'Error',
+                            text: `Verifica bien los campos.`,
+                            icon: 'error'
+                        });
+
+                    })
 
 
             }
+            catch (error) {
+
+                if (state.vendedorID === 0) {
+
+                    swal({
+                        title: 'Error',
+                        text: 'Error, debe seleccionar vendedor',
+                        icon: 'error'
+                    });
 
 
+                } else {
+
+                    swal({
+                        title: 'Error',
+                        text: 'Error, no se pudo procesar la factura',
+                        icon: 'error'
+                    });
+                }
 
 
-        }
-        catch (error) {
-
-            console.log(error);
-
-            if(state.vendedorID ===0){
-
-                swal({
-                    title: 'Error',
-                    text: 'Error, debe seleccionar vendedor',
-                    icon: 'error'
-                });
-    
-
-            } else {
-
-                swal({
-                    title: 'Error',
-                    text: 'Error, no se pudo procesar la factura',
-                    icon: 'error'
-                });
             }
-
 
         }
 
@@ -207,7 +196,7 @@ const Create = () => {
 
             <Container className='containerPayment'>
 
-            <Form.Group as={Col} md="4" controlId="validationCustom02">
+                <Form.Group as={Col} md="4" controlId="validationCustom02">
                     <Form.Label>Fecha de factura</Form.Label>
                     <Form.Control
                         name='billDate'
@@ -216,9 +205,9 @@ const Create = () => {
                         type="date"
                         placeholder="Fecha"
                     />
-            </Form.Group>
+                </Form.Group>
 
-                <br/>
+                <br />
 
                 <Form.Group as={Col} md="4" controlId="validationCustom02">
                     <Form.Label>Fecha de despacho</Form.Label>
@@ -230,7 +219,7 @@ const Create = () => {
                         placeholder="Fecha de despacho"
                     />
                 </Form.Group>
-                <br/>
+                <br />
 
 
                 <Form.Group as={Col} md="4" controlId="validationCustom02">
@@ -243,65 +232,73 @@ const Create = () => {
                         placeholder="Fecha de expiracion"
                     />
                 </Form.Group>
-                <br/>
+                <br />
+
+
+                <Form.Group className="mb-3">
+                    <Form.Label># de factura</Form.Label>
+                    <Form.Control placeholder="Numero" name="id" onChange={onInputChange} type='number' />
+                </Form.Group>
 
 
                 <Form.Group className="mb-3">
                     <Form.Label>Cliente</Form.Label>
-                    <Form.Control  placeholder="Cliente" name="client" onChange={onInputChange} />
+                    <Form.Control placeholder="Cliente" name="client" onChange={onInputChange} />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <Form.Label>RIF</Form.Label>
-                    <Form.Control  placeholder="RIF" name="rif" onChange={onInputChange} />
+                    <Form.Label>RIF/Cedula</Form.Label>
+                    <Form.Control placeholder="RIF" name="rif" onChange={onInputChange} />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>Monto USD</Form.Label>
-                    <Form.Control  placeholder="Monto" name="amountUSD" onChange={onInputChange} />
+                    <Form.Control placeholder="Monto" name="amountUSD" pattern="[0-9.]{0,13}" value={state.amountUSD} onChange={onInputChange} />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>Tasa de cambio</Form.Label>
-                    <Form.Control  placeholder="Tasa " name="exchange" onChange={onInputChange} />
+                    <Form.Control placeholder="Tasa " name="exchange" pattern="[0-9.]{0,13}" value={state.exchange} onChange={onInputChange} />
                 </Form.Group>
 
 
                 <Form.Group className="mb-3">
                     <Form.Label>Comision (%)</Form.Label>
-                    <Form.Control  placeholder="Comision" name="sellersCommission" onChange={onInputChange} />
+                    <Form.Control placeholder="Comision" name="sellersCommission" pattern="[0-9.]{0,13}" value={state.sellersCommission} onChange={onInputChange} />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <Form.Label>Ciudad</Form.Label>
-                    <Form.Control  placeholder="Ciudad" name="city" onChange={onInputChange} />
+                    <Form.Label>Ciudad de la sede que distribuye</Form.Label>
+                    <Form.Select onChange={onCityChange} name="city">
+                        <option value="No">--- Seleccione</option>
+                        <option value="Cabimas">Cabimas</option>
+                        <option value="Caracas">Caracas</option>
+                    </Form.Select>
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                     <Form.Label>Direccion</Form.Label>
-                    <Form.Control  placeholder="Direccion" name="location" onChange={onInputChange} />
+                    <Form.Control placeholder="Direccion" name="location" onChange={onInputChange} />
                 </Form.Group>
-
-
 
                 <Form.Group id='vendedor' className="mb-3"></Form.Group>
 
                 <DropdownButton as={ButtonGroup} className='dropdownSeller' title="Vendedor" id="bg-vertical-dropdown-2">
-                    {state.sellers.map(data=>(
-                        <Dropdown.Item key={data.id}  onClick={()=> { let sellerName = `${data.name} ${data.lastname}`;  onChangeSeller(sellerName, data.id);}}>{ `${data.name}  ${data.lastname}`}</Dropdown.Item>
+                    {state.sellers.map(data => (
+                        <Dropdown.Item key={data.id} onClick={() => { let sellerName = `${data.name} ${data.lastname}`; onChangeSeller(sellerName, data.id); }}>{`${data.name}  ${data.lastname}`}</Dropdown.Item>
 
                     ))}
                 </DropdownButton>
-                <br/>
-                <br/>
+                <br />
+                <br />
 
                 <Button variant="success" className='btnMake' onClick={onSubmit} type="submit">Registrar factura</Button>
 
 
             </Container>
 
-                        
-  
+
+
 
         </>
 

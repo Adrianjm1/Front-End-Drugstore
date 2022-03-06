@@ -1,6 +1,6 @@
 .divTable{
     margin-top: 50px;
-    width: 80%;
+    width: 90%;
     display: block;
     margin-left: auto;
     margin-right: auto;
@@ -17,6 +17,16 @@ a{
 
 }
 
+.busqueda  {
+    width: 15%;
+    margin-left: 90px;
+}
+
+.busquedax {
+    width: 15%;
+    margin-left: 90px;
+}
+
 
 .tableDetails:hover{
     color: rgb(3, 164, 175);
@@ -26,7 +36,7 @@ a{
 
 
 .dropdownMain {
-    margin-top: 20px;
+
     margin-left: auto;
     margin-right: auto;
     display: block;
@@ -43,6 +53,10 @@ a{
     background-color: rgb(11, 86, 109);
 }
 
+#test-table-xls-button{
+    margin-top: 18px;
+    margin-left: 90px;
+}
 /* .modalCreateBill{
     width: 120%;
 } */
@@ -51,3 +65,5 @@ a{
 .modal-content{
     width: 120%;
 }
+
+

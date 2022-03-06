@@ -2,10 +2,10 @@
 
 // const TABLE_GET = '/local/table';
 
-// const types = {
-//     login: '[auth] login',
-//     logout: '[auth] logout',
-// }
+const types = {
+    login: '[auth] login',
+    logout: '[auth] logout',
+}
 
 /* let api;
 if (process.env.NODE_ENV != 'production') {
@@ -16,10 +16,17 @@ if (process.env.NODE_ENV != 'production') {
  */
 const URL_API = 'http://localhost:5000/api';
 
+// const URL_API ='https://drugstore-enmanuelle.herokuapp.com/api';
+
+// const URL_API = 'https://drogueria-enmanuelle.herokuapp.com/api'
 
 export {
     // TABLE_GET,
     // ADMIN_GET,
-    // types,
+    types,
     URL_API,
 }
+
+
+
+

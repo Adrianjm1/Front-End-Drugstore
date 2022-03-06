@@ -1,7 +1,12 @@
-.divTable{
-    margin-top: 50px;
-    width: 80%;
+
+.btnSeller {
+    width: 100%;
+    height: auto;
+}
+
+.registerSeller {
+    text-align: center;
     display: block;
-    margin-left: auto;
+    margin-left:auto ;
     margin-right: auto;
 }

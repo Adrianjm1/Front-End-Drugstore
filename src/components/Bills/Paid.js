@@ -1,27 +1,63 @@
 
 import React, { useState, useEffect } from 'react'
-import { Table, Modal, Button, Form, Row, Col, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
+import { Modal, Table } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
+import numberWithCommas from '../../helpers/helpers';
+import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import BootstrapTable from "react-bootstrap-table-next";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import { AuthContext } from '../../auth/AuthContext';
+
 
 
 const defaultState = {
-    sellers: [],
-    bills: [],
-
+    bills1: [],
+    usd: 0,
+    bs: 0,
+    busqueda: ''
 };
 
 
 const Paid = () => {
-    
+
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
-    
-    const handleCloseDetails = () => setShowDetails(false);
-    const handleShowDetails = () => setShowDetails(true);
-    
 
-    const changeNumber = (id)=>{
+
+
+    const handleCloseDetails = () => {
+
+        axios.get('/bill/paid')
+            .then((resp) => {
+
+                let datos = resp.data;
+
+                let productos = [];
+
+                datos.data.map(data => {
+                    productos.push({
+                        date: (data.billDate).slice(0, 10),
+                        expirationDate: data.expirationDate.slice(0, 10),
+                        client: data.client,
+                        amountPayed: `${data.amount.paid} $`,
+                        toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
+                    })
+                });
+
+                setState({ ...state, bills1: productos, usd: datos.sumUSD, bs: datos.sumBS });
+                setShowDetails(false);
+
+            })
+            .catch((error) => console.log(error))
+
+
+    }
+
+    const handleShowDetails = () => setShowDetails(true);
+
+    const changeNumber = (id) => {
 
         setState({
             ...state,
@@ -30,91 +66,129 @@ const Paid = () => {
 
     }
 
-    
-
-
     useEffect(function () {
 
+        axios.get('/bill/paid')
+            .then((resp) => {
 
-        axios.get('/seller/')
-            .then((res) => {
+                let productos = [];
+                let datos = resp.data;
 
-                axios.get('/bill/paid')
-                    .then((resp) => {
-
-                            setState({
-                                ...state,
-                                sellers: res.data,
-                                bills: resp.data,
-                            })
-
+                datos.data.map(data => {
+                    productos.push({
+                        id: (data.id),
+                        date: (data.billDate).slice(0, 10),
+                        expirationDate: data.expirationDate.slice(0, 10),
+                        client: data.client,
+                        amountPayed: `${data.amount.paid} $`,
+                        overPaidBS: `${data.overPaidBS}Bs.`,
+                        toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
                     })
-                    .catch((error) => console.log(error))
+                });
 
+                setState({ ...state, bills1: productos, usd: datos.sumUSD, bs: datos.sumBS });
 
             })
-            .catch((error) => console.log(error))
+            .catch((error) => console.error(error))
 
-
-        //eslint-disable-next-line
     }, [])
 
-
+    const columns = [
+        {
+            dataField: "date",
+            text: "Fecha",
+            sort: true
+        },
+        {
+            dataField: "expirationDate",
+            text: "Fecha de expiracion",
+            sort: true
+        },
+        {
+            dataField: "client",
+            text: "Cliente",
+            sort: true
+        },
+        {
+            dataField: "amountPayed",
+            text: "Monto Pagado",
+            sort: true
+        },
+        {
+            dataField: "overPaidBS",
+            text: "Diferencial Cambiario",
+            sort: true
+        },
+        {
+            dataField: "toDo",
+            text: "Detalle",
+            sort: true
+        }
+    ];
 
     return (
         <>
-             <h2><b>Facturas pagadas</b></h2>
-
-    <div className='divTable'>
-
-    <Table className='table-seller' striped bordered hover>
-        <thead>
-            <tr>
-                <th># de factura</th>
-                <th>Fecha</th>
-                <th>Fecha de expiracion</th>
-                <th>Cliente</th>
-                <th>Monto pagado</th>
-                <th>Accion a realizar</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-            {
-                state.bills.map(data => (
+            <h2><b>Facturas cobradas</b></h2>
 
 
-                    <tr className='table-pagadas' key={data.id}>
-                        <td>{data.id}</td>
-                        <td>{(data.billDate).slice(0, 10)}</td>
-                        <td>{data.expirationDate.slice(0, 10)}</td>
-                        <td>{data.client}</td>
-                        <td>{`${data.amount.paid} $`}</td>
-                        
+            <div className='divTable'>
+                <Table className="margintable" striped bordered hover size="sm" >
+                    <thead>
+                        <tr className='first'>
+                            <th>Facturado en dolares ($)</th>
+                            <th>Facturado en bolívares (Bs.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{numberWithCommas(parseFloat(state.usd || 0).toFixed(2))} USD</td>
+                            <td>{numberWithCommas(parseFloat(state.bs || 0).toFixed(2))} Bs.</td>
+                        </tr>
+                    </tbody>
+                </Table>
 
-                        <td >{<a  onClick={()=>{handleShowDetails(); changeNumber(data.id) }}  className='tableDetails' href='#'>Detalles</a>}</td>
-                
+                {<ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="btn btn-success"
+                    table="Paid"
+                    filename="tablexls"
+                    sheet="tablexls"
+                    buttonText="Exportar a Excel" />}
+            </div>
 
-                    </tr>
-                ))
-            }
-        </tbody>
-    </Table>
+            <div className='divTable'>
 
-    </div>
+                <BootstrapTable
+                    bootstrap4
+                    id='Paid'
+                    keyField="id"
+                    data={state.bills1}
+                    columns={columns}
+                    pagination={paginationFactory({
+                        sizePerPageList: [{
+                            text: '15', value: 15
+                        }, {
+                            text: '50', value: 50
+                        }, {
+                            text: 'Todo', value: state.bills1.length
+                        }]
+                    })}
+                />
 
-    <Modal show={showDetails} onHide={handleCloseDetails}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>Detalles</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
+            </div>
 
-                        <Details number={state.number} />
+            <Modal show={showDetails} onHide={handleCloseDetails}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Detalles</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
 
-                    </Modal.Body>
-                </Modal>
-            </>
-        )
+                    <Details number={state.number} />
+
+                </Modal.Body>
+            </Modal>
+        </>
+    )
 }
 
 export default Paid

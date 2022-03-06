@@ -1,32 +1,98 @@
-import React, { useState, useEffect } from 'react'
-import { Table, Modal, Button, Form, Row, Col, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
+import React, { useState, useEffect, useMemo, useContext } from 'react'
+import { Modal, FormControl } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import MakeAPayment from '../Payments/MakeAPayment';
+import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
+import paginationFactory from 'react-bootstrap-table2-paginator';
+import BootstrapTable from "react-bootstrap-table-next";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import { AuthContext } from '../../auth/AuthContext';
+
 
 
 const defaultState = {
-    sellers: [],
-    bills: [],
-
+    bills3: [],
+    busqueda: ''
 };
 
 
 const Notpayed = () => {
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
-    
-    const handleCloseDetails = () => setShowDetails(false);
+    const { user, dispatch } = useContext(AuthContext);
+
+
+    const handleCloseDetails = () => {
+
+        axios.get('/bill/notpayed')
+            .then((resp) => {
+
+                let productos = [];
+
+                resp.data.map(data => {
+                    productos.push({
+                        id: data.id,
+                        date: (data.billDate).slice(0, 10),
+                        expirationDate: data.expirationDate.slice(0, 10),
+                        client: data.client,
+                        amountNotPayed: `${data.amount.notPayed} $`,
+                        billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
+                    })
+                });
+
+
+                setState({ ...state, bills3: productos });
+                setShowDetails(false);
+
+            })
+            .catch((error) => console.log(error))
+    }
+
+
+
+
     const handleShowDetails = () => setShowDetails(true);
 
-    
+
+
+
+    const handleChange = e => {
+        setState({ ...state, busqueda: e.target.value.toUpperCase() });
+    }
+
     const [show, setShow] = useState(false);
-    const handleClose = () => setShow(false);
+
+    const handleClose = () => {
+
+        axios.get('/bill/notpayed')
+            .then((resp) => {
+
+                let productos = [];
+
+                resp.data.map(data => {
+                    productos.push({
+                        date: (data.billDate).slice(0, 10),
+                        expirationDate: data.expirationDate.slice(0, 10),
+                        client: data.client,
+                        amountNotPayed: `${data.amount.notPayed} $`,
+                        billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
+                    })
+                });
+
+                setState({ ...state, bills3: productos });
+                setShow(false);
+
+            })
+            .catch((error) => console.log(error))
+
+    }
+
     const handleShow = () => setShow(true);
 
-    
-
-    const changeNumber = (id)=>{
+    const changeNumber = (id) => {
 
         setState({
             ...state,
@@ -35,26 +101,88 @@ const Notpayed = () => {
 
     }
 
+    const columns = [
+        {
+            dataField: "date",
+            text: "Fecha",
+            sort: true
+        },
+        {
+            dataField: "expirationDate",
+            text: "Fecha de expiracion",
+            sort: true
+        },
+        {
+            dataField: "client",
+            text: "Cliente",
+            sort: true
+        },
+        {
+            dataField: "amountNotPayed",
+            text: "Monto Vencido",
+            sort: true
+        },
+        {
+            dataField: "billNumber",
+            text: "Detalle",
+            sort: true
+        },
+        {
+            dataField: "toDo",
+            text: "Accion a Realizar",
+            sort: true
+        }
+    ];
 
-    
+    const columnview = [
+        {
+            dataField: "date",
+            text: "Fecha",
+            sort: true
+        },
+        {
+            dataField: "expirationDate",
+            text: "Fecha de expiracion",
+            sort: true
+        },
+        {
+            dataField: "client",
+            text: "Cliente",
+            sort: true
+        },
+        {
+            dataField: "amountNotPayed",
+            text: "Monto Vencido",
+            sort: true
+        },
+        {
+            dataField: "billNumber",
+            text: "Detalle",
+            sort: true
+        },
+    ];
+
     useEffect(function () {
 
+        axios.get('/bill/notpayed')
+            .then((resp) => {
 
-        axios.get('/seller/')
-            .then((res) => {
+                let productos = [];
 
-                axios.get('/bill/notpayed')
-                    .then((resp) => {
-
-                            setState({
-                                ...state,
-                                sellers: res.data,
-                                bills: resp.data,
-                            })
-
+                resp.data.map(data => {
+                    productos.push({
+                        id: (data.id),
+                        date: (data.billDate).slice(0, 10),
+                        expirationDate: data.expirationDate.slice(0, 10),
+                        client: data.client,
+                        amountNotPayed: `${data.amount.notPayed} $`,
+                        billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
-                    .catch((error) => console.log(error))
 
+                });
+
+                setState({ ...state, bills3: productos })
 
             })
             .catch((error) => console.log(error))
@@ -63,62 +191,80 @@ const Notpayed = () => {
         //eslint-disable-next-line
     }, [])
 
+    const facturas = useMemo(function () {
+        if (state.bills3.length) {
+            return state.bills3.filter(factura => (`${factura.id}`).includes(state.busqueda))
+        } else if (state.busqueda === '') {
+            return state.bills3
+        }
+
+        return state.bills3
+    }, [state])
 
     return (
         <>
-             <h2><b>Facturas vencidas</b></h2>
+            <h2><b>Facturas vencidas</b></h2>
+            <p className='busquedax'>Busqueda por #</p>
+            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
 
-    <div className='divTable'>
-
-    <Table className='table-seller' striped bordered hover>
-        <thead>
-            <tr>
-                <th># de factura</th>
-                <th>Fecha</th>
-                <th>Fecha de expiracion</th>
-                <th>Cliente</th>
-                <th>Monto Vencido</th>
-                <th>Accion a realizar</th>
-            </tr>
-        </thead>
-        <tbody>
-            
-            
-            {
-                state.bills.map(data => (
+            {<ReactHTMLTableToExcel
+                id="test-table-xls-button"
+                className="btn btn-success"
+                table="NotPayedTable"
+                filename="tablexls"
+                sheet="tablexls"
+                buttonText="Exportar a Excel" />}
 
 
-                    <tr key="2" className='table-danger'>
-                        <td>{data.id}</td>
-                        <td>{(data.billDate).slice(0, 10)}</td>
-                        <td>{data.expirationDate.slice(0, 10)}</td>
-                        <td>{data.client}</td>
-                        <td>{`${data.amount.notPayed} $`}</td>
-                        
+
+            <div className='divTable'>
+
+                {user.viewer === 0 ?
+                    <BootstrapTable
+                        bootstrap4
+                        id='NotPayedTable'
+                        keyField="id"
+                        data={facturas}
+                        columns={columns}
+                        pagination={paginationFactory({
+                            sizePerPageList: [{
+                                text: '15', value: 15
+                            }, {
+                                text: '50', value: 50
+                            }, {
+                                text: 'Todo', value: state.bills3.length
+                            }]
+                        })}
+                    />
+
+                    :
+                    <BootstrapTable
+                        bootstrap4
+                        id='NotPayedTable'
+                        keyField="id"
+                        data={facturas}
+                        columns={columnview}
+                        pagination={paginationFactory({
+                            sizePerPageList: [{
+                                text: '15', value: 15
+                            }, {
+                                text: '50', value: 50
+                            }, {
+                                text: 'Todo', value: state.bills3.length
+                            }]
+                        })}
+                    />}
+
+            </div>
 
 
-                        <td >{<a  onClick={()=>{handleShowDetails(); changeNumber(data.id) }}  className='tableDetails' href='#'>
-                            Detalles</a> } /      
-                            {<a className='tableDetails' onClick={() =>{ handleShow(); changeNumber(data.id);}} >Realizar pago</a>}
-                                                      </td>
- 
-
-                    </tr>
-                ))
-            }
-        </tbody>
-    </Table>
-
-    </div>
-
-               
-    <Modal show={show} onHide={handleClose}>
+            <Modal show={show} onHide={handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Procesar pago</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
 
-                <MakeAPayment number={state.number}/>
+                    <MakeAPayment number={state.number} />
 
                 </Modal.Body>
             </Modal>
@@ -134,8 +280,8 @@ const Notpayed = () => {
                 </Modal.Body>
             </Modal>
 
-            </>
-        )
+        </>
+    )
 }
 
 export default Notpayed
