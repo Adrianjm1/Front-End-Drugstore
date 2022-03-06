@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom'
+import ReactDOM from 'react-dom';
 import { Container, Form, Col, Row, Button } from 'react-bootstrap';
 import image from '../../assets/img/dolar.png'
 import swal from 'sweetalert';

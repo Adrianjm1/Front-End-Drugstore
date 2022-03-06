@@ -20,7 +20,7 @@ import File from './File';
 const Main = () => {
 
 
- 
+
 
     const defaultState = {
         number: 0,
@@ -30,6 +30,11 @@ const Main = () => {
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+
+    const [showFile, setShowFile] = useState(false);
+    const handleCloseFile = () => setShowFile(false);
+    const handleShowFile = () => setShowFile(true);
+
 
 
     const [showWelcome, setShowWelcome] = useState(false);
@@ -92,10 +97,16 @@ const Main = () => {
         <>
 
             <NavbarLoged />
-            <File/>
+
 
             {user.viewer === 0 ?
-                <Button className='btnCreateBill' onClick={handleShow}>Crear Factura </Button>
+                <Button className="bg-danger mx-auto d-block m-5" style={{ borderColor: 'black' }} onClick={handleShowFile}>Subir archivo</Button>
+                :
+                <></>
+            }
+
+            {user.viewer === 0 ?
+                <Button className='bg-success mx-auto d-block m-3' style={{ borderColor: 'black' }} onClick={handleShow}>Crear Factura </Button>
                 :
                 <> {user.viewer}</>
             }
@@ -147,6 +158,17 @@ const Main = () => {
                 <Modal.Body>
 
                     <Create />
+
+                </Modal.Body>
+            </Modal>
+
+            <Modal className="modalFile" show={showFile} onHide={handleCloseFile}>
+                <Modal.Header >
+                    <Modal.Title>Importar datos desde Excel</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+
+                    <File />
 
                 </Modal.Body>
             </Modal>
