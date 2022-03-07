@@ -218,8 +218,6 @@ const Seller = () => {
         }
         catch (error) {
 
-            console.log(error);
-
             swal({
                 title: 'Error',
                 text: 'Error, no se pudo eliminar el usuario',
