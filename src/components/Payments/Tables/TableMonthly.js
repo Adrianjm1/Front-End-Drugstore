@@ -6,6 +6,9 @@ import numberWithCommas from '../../../helpers/helpers';
 
 export const TableMonthly = (props) => {
 
+    const { setPayment } = props;
+
+
     const columns = [
         {
             dataField: "date",
@@ -46,8 +49,20 @@ export const TableMonthly = (props) => {
             dataField: "bank",
             text: "Banco",
             sort: true
+        },
+        {
+            dataField: "delete",
+            text: "",
+            sort: true
         }
     ];
+
+    const onFocusDelete = (data) => {
+
+        setPayment({ id: data.id, client: data.bill.client, amount: data.amountUSD });
+
+    }
+
 
     const productsGenerator = items => {
 
@@ -62,7 +77,9 @@ export const TableMonthly = (props) => {
                 exchange: `${numberWithCommas(parseFloat(data.exchangeRate).toFixed(2))} Bs`,
                 reference: data.referenceNumber,
                 paymentUSD: data.paymentUSD === false ? 'No' : 'Si',
-                bank: data.bank
+                bank: data.bank,
+                delete: <b><p className="btn btn-danger delete-payment" onClick={() => { onFocusDelete(data) }}>Eliminar Pago</p></b>
+
             })
         })
 
