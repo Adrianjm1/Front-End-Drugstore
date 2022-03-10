@@ -56,33 +56,68 @@ const File = () => {
         try {
 
 
-            document.getElementById("subeFile").style = "display:none";
+            
+            try {
+                document.getElementById("subeFile").style = "display:none";
+    
+    
+                event.preventDefault()
+    
+                formData.append("file", selectedFile, 'tabla.xlsx');
 
 
-            event.preventDefault()
 
-            formData.append("file", selectedFile, 'tabla.xlsx');
-            const uploadd = axios.post('/bill/file', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+                const uploadd = axios.post('/bill/file', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                })
+    
+                if (!uploadd) {
+                    swal({
+                        title: 'Error',
+                        text: 'Ha ocurrido un error al procesar los datos',
+                        icon: 'error',
+        
+                    })
+                    
                 }
-            })
 
-            if (uploadd) {
 
-                axios.get('/bill/correct')
+                swal({
+                    title: 'Esperar',
+                    text: 'Por favor esperar unos segundos... este mensaje se cerrara automaticamente',
+                    icon: 'info',
+                    timer: 30000,
+                    buttons: false
+                })
+    
+    
+            } catch (error) {
+                swal({
+                    title: 'Error',
+                    text: 'Ha ocurrido un error al procesar los datos',
+                    icon: 'error',
+                    buttons: false
+                })
+
+                document.getElementById("subeFile").style = "display:block";
+
+    
+                
             }
 
-            swal({
-                title: 'Esperar',
-                text: 'Por favor esperar unos segundos... este mensaje se cerrara automaticamente',
-                icon: 'info',
-                timer: 30000,
-                buttons: false
-            })
+
 
 
         } catch (error) {
+            swal({
+                title: 'Error',
+                text: 'Ha ocurrido un error al procesar los datos',
+                icon: 'error',
+                buttons: false
+            })
+
             console.log(error)
         }
     }

@@ -13,6 +13,11 @@ export const TableMonthly = (props) => {
             sort: true
         },
         {
+            dataField: "idBill",
+            text: "Numero",
+            sort: true
+        },
+        {
             dataField: "client",
             text: "Cliente",
             sort: true
@@ -55,6 +60,7 @@ export const TableMonthly = (props) => {
 
         items.map(data => {
             productos.push({
+                idBill: data.idBill,
                 date: data.date,
                 client: data.bill.client,
                 priceUSD: `${numberWithCommas(parseFloat(data.amountUSD))} USD`,
