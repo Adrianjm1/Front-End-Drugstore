@@ -8,6 +8,8 @@ import Footer from '../Footer/Footer';
 import numberWithCommas from '../../helpers/helpers';
 import { AuthContext } from '../../auth/AuthContext';
 import { types } from '../../config/constant';
+import swal from "sweetalert";
+
 import './payments.css';
 
 const Payments = () => {
@@ -22,7 +24,8 @@ const Payments = () => {
         bsMeses: '',
         totalMeses: '',
         busqueda: '',
-        option: 1
+        option: 1,
+        deleteId: 0
     };
 
     const paymentValues = {
@@ -192,6 +195,50 @@ const Payments = () => {
     }
 
 
+    const deletePay = () => {
+
+console.log(payment.id);
+        try {
+
+            axios.delete(`/payments/delete/${payment.id}`)
+                .then(data => {
+
+                    if (!data.data.ok) {
+
+                        swal({
+                            title: 'Error',
+                            text: 'Ha ocurrido un error al intentar eliminar el pago',
+                            icon: 'error'
+                        });
+
+                    } else {
+
+                        swal({
+                            title: 'Realizado',
+                            text: data.data.res,
+                            icon: 'success'
+                        });
+
+
+                    }
+
+                })
+
+        }
+        catch (error) {
+
+            swal({
+                title: 'Error',
+                text: 'Error, no se pudo eliminar el usuario',
+                icon: 'error'
+            });
+
+        }
+
+        setTimeout(function () { window.location.reload(); }, 1500);
+
+    }
+
     return (
         <>
 
@@ -313,7 +360,7 @@ const Payments = () => {
 
                     <Modal.Footer>
                         <Button onClick={handleCloseDelete} variant="secondary">No</Button>
-                        <Button className="btn-danger" variant="primary">Si</Button>
+                        <Button onClick={deletePay} className="btn-danger" variant="primary">Si</Button>
                     </Modal.Footer>
                 </Modal>
 

@@ -1,19 +1,28 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useContext } from 'react';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
 import numberWithCommas from '../../../helpers/helpers';
 import { Button, Modal } from 'react-bootstrap';
+
 import './tables.css';
 
 export const TableDaily = (props) => {
 
+
+
     const { setPayment } = props;
+
 
     const columns = [
         {
             dataField: "client",
             text: "Cliente",
+            sort: true
+        },
+        {
+            dataField: "idBill",
+            text: "Numero",
             sort: true
         },
         {
@@ -55,9 +64,10 @@ export const TableDaily = (props) => {
 
     const onFocusDelete = (data) => {
 
-        setPayment({ id: data.id, client: data.bill.client, amount: data.amountUSD });
+        setPayment({ id: data.id, client: data.bill.client, amount: data.amountUSD,  });
 
     }
+
 
     const productsGenerator = items => {
 
@@ -65,6 +75,7 @@ export const TableDaily = (props) => {
 
         items.map(data => {
             productos.push({
+                idBill: data.idBill,
                 client: data.bill.client,
                 priceUSD: `${numberWithCommas(parseFloat(data.amountUSD))} USD`,
                 priceBS: `${numberWithCommas((parseFloat(data.amountUSD) * parseFloat(data.exchangeRate)).toFixed(2))} Bs`,
