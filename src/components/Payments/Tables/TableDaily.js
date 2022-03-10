@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
 import numberWithCommas from '../../../helpers/helpers';
+import { Button, Modal } from 'react-bootstrap';
+import './tables.css';
 
 export const TableDaily = (props) => {
+
+    const { setPayment } = props;
 
     const columns = [
         {
@@ -41,8 +45,19 @@ export const TableDaily = (props) => {
             dataField: "bank",
             text: "Banco",
             sort: true
+        },
+        {
+            dataField: "delete",
+            text: "",
+            sort: true
         }
     ];
+
+    const onFocusDelete = (data) => {
+
+        setPayment({ id: data.id, client: data.bill.client, amount: data.amountUSD });
+
+    }
 
     const productsGenerator = items => {
 
@@ -56,7 +71,8 @@ export const TableDaily = (props) => {
                 exchange: `${numberWithCommas(parseFloat(data.exchangeRate).toFixed(2))} Bs`,
                 reference: data.referenceNumber,
                 paymentUSD: data.paymentUSD === false ? 'No' : 'Si',
-                bank: data.bank
+                bank: data.bank,
+                delete: <b><p className="btn btn-danger delete-payment" onClick={() => { onFocusDelete(data) }}>Eliminar Pago</p></b>
             })
         })
 

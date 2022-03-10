@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react'
-import { Table, Container, Form, FormControl, Dropdown, ButtonGroup, DropdownButton } from 'react-bootstrap';
+import { Table, Container, Form, FormControl, Dropdown, ButtonGroup, DropdownButton, Modal, Button } from 'react-bootstrap';
 import { TableMonthly } from './Tables/TableMonthly';
 import { TableDaily } from './Tables/TableDaily';
 import axios, { generateToken } from '../../config/axios';
@@ -24,6 +24,23 @@ const Payments = () => {
         busqueda: '',
         option: 1
     };
+
+    const paymentValues = {
+        id: '',
+        client: '',
+        amount: '',
+    }
+
+
+    const [showDelete, setShowDelete] = useState(false);
+    const handleCloseDelete = () => {
+        setShowDelete(false);
+        setPayment({ ...state, id: '', client: '', amount: '' });
+    }
+    const handleShowDelete = () => setShowDelete(true);
+
+
+    const [payment, setPayment] = useState(paymentValues);
 
     const [state, setState] = useState(defaultState);
 
@@ -57,6 +74,19 @@ const Payments = () => {
 
     }, [user.token]);
 
+    useEffect(function () {
+
+        if(payment.id !== ''){
+
+            console.log('it works!');
+            handleShowDelete();
+
+        }
+
+
+    }, [payment]);
+
+
 
     const OnChangeMonth = (e) => {
 
@@ -81,7 +111,7 @@ const Payments = () => {
 
     }
 
-    
+
     const OnChangeDate = (e) => {
 
         const day = e.target.value;
@@ -213,7 +243,7 @@ const Payments = () => {
 
                         <p></p>
 
-                        <TableMonthly data={state.datosMeses} />
+                        <TableMonthly data={state.datosMeses} setPayment={setPayment} />
 
                     </Form>
 
@@ -262,7 +292,7 @@ const Payments = () => {
 
                         <p></p>
 
-                        <TableDaily data={state.datosDias} />
+                        <TableDaily data={state.datosDias} setPayment={setPayment} />
 
                     </Form>
 
@@ -271,6 +301,21 @@ const Payments = () => {
                     <> </>
 
                 }
+
+                <Modal show={showDelete} onHide={handleCloseDelete}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirmar</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <p>¿Estas seguro/a que deseas eliminar el pago de <b>{payment.client}</b> por el monto de <b>{payment.amount}</b>?</p>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button onClick={handleCloseDelete} variant="secondary">No</Button>
+                        <Button className="btn-danger" variant="primary">Si</Button>
+                    </Modal.Footer>
+                </Modal>
 
 
             </Container>
