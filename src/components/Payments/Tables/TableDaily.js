@@ -102,7 +102,15 @@ export const TableDaily = (props) => {
                 keyField="reference"
                 data={products}
                 columns={columns}
-                pagination={paginationFactory({ sizePerPage: 5 })}
+                pagination={paginationFactory({
+                    sizePerPageList: [{
+                        text: '15', value: 15
+                    }, {
+                        text: '50', value: 50
+                    }, {
+                        text: 'Todo', value: products.length
+                    }]
+                })}
             />
         </div>
     )

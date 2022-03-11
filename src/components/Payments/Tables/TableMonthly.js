@@ -1,4 +1,6 @@
-import React from 'react'
+import React, { useState, useMemo } from 'react';
+import {  Form, FormControl } from 'react-bootstrap';
+
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
@@ -7,6 +9,14 @@ import numberWithCommas from '../../../helpers/helpers';
 export const TableMonthly = (props) => {
 
     const { setPayment } = props;
+
+    const defaultstate = {
+        busqueda: '',
+    }
+
+
+    const [state, setState] = useState(defaultstate)
+
 
 
     const columns = [
@@ -73,6 +83,8 @@ export const TableMonthly = (props) => {
 
         let productos = [];
 
+
+
         items.map(data => {
             productos.push({
                 idBill: data.idBill,
@@ -93,19 +105,60 @@ export const TableMonthly = (props) => {
 
     };
 
-
     const products = productsGenerator(props.data);
+
+    
+
+     const  dataTable = useMemo(function () {
+        if (state.busqueda.length ) {
+
+            return products.filter(product => product.bank.includes( (state.busqueda).toUpperCase() ))
+        }
+
+        return products
+    }, [products])
+
+
+
+
+    const onInputChange = e => {
+
+        const isValid = e.target.validity.valid;
+
+        if (isValid === true) {
+            setState({ ...state, [e.target.name]: e.target.value });
+
+        }
+
+    }
+
+
 
 
     return (
-        <div>
-            <BootstrapTable
-                bootstrap4
-                keyField="reference"
-                data={products}
-                columns={columns}
-                pagination={paginationFactory({ sizePerPage: 5 })}
-            />
-        </div>
+        <>
+
+            <Form.Group className="mb-3">
+                <Form.Label className="label-date">Banco</Form.Label>
+                <FormControl type="text" placeholder="Busqueda por banco" className="getPayments" id="busqueda" name="busqueda" onChange={onInputChange} />
+            </Form.Group>
+            <div>
+                <BootstrapTable
+                    bootstrap4
+                    keyField="idBill"
+                    data={dataTable}
+                    columns={columns}
+                    pagination={paginationFactory({
+                        sizePerPageList: [{
+                            text: '15', value: 15
+                        }, {
+                            text: '50', value: 50
+                        }, {
+                            text: 'Todo', value: products.length
+                        }]
+                    })}
+                />
+            </div>
+        </>
     )
 }

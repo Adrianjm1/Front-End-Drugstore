@@ -266,10 +266,7 @@ console.log(payment.id);
                             <Form.Control type="month" className="getPayments" onChange={OnChangeMonth} />
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label className="label-date">Banco</Form.Label>
-                            <FormControl type="text" placeholder="Busqueda por banco" className="getPayments" id="busqueda" onChange={handleChangeBMeses} />
-                        </Form.Group>
+
 
                         <Table className="margintable" striped bordered hover size="sm" >
                             <thead>
