@@ -1,15 +1,23 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useMemo,useContext } from 'react';
+import { AuthContext } from '../../../auth/AuthContext';
+import { Form, FormControl } from 'react-bootstrap';
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
 import numberWithCommas from '../../../helpers/helpers';
-import { Button, Modal } from 'react-bootstrap';
 
 import './tables.css';
 
 export const TableDaily = (props) => {
 
 
+
+    const defaultstate = {
+        busqueda: '',
+    }
+
+    const [state, setState] = useState(defaultstate)
 
     const { setPayment } = props;
 
@@ -61,10 +69,16 @@ export const TableDaily = (props) => {
             sort: true
         }
     ];
+    const { user} = useContext(AuthContext);
 
+    if (user.viewer !==0) {
+        columns.pop()
+    }
+
+    
     const onFocusDelete = (data) => {
 
-        setPayment({ id: data.id, client: data.bill.client, amount: data.amountUSD,  });
+        setPayment({ id: data.id, client: data.bill.client, amount: data.amountUSD, });
 
     }
 
@@ -75,6 +89,7 @@ export const TableDaily = (props) => {
 
         items.map(data => {
             productos.push({
+                id: data.id,
                 idBill: data.idBill,
                 client: data.bill.client,
                 priceUSD: `${numberWithCommas(parseFloat(data.amountUSD))} USD`,
@@ -91,27 +106,80 @@ export const TableDaily = (props) => {
 
     };
 
-
     const products = productsGenerator(props.data);
+    const dataTable = useMemo(function () {
+            return products.filter(product => product.bank.includes((state.busqueda).toUpperCase()))
+
+    }, [products])
+
+    const onInputChange = e => {
+
+        const isValid = e.target.validity.valid;
+
+        if (isValid === true) {
+            setState({ ...state, [e.target.name]: e.target.value });
+
+        }
+
+    }
+
+
+
 
 
     return (
-        <div>
-            <BootstrapTable
-                bootstrap4
-                keyField="reference"
-                data={products}
-                columns={columns}
-                pagination={paginationFactory({
-                    sizePerPageList: [{
-                        text: '15', value: 15
-                    }, {
-                        text: '50', value: 50
-                    }, {
-                        text: 'Todo', value: products.length
-                    }]
-                })}
-            />
-        </div>
+
+        <>
+
+            <div>
+
+
+                <div className='overTable' >
+
+                    <div>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label className="label-date">Banco</Form.Label>
+                            <FormControl type="text" placeholder="Busqueda por banco" className="getPayments" id="busqueda" name="busqueda" onChange={onInputChange} />
+                        </Form.Group>
+                    </div>
+
+
+                    <div>
+                        {<ReactHTMLTableToExcel
+                            id="test-table-xls-button"
+                            className="btn btn-success"
+                            table="dailyTable"
+                            filename="pagoxdia"
+                            sheet="tablexls"
+                            buttonText="Exportar a Excel" />}
+
+
+                    </div>
+
+                </div>
+
+
+
+                <BootstrapTable
+                    bootstrap4
+                    id='dailyTable'
+                    hover={true}
+                    keyField="id"
+                    data={dataTable}
+                    columns={columns}
+                    pagination={paginationFactory({
+                        sizePerPageList: [{
+                            text: '15', value: 15
+                        }, {
+                            text: '50', value: 50
+                        }, {
+                            text: 'Todo', value: products.length
+                        }]
+                    })}
+                />
+            </div>
+
+        </>
     )
 }

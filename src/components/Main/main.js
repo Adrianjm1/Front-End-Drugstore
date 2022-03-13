@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { AuthContext } from '../../auth/AuthContext';
 import { Modal, Button, DropdownButton, ButtonGroup, Dropdown, Col, Row } from 'react-bootstrap';
 import axios, { generateToken } from '../../config/axios';
-import { AuthContext } from '../../auth/AuthContext';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
 import Paid from '../Bills/Paid';
@@ -127,7 +127,7 @@ const Main = () => {
                     {user.viewer === 0 ?
                         <Button className='bg-success d-block' style={{ borderColor: 'black' }} onClick={handleShow}>Crear Factura </Button>
                         :
-                        <> {user.viewer}</>
+                        <></>
                     }
 
                 </Col>

@@ -1,10 +1,12 @@
-import React, { useState, useMemo } from 'react';
-import {  Form, FormControl } from 'react-bootstrap';
-
+import React, { useState, useMemo,useContext } from 'react';
+import { AuthContext } from '../../../auth/AuthContext';
+import { Form, FormControl } from 'react-bootstrap';
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
 import numberWithCommas from '../../../helpers/helpers';
+import './tables.css';
 
 export const TableMonthly = (props) => {
 
@@ -17,7 +19,7 @@ export const TableMonthly = (props) => {
 
     const [state, setState] = useState(defaultstate)
 
-
+    const { user} = useContext(AuthContext);
 
     const columns = [
         {
@@ -72,6 +74,12 @@ export const TableMonthly = (props) => {
         }
     ];
 
+
+    if (user.viewer !==0) {
+        columns.pop()
+    }
+
+
     const onFocusDelete = (data) => {
 
         setPayment({ id: data.id, client: data.bill.client, amount: data.amountUSD });
@@ -87,6 +95,7 @@ export const TableMonthly = (props) => {
 
         items.map(data => {
             productos.push({
+                id: data.id,
                 idBill: data.idBill,
                 date: data.date,
                 client: data.bill.client,
@@ -107,15 +116,13 @@ export const TableMonthly = (props) => {
 
     const products = productsGenerator(props.data);
 
-    
 
-     const  dataTable = useMemo(function () {
-        if (state.busqueda.length ) {
 
-            return products.filter(product => product.bank.includes( (state.busqueda).toUpperCase() ))
-        }
+    const dataTable = useMemo(function () {
 
-        return products
+
+            return products.filter(product => product.bank.includes((state.busqueda).toUpperCase()))
+        
     }, [products])
 
 
@@ -138,14 +145,41 @@ export const TableMonthly = (props) => {
     return (
         <>
 
-            <Form.Group className="mb-3">
-                <Form.Label className="label-date">Banco</Form.Label>
-                <FormControl type="text" placeholder="Busqueda por banco" className="getPayments" id="busqueda" name="busqueda" onChange={onInputChange} />
-            </Form.Group>
             <div>
+
+
+                <div className='overTable' >
+
+                    <div>
+
+                        <Form.Group className="mb-3">
+                            <Form.Label className="label-date">Banco</Form.Label>
+                            <FormControl type="text" placeholder="Busqueda por banco" className="getPayments" id="busqueda" name="busqueda" onChange={onInputChange} />
+                        </Form.Group>
+                    </div>
+
+
+                    <div>
+                        {<ReactHTMLTableToExcel
+                            id="test-table-xls-button"
+                            className="btn btn-success"
+                            table="monthlyTable"
+                            filename="pagoxmes"
+                            sheet="tablexls"
+                            buttonText="Exportar a Excel" />}
+
+
+                    </div>
+
+                </div>
+
+
+
                 <BootstrapTable
-                    bootstrap4
-                    keyField="idBill"
+                    bootstrap4={true}
+                    hover={true}
+                    id='monthlyTable'
+                    keyField="id"
                     data={dataTable}
                     columns={columns}
                     pagination={paginationFactory({
@@ -158,6 +192,11 @@ export const TableMonthly = (props) => {
                         }]
                     })}
                 />
+            </div>
+
+
+            <div>
+
             </div>
         </>
     )

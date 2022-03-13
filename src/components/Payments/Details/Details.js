@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react'
+import { AuthContext } from '../../../auth/AuthContext';
 import { ListGroup, Modal, Button } from 'react-bootstrap';
 import axios from '../../../config/axios';
+import DeleteBill from './DeleteBill';
 import PaymentsDetails from './PaymentsDetails';
 
 const Details = (number) => {
@@ -15,11 +17,15 @@ const Details = (number) => {
         comision: 0
     }
 
+
+    const { user, dispatch } = useContext(AuthContext);
     const [showDetails, setShowDetails] = useState(false);
-
     const handleCloseDetails = () => setShowDetails(false);
-
     const handleShowDetails = () => setShowDetails(true);
+
+    const [showDetailsDelete, setShowDetailsDelete] = useState(false);
+    const handleCloseDetailsDelete = () => setShowDetailsDelete(false);
+    const handleShowDetailsDelete = () => setShowDetailsDelete(true);
 
     const [state, setState] = useState(defaultState);
 
@@ -70,7 +76,18 @@ const Details = (number) => {
                     <ListGroup.Item variant='info'>  {`Ubicacion: `}  <b>  {state.datos.location}  </b>    </ListGroup.Item>
                     <ListGroup.Item variant='info'>  {`Vendedor:  `}  <b> {state.seller} </b>     </ListGroup.Item>
                     <ListGroup.Item variant='info'>  {`Comision del vendedor:`}  <b>{state.datos.sellersComission} %</b>    </ListGroup.Item>
+                   
+                   <div className='d-flex mx-auto'>
+
                     <ListGroup.Item variant='info'>  <Button onClick={() => { handleShowDetails(); }}><b>Ver pagos</b></Button>    </ListGroup.Item>
+
+                    {user.viewer === 0 ?
+                    <ListGroup.Item variant='info'>  <Button className="btn-danger" onClick={() => { handleShowDetailsDelete(); }}><b>Borrar factura</b></Button>    </ListGroup.Item>
+                    :
+                        <></>
+                    }
+                   </div>
+                   
 
                 </ListGroup>
 
@@ -81,6 +98,18 @@ const Details = (number) => {
                     <Modal.Body>
 
                         <PaymentsDetails pagos={state.pagos} />
+
+                    </Modal.Body>
+                </Modal>
+
+
+                <Modal show={showDetailsDelete} onHide={handleCloseDetailsDelete}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirmacion</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+
+                        <DeleteBill numero ={state.datos.id} close={handleCloseDetailsDelete}/>
 
                     </Modal.Body>
                 </Modal>
