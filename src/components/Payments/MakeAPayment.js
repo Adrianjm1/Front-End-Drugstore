@@ -20,6 +20,8 @@ const billState = {
     oldExchange: 0,
     restanteBS: 0,
     exchangeHide: false,
+    texto: 'Monto en a pagar en dolares',
+    itsUSD: true
 }
 
 const handle = {
@@ -55,7 +57,7 @@ const MakeAPayment = (number) => {
 
                     }
 
-                } 
+                }
 
             })
             .catch((error) => console.log(error))
@@ -121,10 +123,13 @@ const MakeAPayment = (number) => {
 
         if (e.target.checked == false) {
 
+
             document.getElementById('restantePorPagar').placeholder = `${numberWithComas(parseFloat(state.restante))}$`;
 
             ReactDOM.render(<p></p>, document.getElementById('tasadecambio'));
             ReactDOM.render(<p></p>, document.getElementById('diferencial'));
+            setState({ ...state, texto: 'Monto en a pagar en dolares', itsUSD: true })
+
 
         } else {
 
@@ -140,9 +145,14 @@ const MakeAPayment = (number) => {
                     <Form.Control placeholder="0" id='diferencialInput' disabled />
                 </Form.Group>
 
+
+
+            setState({ ...state, texto: 'Monto en a pagar en bolivares', itsUSD: false })
+
             document.getElementById('restantePorPagar').placeholder = `${numberWithComas(parseFloat(state.restante))}$ (${numberWithComas((parseFloat(state.restante) * parseFloat(state.oldExchange)).toFixed(2))}Bs.)`;
             ReactDOM.render(tasa, document.getElementById('tasadecambio'));
             ReactDOM.render(diferencial, document.getElementById('diferencial'));
+
 
         }
 
@@ -162,13 +172,22 @@ const MakeAPayment = (number) => {
 
                 if ((isNaN(stateHandle.tasadecambio == '' ? 'a' : stateHandle.tasadecambio) === false || stateHandle.tasadecambio === 0) && (isNaN(state.amountPay == '' ? 'a' : state.amountPay) === false)) {
 
+                    let monto =0;
+
+                    if (state.itsUSD === false) {
+                        
+                         monto = state.amountPay / stateHandle.tasadecambio;
+                         monto = Math.round(monto);
+                    }
+
+
                     const res = await axios.post('/payments/create',
                         {
                             id: state.datos.id,
                             client: state.datos.client,
                             city: state.datos.city,
                             referenceNumber: (state.reference),
-                            amountUSD: state.amountPay,
+                            amountUSD: monto,
                             date: state.date,
                             bank: state.bank,
                             paymentUSD: paymentUSD,
@@ -275,8 +294,8 @@ const MakeAPayment = (number) => {
                 </Form.Group>
                 <br />
 
-                <Form.Group className="mb-3">
-                    <Form.Label>Monto a pagar</Form.Label>
+                <Form.Group id='inputpago' className="mb-3">
+                    <Form.Label>{state.texto}</Form.Label>
                     <Form.Control placeholder="Ingrese el monto" type='text' name="amountPay" onChange={onNumber2Change} />
                 </Form.Group>
 
