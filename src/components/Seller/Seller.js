@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { types } from '../../config/constant';
-import { Table, Form, Button, Modal, Row, Col } from 'react-bootstrap';
+import { Table, Form, Button, Modal } from 'react-bootstrap';
 import { AuthContext } from '../../auth/AuthContext';
 import swal from "sweetalert";
 import './seller.css';
@@ -8,6 +8,7 @@ import axios, { generateToken } from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
 import SellerPayment from './SellerPayment';
+import CreateSeller from './CreateSeller';
 
 
 const Seller = () => {
@@ -21,20 +22,30 @@ const Seller = () => {
         usdbs: 'Dolares',
         sellerName: '',
         sellerid: 0,
-
+        deleteName: '',
+        deleteLastname: '',
+        deleteId: ''
     };
 
     const [state, setState] = useState(defaultState);
     const { user, dispatch } = useContext(AuthContext);
+
     const [show, setShow] = useState(false);
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    const [showPay, setShowPay] = useState(false);
 
+    const [showPay, setShowPay] = useState(false);
     const handleClosePay = () => setShowPay(false);
     const handleShowPay = () => setShowPay(true);
 
+    const [showCreate, setShowCreate] = useState(false);
+    const handleCloseCreate = () => setShowCreate(false);
+    const handleShowCreate = () => setShowCreate(true);
+
+    const [showDelete, setShowDelete] = useState(false);
+    const handleCloseDelete = () => setShowDelete(false);
+    const handleShowDelete = () => setShowDelete(true);
 
     const logout = () => {
         dispatch({
@@ -84,7 +95,7 @@ const Seller = () => {
         if (sellerName) {
 
 
-            setState({ ...state, sellerName: fullName })
+            setState({ ...state, sellerName: fullName, sellerid: sellerName.id })
         }
 
 
@@ -97,6 +108,7 @@ const Seller = () => {
 
         if (isValid === true) {
             setState({ ...state, [e.target.name]: e.target.value });
+
 
         } else {
             console.log(isValid);
@@ -111,11 +123,14 @@ const Seller = () => {
 
 
             let USDBS;
-            if (state.paymentUSD == 'Dolares') {
-                USDBS = 1
+            if (state.usdbs == 'Dolares') {
+                // console.log('dolares');
+                USDBS = true
             } else {
-                USDBS = 0
+                USDBS = false
+
             }
+
 
             const res = await axios.post('/sellerPayments/create',
                 {
@@ -144,7 +159,6 @@ const Seller = () => {
                     icon: 'success'
                 });
 
-                // setTimeout(function () { window.location.reload(); }, 2000);
 
             }
 
@@ -166,12 +180,60 @@ const Seller = () => {
 
     }
 
+    const onFocusDelete = (data) => {
+
+        setState({ ...state, deleteName: data.name, deleteLastname: data.lastname, deleteId: data.id });
+
+    }
+
+    const deleteSeller = () => {
+
+
+        try {
+
+            axios.delete(`/seller/delete/${state.deleteId}`)
+                .then(data => {
+
+                    if (!data.data.ok) {
+
+                        swal({
+                            title: 'Error',
+                            text: 'Ha ocurrido un error al intentar eliminar el usuario',
+                            icon: 'error'
+                        });
+
+                    } else {
+
+                        swal({
+                            title: 'Realizado',
+                            text: data.data.res,
+                            icon: 'success'
+                        });
+
+
+                    }
+
+                })
+
+        }
+        catch (error) {
+
+            swal({
+                title: 'Error',
+                text: 'Error, no se pudo eliminar el usuario',
+                icon: 'error'
+            });
+
+        }
+
+        setTimeout(function () { window.location.reload(); }, 1500);
+
+    }
 
 
     const onChangeMethod = e => {
 
         const isValid = e.target.value;
-
 
         if (isValid === 'Dolares') {
             setState({ ...state, monto: true, usdbs: e.target.value });
@@ -188,7 +250,18 @@ const Seller = () => {
     return (
         <>
             <NavbarLoged />
+
+
             <div className='divTable'>
+
+                {user.viewer == 0 ?
+                    <Button onClick={handleShowCreate}>Agregar nuevo vendedor</Button>
+                    :
+                    <p></p>
+
+                }
+
+
 
                 <h2>Vendedores</h2>
                 <br />
@@ -202,12 +275,6 @@ const Seller = () => {
                             <th>Identidad</th>
                             <th>Comision en USD</th>
                             <th>Comision en Bs</th>
-
-                            {user.viewer === 0 ?
-                                <th>Accion</th>
-                                :
-                                null
-                            }
                         </tr>
                     </thead>
                     <tbody>
@@ -220,9 +287,14 @@ const Seller = () => {
                                     <td>{data.identification} </td>
                                     <td>{data.commissionUSD} USD</td>
                                     <td>{data.commissionBS} Bs</td>
+                                    <td> <Button className='btnSeller' onClick={() => { handleShowPay(); onChangeSeller(data) }}>Detalles</Button> </td>
 
                                     {user.viewer === 0 ?
-                                        <td> <Button className='btnSeller' onClick={() => { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
+                                        <>
+                                            <td> <Button className='btn-success btnSeller' onClick={() => { handleShow(); onChangeSeller(data) }}>Registrar pago</Button> </td>
+                                            <td> <Button className='btn-danger btnSeller' onClick={() => { handleShowDelete(); onFocusDelete(data) }}>Eliminar</Button> </td>
+                                        </>
+
                                         :
                                         null
                                     }
@@ -274,12 +346,6 @@ const Seller = () => {
                         <Form.Control placeholder="Banco" name="bank" onChange={onInputChange} />
                     </Form.Group>
 
-
-
-
-
-
-
                     <Modal.Footer className="registerSeller">
                         <Button onClick={onPay} variant="primary" >
                             Registrar
@@ -291,7 +357,6 @@ const Seller = () => {
                 </Modal.Body>
             </Modal>
 
-
             <Modal className="modalRegister" show={showPay} onHide={handleClosePay}>
                 <Modal.Header closeButton>
                     <Modal.Title>Pagos a vendedor <b> {state.sellerName} </b></Modal.Title>
@@ -299,6 +364,30 @@ const Seller = () => {
                 <Modal.Body>
                     <SellerPayment id={state.sellerid} />
                 </Modal.Body>
+            </Modal>
+
+            <Modal className="modalCreate" show={showCreate} onHide={handleCloseCreate}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Registrar nuevo vendedor</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <CreateSeller />
+                </Modal.Body>
+            </Modal>
+
+            <Modal show={showDelete} onHide={handleCloseDelete}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Confirmar</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <p>¿Estas seguro/a que deseas eliminar a <b>{state.deleteName} {state.deleteLastname}</b> de la lista de vendedores?</p>
+                </Modal.Body>
+
+                <Modal.Footer>
+                    <Button onClick={handleCloseDelete} variant="secondary">No</Button>
+                    <Button onClick={deleteSeller} className="btn-danger" variant="primary">Si</Button>
+                </Modal.Footer>
             </Modal>
 
         </>

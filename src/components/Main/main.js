@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Modal, Button, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
-import axios, { generateToken } from '../../config/axios';
 import { AuthContext } from '../../auth/AuthContext';
+import { Modal, Button, DropdownButton, ButtonGroup, Dropdown, Col, Row } from 'react-bootstrap';
+import axios, { generateToken } from '../../config/axios';
 import NavbarLoged from '../Navbar/NavbarLoged';
 import Footer from '../Footer/Footer';
 import Paid from '../Bills/Paid';
@@ -98,27 +98,43 @@ const Main = () => {
 
             <NavbarLoged />
 
-
-            {user.viewer === 0 ?
-                <Button className="bg-danger mx-auto d-block m-5" style={{ borderColor: 'black' }} onClick={handleShowFile}>Subir archivo</Button>
-                :
-                <></>
-            }
-
-            {user.viewer === 0 ?
-                <Button className='bg-success mx-auto d-block m-3' style={{ borderColor: 'black' }} onClick={handleShow}>Crear Factura </Button>
-                :
-                <> {user.viewer}</>
-            }
-
+            <br />
             <br />
 
-            <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
-                <Dropdown.Item eventKey="1" onClick={() => changeOption(1)}>Facturas por cobrar</Dropdown.Item>
-                <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Facturas cobradas</Dropdown.Item>
-                <Dropdown.Item eventKey="3" onClick={() => changeOption(3)}>Facturas vencidas</Dropdown.Item>
-                <Dropdown.Item eventKey="3" onClick={() => changeOption(4)}>Facturas por vendedor</Dropdown.Item>
-            </DropdownButton>
+            <Row className='buttons'>
+
+                <Col>
+                    {user.viewer === 0 ?
+                        <Button className="bg-danger d-block" style={{ borderColor: 'black' }} onClick={handleShowFile}>Subir archivo</Button>
+                        :
+                        <></>
+                    }
+                </Col>
+
+                <Col>
+
+                    <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver facturas" id="bg-vertical-dropdown-1">
+                        <Dropdown.Item eventKey="1" onClick={() => changeOption(1)}>Facturas por cobrar</Dropdown.Item>
+                        <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Facturas cobradas</Dropdown.Item>
+                        <Dropdown.Item eventKey="3" onClick={() => changeOption(3)}>Facturas vencidas</Dropdown.Item>
+                        <Dropdown.Item eventKey="3" onClick={() => changeOption(4)}>Facturas por vendedor</Dropdown.Item>
+                    </DropdownButton>
+
+                </Col>
+
+                <Col>
+
+                    {user.viewer === 0 ?
+                        <Button className='bg-success d-block' style={{ borderColor: 'black' }} onClick={handleShow}>Crear Factura </Button>
+                        :
+                        <></>
+                    }
+
+                </Col>
+
+            </Row>
+
+            <br />
 
             {state.option === 1 ?
                 <Unpaid key={1} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react'
-import { Table, Container, Form, FormControl, Dropdown, ButtonGroup, DropdownButton } from 'react-bootstrap';
+import { Table, Container, Form, FormControl, Dropdown, ButtonGroup, DropdownButton, Modal, Button } from 'react-bootstrap';
 import { TableMonthly } from './Tables/TableMonthly';
 import { TableDaily } from './Tables/TableDaily';
 import axios, { generateToken } from '../../config/axios';
@@ -8,6 +8,8 @@ import Footer from '../Footer/Footer';
 import numberWithCommas from '../../helpers/helpers';
 import { AuthContext } from '../../auth/AuthContext';
 import { types } from '../../config/constant';
+import swal from "sweetalert";
+
 import './payments.css';
 
 const Payments = () => {
@@ -22,8 +24,26 @@ const Payments = () => {
         bsMeses: '',
         totalMeses: '',
         busqueda: '',
-        option: 1
+        option: 1,
+        deleteId: 0
     };
+
+    const paymentValues = {
+        id: '',
+        client: '',
+        amount: '',
+    }
+
+
+    const [showDelete, setShowDelete] = useState(false);
+    const handleCloseDelete = () => {
+        setShowDelete(false);
+        setPayment({ ...state, id: '', client: '', amount: '' });
+    }
+    const handleShowDelete = () => setShowDelete(true);
+
+
+    const [payment, setPayment] = useState(paymentValues);
 
     const [state, setState] = useState(defaultState);
 
@@ -57,6 +77,19 @@ const Payments = () => {
 
     }, [user.token]);
 
+    useEffect(function () {
+
+        if(payment.id !== ''){
+
+            console.log('it works!');
+            handleShowDelete();
+
+        }
+
+
+    }, [payment]);
+
+
 
     const OnChangeMonth = (e) => {
 
@@ -81,7 +114,7 @@ const Payments = () => {
 
     }
 
-    
+
     const OnChangeDate = (e) => {
 
         const day = e.target.value;
@@ -162,12 +195,59 @@ const Payments = () => {
     }
 
 
+    const deletePay = () => {
+
+console.log(payment.id);
+        try {
+
+            axios.delete(`/payments/delete/${payment.id}`)
+                .then(data => {
+
+                    if (!data.data.ok) {
+
+                        swal({
+                            title: 'Error',
+                            text: 'Ha ocurrido un error al intentar eliminar el pago',
+                            icon: 'error'
+                        });
+
+                    } else {
+
+                        swal({
+                            title: 'Realizado',
+                            text: data.data.res,
+                            icon: 'success'
+                        });
+
+
+                    }
+
+                })
+
+        }
+        catch (error) {
+
+            swal({
+                title: 'Error',
+                text: 'Error, no se pudo eliminar el usuario',
+                icon: 'error'
+            });
+
+        }
+
+        setTimeout(function () { window.location.reload(); }, 1500);
+
+    }
+
     return (
         <>
 
             <NavbarLoged />
 
             <Container>
+
+                <br />
+                <br />
 
                 <DropdownButton as={ButtonGroup} className='dropdownMain' title="Ver pagos" id="bg-vertical-dropdown-1">
                     <Dropdown.Item eventKey="1" onClick={() => changeOption(1)}>Pagos por mes</Dropdown.Item>
@@ -186,10 +266,7 @@ const Payments = () => {
                             <Form.Control type="month" className="getPayments" onChange={OnChangeMonth} />
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label className="label-date">Banco</Form.Label>
-                            <FormControl type="text" placeholder="Busqueda por banco" className="getPayments" id="busqueda" onChange={handleChangeBMeses} />
-                        </Form.Group>
+
 
                         <Table className="margintable" striped bordered hover size="sm" >
                             <thead>
@@ -203,14 +280,14 @@ const Payments = () => {
                                 <tr>
                                     <td>{numberWithCommas(parseFloat(state.usdMeses || 0))} USD</td>
                                     <td>{numberWithCommas(parseFloat(state.bsMeses || 0).toFixed(2))} Bs.</td>
-                                    <td>{numberWithCommas(parseFloat(state.totalMeses || 0))} USD</td>
+                                    <td>{numberWithCommas(parseFloat(state.totalMeses || 0).toFixed(2))} USD</td>
                                 </tr>
                             </tbody>
                         </Table>
 
                         <p></p>
 
-                        <TableMonthly data={state.datosMeses} />
+                        <TableMonthly data={state.datosMeses} setPayment={setPayment} />
 
                     </Form>
 
@@ -235,10 +312,6 @@ const Payments = () => {
                             <Form.Control type="date" className="getPayments" onChange={OnChangeDate} />
                         </Form.Group>
 
-                        <Form.Group className="mb-3">
-                            <Form.Label className="label-date">Banco</Form.Label>
-                            <FormControl type="text" placeholder="Busqueda por banco" className="getPayments" id="busqueda" onChange={handleChangeBDias} />
-                        </Form.Group>
 
                         <Table className="margintable" striped bordered hover size="sm" >
                             <thead>
@@ -252,14 +325,14 @@ const Payments = () => {
                                 <tr>
                                     <td>{numberWithCommas(parseFloat(state.usdDias || 0))} USD</td>
                                     <td>{numberWithCommas(parseFloat(state.bsDias || 0).toFixed(2))} Bs.</td>
-                                    <td>{numberWithCommas(parseFloat(state.totalDias || 0))} USD</td>
+                                    <td>{numberWithCommas(parseFloat(state.totalDias || 0).toFixed(2))} USD</td>
                                 </tr>
                             </tbody>
                         </Table>
 
                         <p></p>
 
-                        <TableDaily data={state.datosDias} />
+                        <TableDaily data={state.datosDias} setPayment={setPayment} />
 
                     </Form>
 
@@ -268,6 +341,21 @@ const Payments = () => {
                     <> </>
 
                 }
+
+                <Modal show={showDelete} onHide={handleCloseDelete}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Confirmar</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <p>¿Estas seguro/a que deseas eliminar el pago de <b>{payment.client}</b> por el monto de <b>{payment.amount}</b>?</p>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <Button onClick={handleCloseDelete} variant="secondary">No</Button>
+                        <Button onClick={deletePay} className="btn-danger" variant="primary">Si</Button>
+                    </Modal.Footer>
+                </Modal>
 
 
             </Container>

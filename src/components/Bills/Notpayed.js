@@ -105,7 +105,8 @@ const Notpayed = () => {
         {
             dataField: "date",
             text: "Fecha",
-            sort: true
+            sort: true,
+            
         },
         {
             dataField: "expirationDate",
@@ -131,7 +132,8 @@ const Notpayed = () => {
             dataField: "toDo",
             text: "Accion a Realizar",
             sort: true
-        }
+        },
+        
     ];
 
     const columnview = [
@@ -187,8 +189,6 @@ const Notpayed = () => {
             })
             .catch((error) => console.log(error))
 
-
-        //eslint-disable-next-line
     }, [])
 
     const facturas = useMemo(function () {
@@ -221,11 +221,13 @@ const Notpayed = () => {
 
                 {user.viewer === 0 ?
                     <BootstrapTable
+                        
                         bootstrap4
                         id='NotPayedTable'
                         keyField="id"
                         data={facturas}
                         columns={columns}
+                        
                         pagination={paginationFactory({
                             sizePerPageList: [{
                                 text: '15', value: 15
