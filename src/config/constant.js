@@ -14,11 +14,10 @@ if (process.env.NODE_ENV != 'production') {
     api = 'https://test-lagomall.herokuapp.com/api'
 }
  */
-const URL_API = 'http://localhost:5000/api';
+// const URL_API = 'http://localhost:5000/api';
 
-// const URL_API ='https://drugstore-enmanuelle.herokuapp.com/api';
 
-// const URL_API = 'https://drogueria-enmanuelle.herokuapp.com/api'
+const URL_API = 'https://drogueria-enmanuelle.herokuapp.com/api'
 
 export {
     // TABLE_GET,

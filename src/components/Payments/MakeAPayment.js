@@ -82,7 +82,7 @@ const MakeAPayment = (number) => {
 
         } else {
             let old = parseFloat(state.restante) * parseFloat(state.oldExchange);
-            let now = value1 * value2;
+            let now = value1;
 
             if (old < now) {
                 document.getElementById('diferencialInput').placeholder = `${-(old - now).toFixed(2)}Bs.`;
@@ -178,6 +178,8 @@ const MakeAPayment = (number) => {
                         
                          monto = state.amountPay / stateHandle.tasadecambio;
                          monto = Math.round(monto);
+                    } else{
+                        monto = state.amountPay
                     }
 
 
