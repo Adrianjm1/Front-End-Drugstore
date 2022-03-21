@@ -1,4 +1,4 @@
-import React, { useState, useMemo,useContext } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import { AuthContext } from '../../../auth/AuthContext';
 import { Form, FormControl } from 'react-bootstrap';
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
@@ -19,12 +19,17 @@ export const TableMonthly = (props) => {
 
     const [state, setState] = useState(defaultstate)
 
-    const { user} = useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
     const columns = [
         {
             dataField: "date",
             text: "Fecha",
+            sort: true
+        },
+        {
+            dataField: "expirationDate",
+            text: "Expiracion",
             sort: true
         },
         {
@@ -68,6 +73,11 @@ export const TableMonthly = (props) => {
             sort: true
         },
         {
+            dataField: "seller",
+            text: "Vendedor",
+            sort: true
+        },
+        {
             dataField: "delete",
             text: "",
             sort: true
@@ -75,7 +85,7 @@ export const TableMonthly = (props) => {
     ];
 
 
-    if (user.viewer !==0) {
+    if (user.viewer !== 0) {
         columns.pop()
     }
 
@@ -91,6 +101,7 @@ export const TableMonthly = (props) => {
 
         let productos = [];
 
+        console.log(items);
 
 
         items.map(data => {
@@ -98,14 +109,16 @@ export const TableMonthly = (props) => {
                 id: data.id,
                 idBill: data.idBill,
                 date: data.date,
+                expirationDate: (data.bill.expirationDate).slice(0, 10),
                 client: data.bill.client,
-                priceUSD: `${numberWithCommas(parseFloat(data.amountUSD))} USD`,
-                priceBS: `${numberWithCommas((parseFloat(data.amountUSD) * parseFloat(data.exchangeRate)).toFixed(2))} Bs`,
+                priceUSD: `${numberWithCommas( parseFloat((data.amountUSD)).toFixed(2)   )} $`,
+                priceBS: `${numberWithCommas(  ((parseFloat(data.amountUSD) * parseFloat(data.exchangeRate))).toFixed(2)  )} Bs`,
                 exchange: `${numberWithCommas(parseFloat(data.exchangeRate).toFixed(2))} Bs`,
                 reference: data.referenceNumber,
                 paymentUSD: data.paymentUSD === false ? 'No' : 'Si',
                 bank: data.bank,
-                delete: <b><p className="btn btn-danger delete-payment" onClick={() => { onFocusDelete(data) }}>Eliminar Pago</p></b>
+                seller: data.bill.seller.name,
+                delete: <b><p className="btn btn-danger delete-payment" onClick={() => { onFocusDelete(data) }}>Eliminar</p></b>
 
             })
         })
@@ -121,8 +134,8 @@ export const TableMonthly = (props) => {
     const dataTable = useMemo(function () {
 
 
-            return products.filter(product => product.bank.includes((state.busqueda).toUpperCase()))
-        
+        return products.filter(product => product.bank.includes((state.busqueda).toUpperCase()))
+
     }, [products])
 
 
@@ -145,7 +158,7 @@ export const TableMonthly = (props) => {
     return (
         <>
 
-            <div>
+            <div className='allTable'>
 
 
                 <div className='overTable' >
