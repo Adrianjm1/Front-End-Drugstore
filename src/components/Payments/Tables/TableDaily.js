@@ -34,6 +34,11 @@ export const TableDaily = (props) => {
             sort: true
         },
         {
+            dataField: "expirationDate",
+            text: "Expiracion",
+            sort: true
+        },
+        {
             dataField: "priceUSD",
             text: "Monto en $",
             sort: true
@@ -61,6 +66,11 @@ export const TableDaily = (props) => {
         {
             dataField: "bank",
             text: "Banco",
+            sort: true
+        },
+        {
+            dataField: "seller",
+            text: "Vendedor",
             sort: true
         },
         {
@@ -92,13 +102,15 @@ export const TableDaily = (props) => {
                 id: data.id,
                 idBill: data.idBill,
                 client: data.bill.client,
-                priceUSD: `${numberWithCommas(parseFloat(data.amountUSD))} USD`,
-                priceBS: `${numberWithCommas((parseFloat(data.amountUSD) * parseFloat(data.exchangeRate)).toFixed(2))} Bs`,
+                priceUSD: `${numberWithCommas( parseFloat((data.amountUSD)).toFixed(2)   )} $`,
+                priceBS: `${numberWithCommas(  ((parseFloat(data.amountUSD) * parseFloat(data.exchangeRate))).toFixed(2)  )} Bs`,
                 exchange: `${numberWithCommas(parseFloat(data.exchangeRate).toFixed(2))} Bs`,
                 reference: data.referenceNumber,
                 paymentUSD: data.paymentUSD === false ? 'No' : 'Si',
                 bank: data.bank,
-                delete: <b><p className="btn btn-danger delete-payment" onClick={() => { onFocusDelete(data) }}>Eliminar Pago</p></b>
+                expirationDate: (data.bill.expirationDate).slice(0, 10),
+                seller: data.bill.seller.name,
+                delete: <b><p className="btn btn-danger delete-payment" onClick={() => { onFocusDelete(data) }}>Eliminar</p></b>
             })
         })
 

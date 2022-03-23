@@ -80,7 +80,7 @@ const Paid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountPayed: `${data.amount.paid} $`,
+                        amountPayed: `${parseFloat(data.amount.paid).toFixed(2)} $`,
                         overPaidBS: `${data.overPaidBS}Bs.`,
                         toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
                     })

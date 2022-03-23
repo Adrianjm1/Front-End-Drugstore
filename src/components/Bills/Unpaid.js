@@ -124,16 +124,16 @@ const Unpaid = () => {
 
                 resp.data.map(data => {
                     productos.push({
+                        id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountUSD: `${data.amountUSD} $`,
-                        unPaid: `${data.amount.unPaid} $`,
-                        paid: `${data.amount.paid} $`,
-                        amountBS: `${numberWithCommas(parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))}Bs.`,
+                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2) } $`,
+                        unPaid: `${ parseFloat(data.amount.unPaid).toFixed(2) } $`,
+                        paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
+                        amountBS: `${(  ( parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange))) ).toFixed(2)    } Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
-                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
-                    })
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b> })
                 });
 
                 setState({ ...state, bills: productos });
@@ -162,16 +162,16 @@ const Unpaid = () => {
 
                 resp.data.map(data => {
                     productos.push({
+                        id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountUSD: `${data.amountUSD} $`,
-                        unPaid: `${data.amount.unPaid} $`,
-                        paid: `${data.amount.paid} $`,
-                        amountBS: `${numberWithCommas(parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))}Bs.`,
+                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2) } $`,
+                        unPaid: `${ parseFloat(data.amount.unPaid).toFixed(2) } $`,
+                        paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
+                        amountBS: `${(  ( parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange))) ).toFixed(2)    } Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
-                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
-                    })
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b> })
                 });
 
                 setState({ ...state, bills: productos });
@@ -206,10 +206,10 @@ const Unpaid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountUSD: `${data.amountUSD} $`,
-                        unPaid: `${data.amount.unPaid} $`,
-                        paid: `${data.amount.paid} $`,
-                        amountBS: `${numberWithCommas(parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))}Bs.`,
+                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2) } $`,
+                        unPaid: `${ parseFloat(data.amount.unPaid).toFixed(2) } $`,
+                        paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
+                        amountBS: `${(  ( parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange))) ).toFixed(2)    } Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })

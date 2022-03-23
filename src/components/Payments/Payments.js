@@ -79,7 +79,7 @@ const Payments = () => {
 
     useEffect(function () {
 
-        if(payment.id !== ''){
+        if (payment.id !== '') {
 
             console.log('it works!');
             handleShowDelete();
@@ -139,54 +139,6 @@ const Payments = () => {
 
 
 
-    const handleChangeBDias = e => {
-
-        let suma = 0;
-        let sumaBS = 0;
-        let sumaUSD = 0;
-        let datos = state.datosDias.filter(local => local.bank.includes(e.target.value.toUpperCase()));
-
-        datos.map(data => {
-
-            if (data.paymentUSD === true) {
-                sumaUSD = sumaUSD + parseFloat(data.amountUSD);
-            } else {
-                sumaBS = sumaBS + (parseFloat(data.amountUSD) * parseFloat(data.exchangeRate));
-            }
-
-            suma = suma + parseFloat(data.amountUSD);
-
-        });
-
-        setState({ ...state, busqueda: e.target.value.toUpperCase(), bsDias: sumaBS, usdDias: sumaUSD, totalDias: suma, datosDias: datos });
-
-
-    }
-
-    const handleChangeBMeses = e => {
-
-        e.preventDefault();
-
-        let suma = 0;
-        let sumaBS = 0;
-        let sumaUSD = 0;
-        let datos = state.datosMeses.filter(local => local.bank.includes(e.target.value.toUpperCase()));
-
-        datos.map(data => {
-
-            if (data.paymentUSD === true) {
-                sumaUSD = sumaUSD + parseFloat(data.amountUSD);
-            } else {
-                sumaBS = sumaBS + (parseFloat(data.amountUSD) * parseFloat(data.exchangeRate));
-            }
-
-            suma = suma + parseFloat(data.amountUSD);
-
-        });
-
-        setState({ ...state, busqueda: e.target.value.toUpperCase(), bsMeses: sumaBS, usdMeses: sumaUSD, totalMeses: suma, datosMeses: datos });
-
-    }
 
     const changeOption = (op) => {
 
@@ -197,7 +149,7 @@ const Payments = () => {
 
     const deletePay = () => {
 
-console.log(payment.id);
+
         try {
 
             axios.delete(`/payments/delete/${payment.id}`)
@@ -244,7 +196,7 @@ console.log(payment.id);
 
             <NavbarLoged />
 
-            <Container>
+            <Container >
 
                 <br />
                 <br />
@@ -254,93 +206,101 @@ console.log(payment.id);
                     <Dropdown.Item eventKey="2" onClick={() => changeOption(2)}>Pagos por dia</Dropdown.Item>
                 </DropdownButton>
 
-                {state.option === 1 ?
-
-
-                    <Form>
-
-                        <h2><b>Pagos por mes</b></h2>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label className="label-date">Ingresa el mes</Form.Label>
-                            <Form.Control type="month" className="getPayments" onChange={OnChangeMonth} />
-                        </Form.Group>
+                <div >
 
 
 
-                        <Table className="margintable" striped bordered hover size="sm" >
-                            <thead>
-                                <tr className='first'>
-                                    <th>Facturado en dolares ($)</th>
-                                    <th>Facturado en bolívares (Bs.S)</th>
-                                    <th>Total ($)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{numberWithCommas(parseFloat(state.usdMeses || 0))} USD</td>
-                                    <td>{numberWithCommas(parseFloat(state.bsMeses || 0).toFixed(2))} Bs.</td>
-                                    <td>{numberWithCommas(parseFloat(state.totalMeses || 0).toFixed(2))} USD</td>
-                                </tr>
-                            </tbody>
-                        </Table>
-
-                        <p></p>
-
-                        <TableMonthly data={state.datosMeses} setPayment={setPayment} />
-
-                    </Form>
-
-                    :
-
-                    <> </>
-
-                }
+                    {state.option === 1 ?
 
 
-                {state.option === 2 ?
+                        <Form>
+
+                            <h2><b>Pagos por mes</b></h2>
+
+                            <Form.Group className="mb-3">
+                                <Form.Label className="label-date">Ingresa el mes</Form.Label>
+                                <Form.Control type="month" className="getPayments" onChange={OnChangeMonth} />
+                            </Form.Group>
 
 
 
-                    <Form>
+                            <Table className="margintable" striped bordered hover size="sm" >
+                                <thead>
+                                    <tr className='first'>
+                                        <th>Facturado en dolares ($)</th>
+                                        <th>Facturado en bolívares (Bs.S)</th>
+                                        <th>Total ($)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{numberWithCommas(parseFloat(state.usdMeses || 0))} USD</td>
+                                        <td>{numberWithCommas(parseFloat(state.bsMeses || 0).toFixed(2))} Bs.</td>
+                                        <td>{numberWithCommas(parseFloat(state.totalMeses || 0).toFixed(2))} USD</td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+
+                            <p></p>
+                            <div className='AllPayment'>
+
+                            <TableMonthly data={state.datosMeses} setPayment={setPayment} />
+                            </div>
+
+                        </Form>
+
+                        :
+
+                        <> </>
+
+                    }
 
 
-                        <h2><b>Pagos por dia</b></h2>
-
-                        <Form.Group className="mb-3">
-                            <Form.Label className="label-date">Ingresa el dia</Form.Label>
-                            <Form.Control type="date" className="getPayments" onChange={OnChangeDate} />
-                        </Form.Group>
+                    {state.option === 2 ?
 
 
-                        <Table className="margintable" striped bordered hover size="sm" >
-                            <thead>
-                                <tr className='first'>
-                                    <th>Facturado en dolares ($)</th>
-                                    <th>Facturado en bolívares (Bs.S)</th>
-                                    <th>Total ($)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>{numberWithCommas(parseFloat(state.usdDias || 0))} USD</td>
-                                    <td>{numberWithCommas(parseFloat(state.bsDias || 0).toFixed(2))} Bs.</td>
-                                    <td>{numberWithCommas(parseFloat(state.totalDias || 0).toFixed(2))} USD</td>
-                                </tr>
-                            </tbody>
-                        </Table>
 
-                        <p></p>
+                        <Form>
 
-                        <TableDaily data={state.datosDias} setPayment={setPayment} />
 
-                    </Form>
+                            <h2><b>Pagos por dia</b></h2>
 
-                    :
+                            <Form.Group className="mb-3">
+                                <Form.Label className="label-date">Ingresa el dia</Form.Label>
+                                <Form.Control type="date" className="getPayments" onChange={OnChangeDate} />
+                            </Form.Group>
 
-                    <> </>
 
-                }
+                            <Table className="margintable" striped bordered hover size="sm" >
+                                <thead>
+                                    <tr className='first'>
+                                        <th>Facturado en dolares ($)</th>
+                                        <th>Facturado en bolívares (Bs.S)</th>
+                                        <th>Total ($)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>{numberWithCommas(parseFloat(state.usdDias || 0))} USD</td>
+                                        <td>{numberWithCommas(parseFloat(state.bsDias || 0).toFixed(2))} Bs.</td>
+                                        <td>{numberWithCommas(parseFloat(state.totalDias || 0).toFixed(2))} USD</td>
+                                    </tr>
+                                </tbody>
+                            </Table>
+
+                            <p></p>
+
+                            <TableDaily data={state.datosDias} setPayment={setPayment} />
+
+                        </Form>
+
+                        :
+
+                        <> </>
+
+                    }
+
+                </div>
 
                 <Modal show={showDelete} onHide={handleCloseDelete}>
                     <Modal.Header closeButton>

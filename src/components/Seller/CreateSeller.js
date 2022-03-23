@@ -4,6 +4,7 @@ import swal from 'sweetalert';
 import axios from '../../config/axios';
 
 const userState = {
+    id:0,
     name: '',
     lastname: '',
     identification: '',
@@ -31,6 +32,7 @@ const CreateSeller = () => {
 
                 const res = await axios.post('/seller/create',
                     {
+                        id: state.id,
                         identification: state.identification,
                         name: state.name,
                         lastname: state.lastname
@@ -87,6 +89,12 @@ const CreateSeller = () => {
 
             <Container className='modalSeller'>
 
+                 <Form.Group className="mb-3">
+                    <Form.Label>Codigo / Identificacion</Form.Label>
+                    <Form.Control name="id" onChange={onInputChange} placeholder='Ingrese el codigo' />
+                </Form.Group>
+
+
                 <Form.Group className="mb-3">
                     <Form.Label>Nombre</Form.Label>
                     <Form.Control name="name" onChange={onInputChange} placeholder='Ingrese el nombre' />
@@ -98,8 +106,8 @@ const CreateSeller = () => {
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                    <Form.Label>Identificacion</Form.Label>
-                    <Form.Control name="identification" onChange={onInputChange} placeholder='Ingrese el numero de identificacion' />
+                    <Form.Label>Cedula</Form.Label>
+                    <Form.Control name="identification" onChange={onInputChange} placeholder='Ingrese el numero de cedula' />
                 </Form.Group>
 
                 <br />
