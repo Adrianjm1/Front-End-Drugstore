@@ -112,7 +112,7 @@ const CreateSeller = () => {
 
                 <br />
 
-                <Button variant="success" className='btnMake' onClick={onSubmit} type="submit">Realizar pago</Button>
+                <Button variant="success" className='btnMake' onClick={onSubmit} type="submit">Registar vendedor</Button>
 
 
             </Container>

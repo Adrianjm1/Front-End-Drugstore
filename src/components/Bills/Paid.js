@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react'
-import { Modal, Table } from 'react-bootstrap';
+import React, { useState, useEffect, useMemo } from 'react'
+import { Modal, Table, FormControl } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import numberWithCommas from '../../helpers/helpers';
@@ -126,6 +126,20 @@ const Paid = () => {
         }
     ];
 
+    const handleChange = e => {
+        setState({ ...state, busqueda: e.target.value.toUpperCase() });
+    }
+
+    const facturas = useMemo(function () {
+        if (state.bills1.length) {
+            return state.bills1.filter(factura => (`${factura.id}`).includes(state.busqueda))
+        } else if (state.busqueda === '') {
+            return state.bills1
+        }
+
+        return state.bills1
+    }, [state])
+
     return (
         <>
             <h2><b>Facturas cobradas</b></h2>
@@ -155,6 +169,12 @@ const Paid = () => {
                     sheet="tablexls"
                     buttonText="Exportar a Excel" />}
             </div>
+                    
+            <br />
+            <br />
+            <p className='busquedax'>Busqueda por #</p>
+            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+
 
             <div className='divTable'>
 
@@ -162,7 +182,7 @@ const Paid = () => {
                     bootstrap4
                     id='Paid'
                     keyField="id"
-                    data={state.bills1}
+                    data={facturas}
                     columns={columns}
                     pagination={paginationFactory({
                         sizePerPageList: [{

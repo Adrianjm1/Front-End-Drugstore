@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react'
-import { Modal, FormControl } from 'react-bootstrap';
+import { Modal, FormControl, Table } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import MakeAPayment from '../Payments/MakeAPayment';
@@ -13,7 +13,9 @@ import numberWithCommas from '../../helpers/helpers';
 
 const defaultState = {
     bills: [],
-    busqueda: ''
+    busqueda: '',
+    usd: 0,
+    bs:0
 };
 
 const columns = [
@@ -122,7 +124,7 @@ const Unpaid = () => {
 
                 let productos = [];
 
-                resp.data.map(data => {
+                resp.data.data.map(data => {
                     productos.push({
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
@@ -160,7 +162,7 @@ const Unpaid = () => {
 
                 let productos = [];
 
-                resp.data.map(data => {
+                resp.data.data.map(data => {
                     productos.push({
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
@@ -199,8 +201,10 @@ const Unpaid = () => {
             .then((resp) => {
 
                 let productos = [];
-
-                resp.data.map(data => {
+                let sumatoria = 0
+                
+            
+                resp.data.data.map(data => {
                     productos.push({
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
@@ -215,7 +219,8 @@ const Unpaid = () => {
                     })
                 });
 
-                setState({ ...state, bills: productos });
+
+                setState({ ...state, bills: productos, usd: resp.data.sumas[0].sumUSD, bs: resp.data.sumas[0].sumBS });
 
             })
             .catch((error) => console.log(error))
@@ -232,12 +237,29 @@ const Unpaid = () => {
     }, [state])
 
 
+
+
     return (
         <>
             <h2><b>Facturas por cobrar</b></h2>
 
-            <p className='busquedax'>Busqueda por #</p>
-            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+            <div className='divTable'>
+
+            <Table className="margintable" striped bordered hover size="sm" >
+                    <thead>
+                        <tr className='first'>
+                            <th>Facturado en dolares ($)</th>
+                            <th>Facturado en bolívares (Bs.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{numberWithCommas(parseFloat(state.usd || 0).toFixed(2))} USD</td>
+                            <td>{numberWithCommas(parseFloat(state.bs || 0).toFixed(2))} Bs.</td>
+                        </tr>
+                    </tbody>
+                </Table>
+
 
             {<ReactHTMLTableToExcel
                 id="test-table-xls-button"
@@ -246,6 +268,14 @@ const Unpaid = () => {
                 filename="tablexls"
                 sheet="tablexls"
                 buttonText="Exportar a Excel" />}
+            </div>
+
+
+            <br/>
+<br/>
+
+            <p className='busquedax'>Busqueda por #</p>
+            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
 
             <div className='divTable'>
 

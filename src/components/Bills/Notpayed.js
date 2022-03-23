@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react'
-import { Modal, FormControl } from 'react-bootstrap';
+import { Modal, FormControl, Table } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import MakeAPayment from '../Payments/MakeAPayment';
+import numberWithCommas from '../../helpers/helpers';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
@@ -13,7 +14,9 @@ import { AuthContext } from '../../auth/AuthContext';
 
 const defaultState = {
     bills3: [],
-    busqueda: ''
+    busqueda: '',
+    usd: 0,
+    bs: 0
 };
 
 
@@ -30,7 +33,7 @@ const Notpayed = () => {
 
                 let productos = [];
 
-                resp.data.map(data => {
+                resp.data.data.map(data => {
                     productos.push({
                         id: data.id,
                         date: (data.billDate).slice(0, 10),
@@ -71,7 +74,7 @@ const Notpayed = () => {
 
                 let productos = [];
 
-                resp.data.map(data => {
+                resp.data.data.map(data => {
                     productos.push({
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
@@ -106,7 +109,7 @@ const Notpayed = () => {
             dataField: "date",
             text: "Fecha",
             sort: true,
-            
+
         },
         {
             dataField: "expirationDate",
@@ -133,7 +136,7 @@ const Notpayed = () => {
             text: "Accion a Realizar",
             sort: true
         },
-        
+
     ];
 
     const columnview = [
@@ -170,8 +173,7 @@ const Notpayed = () => {
             .then((resp) => {
 
                 let productos = [];
-
-                resp.data.map(data => {
+                resp.data.data.map(data => {
                     productos.push({
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
@@ -184,7 +186,7 @@ const Notpayed = () => {
 
                 });
 
-                setState({ ...state, bills3: productos })
+                setState({ ...state, bills3: productos, usd: resp.data.sumas[0].sumUSD, bs: resp.data.sumas[0].sumBS })
 
             })
             .catch((error) => console.log(error))
@@ -204,30 +206,53 @@ const Notpayed = () => {
     return (
         <>
             <h2><b>Facturas vencidas</b></h2>
+
+            <div className='divTable'>
+
+                <Table className="margintable" striped bordered hover size="sm" >
+                    <thead>
+                        <tr className='first'>
+                            <th>Facturado en dolares ($)</th>
+                            <th>Facturado en bolívares (Bs.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{numberWithCommas(parseFloat(state.usd || 0).toFixed(2))} USD</td>
+                            <td>{numberWithCommas(parseFloat(state.bs || 0).toFixed(2))} Bs.</td>
+                        </tr>
+                    </tbody>
+                </Table>
+
+
+
+                {<ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="btn btn-success"
+                    table="NotPayedTable"
+                    filename="tablexls"
+                    sheet="tablexls"
+                    buttonText="Exportar a Excel" />}
+            </div>
+
+            <br />
+            <br />
+
             <p className='busquedax'>Busqueda por #</p>
             <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
-
-            {<ReactHTMLTableToExcel
-                id="test-table-xls-button"
-                className="btn btn-success"
-                table="NotPayedTable"
-                filename="tablexls"
-                sheet="tablexls"
-                buttonText="Exportar a Excel" />}
-
 
 
             <div className='divTable'>
 
                 {user.viewer === 0 ?
                     <BootstrapTable
-                        
+
                         bootstrap4
                         id='NotPayedTable'
                         keyField="id"
                         data={facturas}
                         columns={columns}
-                        
+
                         pagination={paginationFactory({
                             sizePerPageList: [{
                                 text: '15', value: 15
