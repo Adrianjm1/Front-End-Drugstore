@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react'
-import { Modal, DropdownButton, ButtonGroup, Dropdown } from 'react-bootstrap';
+import { Modal, DropdownButton, ButtonGroup, Dropdown, Table } from 'react-bootstrap';
 import { AuthContext } from '../../auth/AuthContext';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
@@ -8,12 +8,16 @@ import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.m
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import BootstrapTable from "react-bootstrap-table-next";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import numberWithCommas from '../../helpers/helpers';
+
 
 
 const defaultState = {
     sellers: [],
     bills: [],
-    id: 1
+    id: 1,
+    usd:0,
+    bs:0
 
 };
 
@@ -62,7 +66,7 @@ const Byseller = () => {
 
                         let productos = [];
 
-                        resp.data.map(data => {
+                        resp.data.data.map(data => {
                             productos.push({
                                 date: (data.billDate).slice(0, 10),
                                 expirationDate: data.expirationDate.slice(0, 10),
@@ -73,7 +77,7 @@ const Byseller = () => {
                         })
 
 
-                        setState({ ...state, sellers: res.data, bills: productos });
+                        setState({ ...state, sellers: res.data, bills: productos, usd: resp.data.sumas[0].sumUSD, bs: resp.data.sumas[0].sumBS  })
                         setShowDetails(false);
 
 
@@ -112,7 +116,7 @@ const Byseller = () => {
 
                         let productos = [];
 
-                        resp.data.map(data => {
+                        resp.data.data.map(data => {
                             productos.push({
                                 date: (data.billDate).slice(0, 10),
                                 expirationDate: data.expirationDate.slice(0, 10),
@@ -123,7 +127,7 @@ const Byseller = () => {
                         })
 
 
-                        setState({ ...state, sellers: res.data, bills: productos })
+                        setState({ ...state, sellers: res.data, bills: productos, usd: resp.data.sumas[0].sumUSD, bs: resp.data.sumas[0].sumBS  })
 
                     })
                     .catch((error) => console.log(error))
@@ -150,6 +154,23 @@ const Byseller = () => {
         <>
             <h2><b>Facturas por vendedor</b></h2>  <br />
 
+            <div className="divTable">
+
+            <Table className="margintable" striped bordered hover size="sm" >
+                    <thead>
+                        <tr className='first'>
+                            <th>Facturado en dolares ($)</th>
+                            <th>Facturado en bolívares (Bs.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{numberWithCommas(parseFloat(state.usd || 0).toFixed(2))} USD</td>
+                            <td>{numberWithCommas(parseFloat(state.bs || 0).toFixed(2))} Bs.</td>
+                        </tr>
+                    </tbody>
+                </Table>
+
             {<ReactHTMLTableToExcel
                 id="test-table-xls-button"
                 className="btn btn-success"
@@ -165,6 +186,7 @@ const Byseller = () => {
 
                 ))}
             </DropdownButton>
+            </div>
 
 
 

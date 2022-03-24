@@ -15,7 +15,7 @@ const defaultState = {
     bills: [],
     busqueda: '',
     usd: 0,
-    bs:0
+    bs: 0
 };
 
 const columns = [
@@ -130,12 +130,13 @@ const Unpaid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2) } $`,
-                        unPaid: `${ parseFloat(data.amount.unPaid).toFixed(2) } $`,
+                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
+                        unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
-                        amountBS: `${(  ( parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange))) ).toFixed(2)    } Bs.`,
+                        amountBS: `${((parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))).toFixed(2)} Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
-                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b> })
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
+                    })
                 });
 
                 setState({ ...state, bills: productos });
@@ -168,12 +169,13 @@ const Unpaid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2) } $`,
-                        unPaid: `${ parseFloat(data.amount.unPaid).toFixed(2) } $`,
+                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
+                        unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
-                        amountBS: `${(  ( parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange))) ).toFixed(2)    } Bs.`,
+                        amountBS: `${((parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))).toFixed(2)} Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
-                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b> })
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
+                    })
                 });
 
                 setState({ ...state, bills: productos });
@@ -202,18 +204,18 @@ const Unpaid = () => {
 
                 let productos = [];
                 let sumatoria = 0
-                
-            
+
+
                 resp.data.data.map(data => {
                     productos.push({
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2) } $`,
-                        unPaid: `${ parseFloat(data.amount.unPaid).toFixed(2) } $`,
+                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
+                        unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
-                        amountBS: `${(  ( parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange))) ).toFixed(2)    } Bs.`,
+                        amountBS: `${((parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))).toFixed(2)} Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
@@ -245,7 +247,7 @@ const Unpaid = () => {
 
             <div className='divTable'>
 
-            <Table className="margintable" striped bordered hover size="sm" >
+                <Table className="margintable" striped bordered hover size="sm" >
                     <thead>
                         <tr className='first'>
                             <th>Facturado en dolares ($)</th>
@@ -261,18 +263,18 @@ const Unpaid = () => {
                 </Table>
 
 
-            {<ReactHTMLTableToExcel
-                id="test-table-xls-button"
-                className="btn btn-success"
-                table="Unpaid"
-                filename="tablexls"
-                sheet="tablexls"
-                buttonText="Exportar a Excel" />}
+                {<ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="btn btn-success"
+                    table="Unpaid"
+                    filename="tablexls"
+                    sheet="tablexls"
+                    buttonText="Exportar a Excel" />}
             </div>
 
 
-            <br/>
-<br/>
+            <br />
+            <br />
 
             <p className='busquedax'>Busqueda por #</p>
             <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
