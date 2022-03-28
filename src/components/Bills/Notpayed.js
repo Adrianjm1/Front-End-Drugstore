@@ -39,6 +39,7 @@ const Notpayed = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        seller: data.seller.name,
                         amountNotPayed: `${data.amount.notPayed} $`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
@@ -79,6 +80,7 @@ const Notpayed = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        seller: data.seller.name,
                         amountNotPayed: `${data.amount.notPayed} $`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
@@ -127,6 +129,11 @@ const Notpayed = () => {
             sort: true
         },
         {
+            dataField: "seller",
+            text: "Vendedor",
+            sort: true
+        },
+        {
             dataField: "billNumber",
             text: "Detalle",
             sort: true
@@ -136,6 +143,7 @@ const Notpayed = () => {
             text: "Accion a Realizar",
             sort: true
         },
+        
 
     ];
 
@@ -161,6 +169,11 @@ const Notpayed = () => {
             sort: true
         },
         {
+            dataField: "seller",
+            text: "Vendedor",
+            sort: true
+        },
+        {
             dataField: "billNumber",
             text: "Detalle",
             sort: true
@@ -180,6 +193,7 @@ const Notpayed = () => {
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
                         amountNotPayed: `${data.amount.notPayed} $`,
+                        seller: data.seller.name,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })

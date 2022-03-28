@@ -55,6 +55,11 @@ const columns = [
         sort: true
     },
     {
+        dataField: "seller",
+        text: "Vendedor",
+        sort: true
+    },
+    {
         dataField: "billNumber",
         text: "Detalle",
         sort: true
@@ -106,6 +111,10 @@ const columview = [
         dataField: "billNumber",
         text: "Detalle",
         sort: true
+    },        {
+        dataField: "seller",
+        text: "Vendedor",
+        sort: true
     }
 
 ];
@@ -130,6 +139,7 @@ const Unpaid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        seller: data.seller.name,
                         amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
                         unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
@@ -172,6 +182,7 @@ const Unpaid = () => {
                         amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
                         unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
+                        seller: data.seller.name,
                         amountBS: `${((parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))).toFixed(2)} Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
@@ -212,6 +223,7 @@ const Unpaid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        seller: data.seller.name,
                         amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
                         unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
