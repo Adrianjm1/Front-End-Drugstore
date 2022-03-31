@@ -39,6 +39,7 @@ const Notpayed = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        location: data.location,
                         seller: data.seller.name,
                         amountNotPayed: `${data.amount.notPayed} $`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
@@ -80,6 +81,7 @@ const Notpayed = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        location: data.location,
                         seller: data.seller.name,
                         amountNotPayed: `${data.amount.notPayed} $`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
@@ -124,6 +126,11 @@ const Notpayed = () => {
             sort: true
         },
         {
+            dataField: "location",
+            text: "Localidad",
+            sort: true
+        },
+        {
             dataField: "amountNotPayed",
             text: "Monto Vencido",
             sort: true
@@ -164,6 +171,11 @@ const Notpayed = () => {
             sort: true
         },
         {
+            dataField: "location",
+            text: "Localidad",
+            sort: true
+        },
+        {
             dataField: "amountNotPayed",
             text: "Monto Vencido",
             sort: true
@@ -185,6 +197,7 @@ const Notpayed = () => {
         axios.get('/bill/notpayed')
             .then((resp) => {
 
+                // console.log(resp.data.data[1].seller.name);
                 let productos = [];
                 resp.data.data.map(data => {
                     productos.push({
@@ -192,6 +205,7 @@ const Notpayed = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        location: data.location,
                         amountNotPayed: `${data.amount.notPayed} $`,
                         seller: data.seller.name,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,

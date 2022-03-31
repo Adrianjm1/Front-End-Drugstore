@@ -38,6 +38,11 @@ const columns = [
         sort: true
     },
     {
+        dataField: "location",
+        text: "Localidad",
+        sort: true
+    },
+    {
         dataField: "amountUSD",
         text: "Monto USD",
         sort: true
@@ -76,6 +81,7 @@ const Byseller = () => {
                                 date: (data.billDate).slice(0, 10),
                                 expirationDate: data.expirationDate.slice(0, 10),
                                 client: data.client,
+                                location: data.location,
                                 amountBS: `${data.amountBS} Bs`,
                                 amountUSD: `${data.amountUSD} $`,
                                 billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>{data.id}</p></b>
@@ -127,6 +133,7 @@ const Byseller = () => {
                                 date: (data.billDate).slice(0, 10),
                                 expirationDate: data.expirationDate.slice(0, 10),
                                 client: data.client,
+                                location: data.location,
                                 amountBS: `${data.amountBS} Bs`,
                                 amountUSD: `${data.amountUSD} $`,
                                 billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>{data.id}</p></b>

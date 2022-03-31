@@ -35,6 +35,11 @@ const columns = [
         sort: true
     },
     {
+        dataField: "location",
+        text: "Localidad",
+        sort: true
+    },
+    {
         dataField: "amountUSD",
         text: "Monto USD",
         sort: true
@@ -88,6 +93,11 @@ const columview = [
         sort: true
     },
     {
+        dataField: "location",
+        text: "Localidad",
+        sort: true
+    },
+    {
         dataField: "amountUSD",
         text: "Monto USD",
         sort: true
@@ -138,7 +148,8 @@ const Unpaid = () => {
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
-                        client: data.client,
+                        client: data.client,            
+                        location: data.location,
                         seller: data.seller.name,
                         amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
                         unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
@@ -179,6 +190,7 @@ const Unpaid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        location: data.location,
                         amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
                         unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
@@ -223,6 +235,7 @@ const Unpaid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        location: data.location,
                         seller: data.seller.name,
                         amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
                         unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,

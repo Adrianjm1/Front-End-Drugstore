@@ -41,6 +41,7 @@ const Paid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        location: data.location,
                         seller: data.seller.name,
                         amountPayed: `${data.amount.paid} $`,
                         toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
@@ -81,6 +82,7 @@ const Paid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        location: data.location,
                         seller: data.seller.name,
                         amountPayed: `${parseFloat(data.amount.paid).toFixed(2)} $`,
                         overPaidBS: `${data.overPaidBS}Bs.`,
@@ -109,6 +111,11 @@ const Paid = () => {
         {
             dataField: "client",
             text: "Cliente",
+            sort: true
+        },
+        {
+            dataField: "location",
+            text: "Localidad",
             sort: true
         },
         {
