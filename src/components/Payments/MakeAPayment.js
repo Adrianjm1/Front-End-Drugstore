@@ -177,7 +177,7 @@ const MakeAPayment = (number) => {
                     if (state.itsUSD === false) {
                         
                          monto = parseFloat(state.amountPay)  / stateHandle.tasadecambio;
-                    
+                        
                     } else{
                         monto = state.amountPay
                     }

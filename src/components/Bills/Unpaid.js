@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useContext } from 'react'
-import { Modal, FormControl } from 'react-bootstrap';
+import { Modal, FormControl, Table } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import MakeAPayment from '../Payments/MakeAPayment';
@@ -13,7 +13,10 @@ import numberWithCommas from '../../helpers/helpers';
 
 const defaultState = {
     bills: [],
-    busqueda: ''
+    busqueda: '',
+    busquedaxcliente: '',
+    usd: 0,
+    bs: 0
 };
 
 const columns = [
@@ -30,6 +33,11 @@ const columns = [
     {
         dataField: "client",
         text: "Cliente",
+        sort: true
+    },
+    {
+        dataField: "location",
+        text: "Localidad",
         sort: true
     },
     {
@@ -50,6 +58,11 @@ const columns = [
     {
         dataField: "amountBS",
         text: "Monto por Cobrar (Bs.)",
+        sort: true
+    },
+    {
+        dataField: "seller",
+        text: "Vendedor",
         sort: true
     },
     {
@@ -81,6 +94,11 @@ const columview = [
         sort: true
     },
     {
+        dataField: "location",
+        text: "Localidad",
+        sort: true
+    },
+    {
         dataField: "amountUSD",
         text: "Monto USD",
         sort: true
@@ -104,6 +122,10 @@ const columview = [
         dataField: "billNumber",
         text: "Detalle",
         sort: true
+    }, {
+        dataField: "seller",
+        text: "Vendedor",
+        sort: true
     }
 
 ];
@@ -122,18 +144,21 @@ const Unpaid = () => {
 
                 let productos = [];
 
-                resp.data.map(data => {
+                resp.data.data.map(data => {
                     productos.push({
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2) } $`,
-                        unPaid: `${ parseFloat(data.amount.unPaid).toFixed(2) } $`,
+                        location: data.location,
+                        seller: data.seller.name,
+                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
+                        unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
-                        amountBS: `${(  ( parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange))) ).toFixed(2)    } Bs.`,
+                        amountBS: `${((parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))).toFixed(2)} Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
-                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b> })
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
+                    })
                 });
 
                 setState({ ...state, bills: productos });
@@ -147,7 +172,7 @@ const Unpaid = () => {
     const handleShowDetails = () => setShowDetails(true);
 
     const handleChange = e => {
-        setState({ ...state, busqueda: e.target.value.toUpperCase() });
+        setState({ ...state, [e.target.name]: e.target.value.toUpperCase() });
     }
 
 
@@ -160,18 +185,21 @@ const Unpaid = () => {
 
                 let productos = [];
 
-                resp.data.map(data => {
+                resp.data.data.map(data => {
                     productos.push({
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2) } $`,
-                        unPaid: `${ parseFloat(data.amount.unPaid).toFixed(2) } $`,
+                        location: data.location,
+                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
+                        unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
-                        amountBS: `${(  ( parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange))) ).toFixed(2)    } Bs.`,
+                        seller: data.seller.name,
+                        amountBS: `${((parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))).toFixed(2)} Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
-                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b> })
+                        toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
+                    })
                 });
 
                 setState({ ...state, bills: productos });
@@ -199,29 +227,36 @@ const Unpaid = () => {
             .then((resp) => {
 
                 let productos = [];
+                let sumatoria = 0
 
-                resp.data.map(data => {
+
+                resp.data.data.map(data => {
                     productos.push({
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
-                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2) } $`,
-                        unPaid: `${ parseFloat(data.amount.unPaid).toFixed(2) } $`,
+                        location: data.location,
+                        seller: data.seller.name,
+                        amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
+                        unPaid: `${parseFloat(data.amount.unPaid).toFixed(2)} $`,
                         paid: `${parseFloat(data.amount.paid).toFixed(2)} $`,
-                        amountBS: `${(  ( parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange))) ).toFixed(2)    } Bs.`,
+                        amountBS: `${((parseFloat(data.amountBS) - (parseFloat(data.amount.paid) * parseFloat(data.exchange)))).toFixed(2)} Bs.`,
                         billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} key={data.id} className='tableDetails' href='#'>{data.id}</p></b>,
                         toDo: <b><p className='tableDetails' key={data.id} onClick={() => { handleShow(); changeNumber(data.id); }} >Realizar pago</p></b>
                     })
                 });
 
-                setState({ ...state, bills: productos });
+
+                setState({ ...state, bills: productos, usd: resp.data.sumas[0].sumUSD, bs: resp.data.sumas[0].sumBS });
 
             })
             .catch((error) => console.log(error))
     }, [])
 
-    const facturas = useMemo(function () {
+
+
+    const facturas1 = useMemo(function () {
         if (state.bills.length) {
             return state.bills.filter(factura => (`${factura.id}`).includes(state.busqueda))
         } else if (state.busqueda === '') {
@@ -232,20 +267,69 @@ const Unpaid = () => {
     }, [state])
 
 
+    const facturas = useMemo(function () {
+        if (state.bills.length) {
+            return facturas1.filter(factura => (`${factura.client}`).includes(state.busquedaxcliente))
+        } else if (state.busquedaxcliente === '') {
+            return facturas1
+        }
+
+        return state.bills
+    }, [state])
+
+
+
+
+
     return (
         <>
             <h2><b>Facturas por cobrar</b></h2>
 
-            <p className='busquedax'>Busqueda por #</p>
-            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+            <div className='divTable'>
 
-            {<ReactHTMLTableToExcel
-                id="test-table-xls-button"
-                className="btn btn-success"
-                table="Unpaid"
-                filename="tablexls"
-                sheet="tablexls"
-                buttonText="Exportar a Excel" />}
+                <Table className="margintable" striped bordered hover size="sm" >
+                    <thead>
+                        <tr className='first'>
+                            <th>Facturado en dolares ($)</th>
+                            <th>Facturado en bolívares (Bs.)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{numberWithCommas(parseFloat(state.usd || 0).toFixed(2))} USD</td>
+                            <td>{numberWithCommas(parseFloat(state.bs || 0).toFixed(2))} Bs.</td>
+                        </tr>
+                    </tbody>
+                </Table>
+
+
+                {<ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="btn btn-success"
+                    table="Unpaid"
+                    filename="tablexls"
+                    sheet="tablexls"
+                    buttonText="Exportar a Excel" />}
+            </div>
+
+
+            <br />
+            <br />
+
+            <div className='row'>
+                <div className='col'>
+                    <p className='busquedax'>Busqueda por #</p>
+                    <FormControl type="text" name='busqueda' placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+
+                </div>
+                <div className='col'>            <p className='busquedax'>Busqueda por Cliente</p>
+                    <FormControl type="text" name='busquedaxcliente' placeholder="Busqueda por cliente" className="busqueda" onChange={handleChange} />
+                </div>
+
+            </div>
+
+
+
 
             <div className='divTable'>
 

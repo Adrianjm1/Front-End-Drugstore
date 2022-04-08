@@ -19,8 +19,7 @@ const Welcome = (number) => {
 
         axios.get(`/amounts/verify/`)
             .then((respues) => {
-                console.log(respues);
-
+                
             })
             .catch((error) => console.log(error))
 
@@ -41,7 +40,7 @@ const Welcome = (number) => {
                         
                         axios.get(`/bill/notPayed`)
                             .then((respuesta) => {
-                                setState({ ...state, porPagar: res.data.length, pagadas: resp.data.data.length, vencidas: respuesta.data.length })
+                                setState({ ...state, porPagar: res.data.data.length, pagadas: resp.data.data.length, vencidas: respuesta.data.data.length })
                            
                             })
                             .catch((error) => console.log(error))

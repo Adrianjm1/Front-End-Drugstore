@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react'
-import { Modal, Table } from 'react-bootstrap';
+import React, { useState, useEffect, useMemo } from 'react'
+import { Modal, Table, FormControl } from 'react-bootstrap';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import numberWithCommas from '../../helpers/helpers';
@@ -16,7 +16,8 @@ const defaultState = {
     bills1: [],
     usd: 0,
     bs: 0,
-    busqueda: ''
+    busqueda: '',
+    busquedaxcliente: '',
 };
 
 
@@ -41,6 +42,8 @@ const Paid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        location: data.location,
+                        seller: data.seller.name,
                         amountPayed: `${data.amount.paid} $`,
                         toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
                     })
@@ -80,6 +83,8 @@ const Paid = () => {
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
                         client: data.client,
+                        location: data.location,
+                        seller: data.seller.name,
                         amountPayed: `${parseFloat(data.amount.paid).toFixed(2)} $`,
                         overPaidBS: `${data.overPaidBS}Bs.`,
                         toDo: <b><a onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails' href='#'>{data.id}</a></b>,
@@ -110,6 +115,11 @@ const Paid = () => {
             sort: true
         },
         {
+            dataField: "location",
+            text: "Localidad",
+            sort: true
+        },
+        {
             dataField: "amountPayed",
             text: "Monto Pagado",
             sort: true
@@ -120,11 +130,43 @@ const Paid = () => {
             sort: true
         },
         {
+            dataField: "seller",
+            text: "Vendedor",
+            sort: true
+        },
+        {
             dataField: "toDo",
             text: "Detalle",
             sort: true
         }
     ];
+
+    const handleChange = e => {
+        setState({ ...state, [e.target.name]: e.target.value.toUpperCase() });
+    }
+
+
+    const facturas1 = useMemo(function () {
+        if (state.bills1.length) {
+            return state.bills1.filter(factura => (`${factura.id}`).includes(state.busqueda))
+        } else if (state.busqueda === '') {
+            return state.bills1
+        }
+
+        return state.bills1
+    }, [state])
+
+
+    const facturas = useMemo(function () {
+        if (state.bills1.length) {
+            return facturas1.filter(factura => (`${factura.client}`).includes(state.busquedaxcliente))
+        } else if (state.busquedaxcliente === '') {
+            return facturas1
+        }
+
+        return state.bills
+    }, [state])
+
 
     return (
         <>
@@ -155,6 +197,22 @@ const Paid = () => {
                     sheet="tablexls"
                     buttonText="Exportar a Excel" />}
             </div>
+                    
+            <br />
+            <br />
+            <div className='row'>
+                <div className='col'>
+                    <p className='busquedax'>Busqueda por #</p>
+                    <FormControl type="text" name='busqueda' placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+
+                </div>
+                <div className='col'>            <p className='busquedax'>Busqueda por Cliente</p>
+                    <FormControl type="text" name='busquedaxcliente' placeholder="Busqueda por cliente" className="busqueda" onChange={handleChange} />
+                </div>
+
+            </div>
+
+
 
             <div className='divTable'>
 
@@ -162,7 +220,7 @@ const Paid = () => {
                     bootstrap4
                     id='Paid'
                     keyField="id"
-                    data={state.bills1}
+                    data={facturas}
                     columns={columns}
                     pagination={paginationFactory({
                         sizePerPageList: [{
