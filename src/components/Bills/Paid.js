@@ -16,7 +16,8 @@ const defaultState = {
     bills1: [],
     usd: 0,
     bs: 0,
-    busqueda: ''
+    busqueda: '',
+    busquedaxcliente: '',
 };
 
 
@@ -141,10 +142,11 @@ const Paid = () => {
     ];
 
     const handleChange = e => {
-        setState({ ...state, busqueda: e.target.value.toUpperCase() });
+        setState({ ...state, [e.target.name]: e.target.value.toUpperCase() });
     }
 
-    const facturas = useMemo(function () {
+
+    const facturas1 = useMemo(function () {
         if (state.bills1.length) {
             return state.bills1.filter(factura => (`${factura.id}`).includes(state.busqueda))
         } else if (state.busqueda === '') {
@@ -153,6 +155,18 @@ const Paid = () => {
 
         return state.bills1
     }, [state])
+
+
+    const facturas = useMemo(function () {
+        if (state.bills1.length) {
+            return facturas1.filter(factura => (`${factura.client}`).includes(state.busquedaxcliente))
+        } else if (state.busquedaxcliente === '') {
+            return facturas1
+        }
+
+        return state.bills
+    }, [state])
+
 
     return (
         <>
@@ -186,8 +200,18 @@ const Paid = () => {
                     
             <br />
             <br />
-            <p className='busquedax'>Busqueda por #</p>
-            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+            <div className='row'>
+                <div className='col'>
+                    <p className='busquedax'>Busqueda por #</p>
+                    <FormControl type="text" name='busqueda' placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+
+                </div>
+                <div className='col'>            <p className='busquedax'>Busqueda por Cliente</p>
+                    <FormControl type="text" name='busquedaxcliente' placeholder="Busqueda por cliente" className="busqueda" onChange={handleChange} />
+                </div>
+
+            </div>
+
 
 
             <div className='divTable'>

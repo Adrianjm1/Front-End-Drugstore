@@ -14,6 +14,7 @@ import numberWithCommas from '../../helpers/helpers';
 const defaultState = {
     bills: [],
     busqueda: '',
+    busquedaxcliente: '',
     usd: 0,
     bs: 0
 };
@@ -121,7 +122,7 @@ const columview = [
         dataField: "billNumber",
         text: "Detalle",
         sort: true
-    },        {
+    }, {
         dataField: "seller",
         text: "Vendedor",
         sort: true
@@ -148,7 +149,7 @@ const Unpaid = () => {
                         id: (data.id),
                         date: (data.billDate).slice(0, 10),
                         expirationDate: data.expirationDate.slice(0, 10),
-                        client: data.client,            
+                        client: data.client,
                         location: data.location,
                         seller: data.seller.name,
                         amountUSD: `${parseFloat(data.amountUSD).toFixed(2)} $`,
@@ -171,7 +172,7 @@ const Unpaid = () => {
     const handleShowDetails = () => setShowDetails(true);
 
     const handleChange = e => {
-        setState({ ...state, busqueda: e.target.value.toUpperCase() });
+        setState({ ...state, [e.target.name]: e.target.value.toUpperCase() });
     }
 
 
@@ -253,7 +254,9 @@ const Unpaid = () => {
             .catch((error) => console.log(error))
     }, [])
 
-    const facturas = useMemo(function () {
+
+
+    const facturas1 = useMemo(function () {
         if (state.bills.length) {
             return state.bills.filter(factura => (`${factura.id}`).includes(state.busqueda))
         } else if (state.busqueda === '') {
@@ -262,6 +265,18 @@ const Unpaid = () => {
 
         return state.bills
     }, [state])
+
+
+    const facturas = useMemo(function () {
+        if (state.bills.length) {
+            return facturas1.filter(factura => (`${factura.client}`).includes(state.busquedaxcliente))
+        } else if (state.busquedaxcliente === '') {
+            return facturas1
+        }
+
+        return state.bills
+    }, [state])
+
 
 
 
@@ -301,8 +316,20 @@ const Unpaid = () => {
             <br />
             <br />
 
-            <p className='busquedax'>Busqueda por #</p>
-            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+            <div className='row'>
+                <div className='col'>
+                    <p className='busquedax'>Busqueda por #</p>
+                    <FormControl type="text" name='busqueda' placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+
+                </div>
+                <div className='col'>            <p className='busquedax'>Busqueda por Cliente</p>
+                    <FormControl type="text" name='busquedaxcliente' placeholder="Busqueda por cliente" className="busqueda" onChange={handleChange} />
+                </div>
+
+            </div>
+
+
+
 
             <div className='divTable'>
 

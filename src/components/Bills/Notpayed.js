@@ -15,6 +15,7 @@ import { AuthContext } from '../../auth/AuthContext';
 const defaultState = {
     bills3: [],
     busqueda: '',
+    busquedaxcliente: '',
     usd: 0,
     bs: 0
 };
@@ -64,8 +65,9 @@ const Notpayed = () => {
 
 
     const handleChange = e => {
-        setState({ ...state, busqueda: e.target.value.toUpperCase() });
+        setState({ ...state, [e.target.name]: e.target.value.toUpperCase() });
     }
+
 
     const [show, setShow] = useState(false);
 
@@ -150,7 +152,7 @@ const Notpayed = () => {
             text: "Accion a Realizar",
             sort: true
         },
-        
+
 
     ];
 
@@ -221,7 +223,7 @@ const Notpayed = () => {
 
     }, [])
 
-    const facturas = useMemo(function () {
+    const facturas1 = useMemo(function () {
         if (state.bills3.length) {
             return state.bills3.filter(factura => (`${factura.id}`).includes(state.busqueda))
         } else if (state.busqueda === '') {
@@ -230,6 +232,18 @@ const Notpayed = () => {
 
         return state.bills3
     }, [state])
+
+
+    const facturas = useMemo(function () {
+        if (state.bills3.length) {
+            return facturas1.filter(factura => (`${factura.client}`).includes(state.busquedaxcliente))
+        } else if (state.busquedaxcliente === '') {
+            return facturas1
+        }
+
+        return state.bills3
+    }, [state])
+
 
     return (
         <>
@@ -266,8 +280,17 @@ const Notpayed = () => {
             <br />
             <br />
 
-            <p className='busquedax'>Busqueda por #</p>
-            <FormControl type="text" placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+            <div className='row'>
+                <div className='col'>
+                    <p className='busquedax'>Busqueda por #</p>
+                    <FormControl type="text" name='busqueda' placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+
+                </div>
+                <div className='col'>            <p className='busquedax'>Busqueda por Cliente</p>
+                    <FormControl type="text" name='busquedaxcliente' placeholder="Busqueda por cliente" className="busqueda" onChange={handleChange} />
+                </div>
+
+            </div>
 
 
             <div className='divTable'>

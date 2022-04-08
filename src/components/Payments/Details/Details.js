@@ -65,9 +65,9 @@ const Details = (number) => {
                 <ListGroup variant="flush">
                     <ListGroup.Item variant='info'>  {`Factura numero:  `} <b>{state.datos.id}</b>      </ListGroup.Item>
                     <ListGroup.Item variant='info'>  {`Monto de factura:   `}   <b> {`${state.datos.amountUSD} $`}</b>   </ListGroup.Item>
-                    <ListGroup.Item variant='info'>  {`Monto pagado   `}   <b> {`${state.amount.paid} $`}</b>   </ListGroup.Item>
-                    <ListGroup.Item variant='info'>  {`Monto: por cobrar:   `}   <b> {`${state.amount.unPaid} $`}</b>   </ListGroup.Item>
-                    <ListGroup.Item variant='info'>  {`Monto vencido:   `}   <b> {`${state.amount.notPayed} $`}</b>   </ListGroup.Item>
+                    <ListGroup.Item variant='info'>  {`Monto pagado   `}   <b> {`${parseFloat(state.amount.paid).toFixed(2) } $ o ${ (parseFloat( state.amount.paid)  *  parseFloat(state.datos.exchange)).toFixed(2) } Bs`}</b>   </ListGroup.Item>
+                    <ListGroup.Item variant='info'>  {`Monto: por cobrar:   `}   <b> {`${state.amount.unPaid} $  o ${ (parseFloat( state.amount.unPaid)  *  parseFloat(state.datos.exchange)).toFixed(2) } Bs`}</b>   </ListGroup.Item>
+                    <ListGroup.Item variant='info'>  {`Monto vencido:   `}   <b> {`${state.amount.notPayed} $ o o ${ (parseFloat( state.amount.notPayed)  *  parseFloat(state.datos.exchange)).toFixed(2) } Bs`}</b>   </ListGroup.Item>
                     <ListGroup.Item variant='info'>  {`Tasa de cambio:   `}   <b> {`${state.datos.exchange}`}</b>   </ListGroup.Item>
                     <ListGroup.Item variant='info'>  {`Fecha: `}    <b>{(state.billDate)} </b>   </ListGroup.Item>
                     <ListGroup.Item variant='info'>  {`Fecha de expiracion: `}   <b>{(state.expiration)}</b>   </ListGroup.Item>
