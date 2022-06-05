@@ -53,6 +53,11 @@ const columns = [
         sort: true
     },
     {
+        dataField: "status",
+        text: "Estado",
+        sort: true
+    },
+    {
         dataField: "billNumber",
         text: "Detalle",
         sort: true
@@ -126,16 +131,26 @@ const Byseller = () => {
                 axios.get(`/bill/seller/${state.id}`)
                     .then((resp) => {
 
+                        
                         let productos = [];
-
+                        let realAmount = 0;
+                        console.log(resp.data.data);
                         resp.data.data.map(data => {
+
+                            if ((data.amountUSD == 0)) {
+                                realAmount = data.amount.notPayed;
+                            } else {
+                                realAmount = data.amountUSD;
+                            }
+
                             productos.push({
                                 date: (data.billDate).slice(0, 10),
                                 expirationDate: data.expirationDate.slice(0, 10),
                                 client: data.client,
                                 location: data.location,
-                                amountBS: `${data.amountBS} Bs`,
-                                amountUSD: `${data.amountUSD} $`,
+                                amountBS: `${ (realAmount * data.exchange).toFixed(2)} Bs`,
+                                amountUSD: `${realAmount} $`,
+                                status: (data.amountUSD == 0 ) ? 'Vencida' : 'Pendiente',
                                 billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>{data.id}</p></b>
                             })
                         })
