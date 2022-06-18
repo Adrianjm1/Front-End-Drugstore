@@ -1,6 +1,6 @@
 
-import React, { useState, useEffect } from 'react'
-import { Modal, DropdownButton, ButtonGroup, Dropdown, Table } from 'react-bootstrap';
+import React, { useState, useEffect, useMemo } from 'react'
+import { Modal, DropdownButton, ButtonGroup, Dropdown, Table, FormControl } from 'react-bootstrap';
 import { AuthContext } from '../../auth/AuthContext';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
@@ -16,8 +16,10 @@ const defaultState = {
     sellers: [],
     bills: [],
     id: 1,
-    usd:0,
-    bs:0
+    usd: 0,
+    bs: 0,
+    busqueda: '',
+    busquedaxcliente: '',
 
 };
 
@@ -55,7 +57,7 @@ const columns = [
     {
         dataField: "status",
         text: "Estado",
-        sort: true
+        sort: true,
     },
     {
         dataField: "billNumber",
@@ -67,7 +69,7 @@ const columns = [
 
 
 const Byseller = () => {
-   
+
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
 
@@ -94,7 +96,7 @@ const Byseller = () => {
                         })
 
 
-                        setState({ ...state, sellers: res.data, bills: productos, usd: resp.data.sumas[0].sumUSD, bs: resp.data.sumas[0].sumBS  })
+                        setState({ ...state, sellers: res.data, bills: productos, usd: resp.data.sumas[0].sumUSD, bs: resp.data.sumas[0].sumBS })
                         setShowDetails(false);
 
 
@@ -131,10 +133,10 @@ const Byseller = () => {
                 axios.get(`/bill/seller/${state.id}`)
                     .then((resp) => {
 
-                        
+
                         let productos = [];
                         let realAmount = 0;
-                        console.log(resp.data.data);
+                        // console.log(resp.data.data);
                         resp.data.data.map(data => {
 
                             if ((data.amountUSD == 0)) {
@@ -144,19 +146,20 @@ const Byseller = () => {
                             }
 
                             productos.push({
+                                id: (data.id),
                                 date: (data.billDate).slice(0, 10),
                                 expirationDate: data.expirationDate.slice(0, 10),
                                 client: data.client,
                                 location: data.location,
-                                amountBS: `${ (realAmount * data.exchange).toFixed(2)} Bs`,
+                                amountBS: `${(realAmount * data.exchange).toFixed(2)} Bs`,
                                 amountUSD: `${realAmount} $`,
-                                status: (data.amountUSD == 0 ) ? 'Vencida' : 'Pendiente',
+                                status: (data.amountUSD == 0) ? 'Vencida' : 'Pendiente',
                                 billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>{data.id}</p></b>
                             })
                         })
 
 
-                        setState({ ...state, sellers: res.data, bills: productos, usd: resp.data.sumas[0].sumUSD, bs: resp.data.sumas[0].sumBS  })
+                        setState({ ...state, sellers: res.data, bills: productos, usd: resp.data.sumas[0].sumUSD, bs: resp.data.sumas[0].sumBS })
 
                     })
                     .catch((error) => console.log(error))
@@ -169,13 +172,36 @@ const Byseller = () => {
     }, [state.id])
 
 
+    const facturas = useMemo(function () {
+        if (state.bills.length) {
+            return state.bills.filter(factura => (`${factura.client}`).includes(state.busquedaxcliente))
+        } else if (state.busquedaxcliente === '') {
+            return state.bills
+        }
+
+        return state.bills
+    }, [state])
+
+
+
     const setID = (id) => {
-        
+
         if (id) {
             setState({ ...state, id: id })
         }
 
     }
+
+
+
+    const handleChange = e => {
+        setState({ ...state, [e.target.name]: e.target.value.toUpperCase() });
+    }
+
+
+    const rowStyle = (row, rowIndex) => {
+        return { backgroundColor: row.status == 'Vencida' ? 'rgba(201, 50, 50, 0.596)' : 'white' };
+    };
 
 
 
@@ -185,7 +211,7 @@ const Byseller = () => {
 
             <div className="divTable">
 
-            <Table className="margintable" striped bordered hover size="sm" >
+                <Table className="margintable" striped bordered hover size="sm" >
                     <thead>
                         <tr className='first'>
                             <th>Facturado en dolares ($)</th>
@@ -200,21 +226,25 @@ const Byseller = () => {
                     </tbody>
                 </Table>
 
-            {<ReactHTMLTableToExcel
-                id="test-table-xls-button"
-                className="btn btn-success"
-                table="Byseller"
-                filename="tablexls"
-                sheet="tablexls"
-                buttonText="Exportar a Excel" />}
+                {<ReactHTMLTableToExcel
+                    id="test-table-xls-button"
+                    className="btn btn-success"
+                    table="Byseller"
+                    filename="tablexls"
+                    sheet="tablexls"
+                    buttonText="Exportar a Excel" />}
 
 
-            <DropdownButton as={ButtonGroup} className='selectSeller' style={{ width: '7%', display: "block", margin: "auto" }} title="Vendedor" id="bg-vertical-dropdown-2">
-                {state.sellers.map(data => (
-                    <Dropdown.Item key={data.id} onClick={() => { let sellerName = `${data.name} ${data.lastname}`; setID(data.id); }}>{`${data.name}  ${data.lastname}`}</Dropdown.Item>
+                <DropdownButton as={ButtonGroup} className='selectSeller' style={{ width: '7%', display: "block", margin: "auto" }} title="Vendedor" id="bg-vertical-dropdown-2">
+                    {state.sellers.map(data => (
+                        <Dropdown.Item key={data.id} onClick={() => { let sellerName = `${data.name} ${data.lastname}`; setID(data.id); }}>{`${data.name}  ${data.lastname}`}</Dropdown.Item>
 
-                ))}
-            </DropdownButton>
+                    ))}
+                </DropdownButton>
+
+                <div className='col'>            <p className='busquedax'>Busqueda por Cliente</p>
+                    <FormControl type="text" name='busquedaxcliente' placeholder="Busqueda por cliente" className="busqueda" onChange={handleChange} />
+                </div>
             </div>
 
 
@@ -225,15 +255,18 @@ const Byseller = () => {
                     bootstrap4
                     id='Byseller'
                     keyField="id"
-                    data={state.bills}
+                    data={facturas}
                     columns={columns}
-                    pagination={paginationFactory({ sizePerPageList : [ {
-                        text: '15', value: 15
-                      }, {
-                        text: '50', value: 50
-                      }, {
-                        text: 'Todo', value: state.bills.length
-                      } ] })}
+                    rowStyle={rowStyle}
+                    pagination={paginationFactory({
+                        sizePerPageList: [{
+                            text: '15', value: 15
+                        }, {
+                            text: '50', value: 50
+                        }, {
+                            text: 'Todo', value: state.bills.length
+                        }]
+                    })}
                 />
 
             </div>
