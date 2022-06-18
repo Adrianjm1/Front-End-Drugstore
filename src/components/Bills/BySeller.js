@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { Modal, DropdownButton, ButtonGroup, Dropdown, Table, FormControl } from 'react-bootstrap';
-import { AuthContext } from '../../auth/AuthContext';
 import axios from '../../config/axios';
 import Details from '../Payments/Details/Details';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
@@ -171,17 +170,26 @@ const Byseller = () => {
 
     }, [state.id])
 
-
-    const facturas = useMemo(function () {
+    const facturas1 = useMemo(function () {
         if (state.bills.length) {
-            return state.bills.filter(factura => (`${factura.client}`).includes(state.busquedaxcliente))
-        } else if (state.busquedaxcliente === '') {
+            return state.bills.filter(factura => (`${factura.id}`).includes(state.busqueda))
+        } else if (state.busqueda === '') {
             return state.bills
         }
 
         return state.bills
     }, [state])
 
+
+    const facturas = useMemo(function () {
+        if (state.bills.length) {
+            return facturas1.filter(factura => (`${factura.client}`).includes(state.busquedaxcliente))
+        } else if (state.busquedaxcliente === '') {
+            return facturas1
+        }
+
+        return state.bills
+    }, [state])
 
 
     const setID = (id) => {
@@ -235,16 +243,24 @@ const Byseller = () => {
                     buttonText="Exportar a Excel" />}
 
 
-                <DropdownButton as={ButtonGroup} className='selectSeller' style={{ width: '7%', display: "block", margin: "auto" }} title="Vendedor" id="bg-vertical-dropdown-2">
+                <DropdownButton as={ButtonGroup} className='selectSeller my-2' style={{ width: '7%', display: "block", margin: "auto" }} title="Vendedor" id="bg-vertical-dropdown-2">
                     {state.sellers.map(data => (
                         <Dropdown.Item key={data.id} onClick={() => { let sellerName = `${data.name} ${data.lastname}`; setID(data.id); }}>{`${data.name}  ${data.lastname}`}</Dropdown.Item>
 
                     ))}
                 </DropdownButton>
 
-                <div className='col'>            <p className='busquedax'>Busqueda por Cliente</p>
+                <div className='row'>
+                <div className='col'>
+                    <p className='busquedax'>Busqueda por #</p>
+                    <FormControl type="text" name='busqueda' placeholder="Busqueda" className="busqueda" onChange={handleChange} />
+
+                </div>
+                <div className='col '>            <p className='busquedax'>Busqueda por Cliente</p>
                     <FormControl type="text" name='busquedaxcliente' placeholder="Busqueda por cliente" className="busqueda" onChange={handleChange} />
                 </div>
+
+            </div>
             </div>
 
 
