@@ -69,6 +69,8 @@ const columns = [
 
 const Byseller = () => {
 
+
+    const date = new Date();
     const [state, setState] = useState(defaultState);
     const [showDetails, setShowDetails] = useState(false);
 
@@ -144,6 +146,15 @@ const Byseller = () => {
                                 realAmount = data.amountUSD;
                             }
 
+
+
+
+                            let expDate = new Date(data.expirationDate.slice(0, 10));
+
+                            // console.log(`Sera ${expDate} mayor a ${date} `);
+                            // console.log(expDate > date);
+                    
+
                             productos.push({
                                 id: (data.id),
                                 date: (data.billDate).slice(0, 10),
@@ -152,7 +163,7 @@ const Byseller = () => {
                                 location: data.location,
                                 amountBS: `${(realAmount * data.exchange).toFixed(2)} Bs`,
                                 amountUSD: `${realAmount} $`,
-                                status: (data.amountUSD == 0) ? 'Vencida' : 'Pendiente',
+                                status: (expDate < date) ? 'Vencida' : 'Pendiente',
                                 billNumber: <b><p onClick={() => { handleShowDetails(); changeNumber(data.id) }} className='tableDetails'>{data.id}</p></b>
                             })
                         })
